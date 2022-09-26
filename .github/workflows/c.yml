@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - git diff --name-only "$GITHUB_BASE_REF..$GITHUB_SHA" | \
+    - uses: actions/checkout@v3
+    - name: indent the project
+    - run: git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | \
         indent -i4 -bad -bap -bbb -bli0 -cdb -sc -cli4 -cbi0 \
         -npcs -nbc -bls -blf -lp -ts4 -nip -pmt
