@@ -20,3 +20,10 @@ jobs:
       run: make
     - name: make check
       run: make check
+  indent:
+	runs-on: ubuntu-latest
+
+	steps:
+	- git diff --name-only "$GITHUB_BASE_REF..$GITHUB_SHA" | \
+		indent -i4 -bad -bap -bbb -bli0 -cdb -sc -cli4 -cbi0 \
+		-npcs -nbc -bls -blf -lp -ts4 -nip -pmt
