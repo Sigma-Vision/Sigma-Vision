@@ -25,4 +25,4 @@ jobs:
         sudo apt-get update -y 
         sudo apt-get install -y indent 
         git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | 
-        indent -i4 -bad -bap -bbb -bli0 -cdb -sc -cli4 -cbi0 -npcs -nbc -bls -blf -lp -ts4 -nip -pmt
+        indent -i4 -bad -bap -bbb -bli0 -cdb -sc -cli4 -cbi0 -npcs -nbc -bls -blf -lp -ts4 -nip -pmt -npsl -fca -fc1 -ncs -l79 -lc79 
