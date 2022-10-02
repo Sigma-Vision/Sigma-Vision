@@ -8,10 +8,11 @@ LDLIBS = `pkg-config --libs sdl2 SDL2_image`
 
 all: neutralize
 
-SRC = neutralize.c
+SRC = main.c neutralize.c
 OBJ = ${SRC:.c=.o}
 EXE = ${SRC:.c=}
 
+main: main.o neutralize.o
 neutralize: neutralize.o
 
 .PHONY: clean
