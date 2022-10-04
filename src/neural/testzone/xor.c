@@ -20,7 +20,7 @@ void shuffle(int *array, size_t n)
     }
 }
 
-int main(int argc, const char * argv[]) {
+int main() {
 
     static const int numInputs = 2;
     static const int numHiddenNodes = 2;
