@@ -1,32 +1,49 @@
-# Makefile
-
+# Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
 CC = gcc
 CPPFLAGS = -MMD
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image`
 LDFLAGS =
-LDLIBS =
+LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
-SRC = $(filter-out src/test.c, $(wildcard src/*.c))
-OBJ = ${SRC:.c=.o}
-DEP = ${SRC:.c=.d}
+TARGET_EXEC := final_program
 
-SRC_CHECK = src/test.c
-OBJ_CHECK = ${SRC_CHECK:.c=.o}
-DEP_CHECK = ${SRC_CHECK:.c=.d}
+BUILD_DIR := ./build
+SRC_DIRS := ./src
 
+# Find all the C and C++ files we want to compile
+# Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
+SRCS := $(shell find $(SRC_DIRS) -name '*.c' -not -path "*/no-make/*")
 
-main: ${OBJ}
+# String substitution for every C/C++ file.
+# As an example, hello.cpp turns into ./build/hello.cpp.o
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
-check: ${OBJ} ${OBJ_CHECK}
+# String substitution (suffix version without %).
+# As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
+DEPS := $(OBJS:.o=.d)
 
+# Every folder in ./src will need to be passed to GCC so that it can find header files
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+# Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
--include ${DEP}
+# The final build step.
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $@ ${CFLAGS} $(LDFLAGS) ${LDLIBS}
+
+# Build step for C source
+$(BUILD_DIR)/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) ${LDFLAGS} ${LDLIBS} -c $< -o $@
+
 
 .PHONY: clean
-
 clean:
-	${RM} ${OBJ} ${OBJ_CHECK}
-	${RM} ${DEP} ${DEP_CHECK}
-	${RM} main check
+	rm -r $(BUILD_DIR)
+
+# Include the .d makefiles. The - at the front suppresses the errors of missing
+# Makefiles. Initially, all the .d files will be missing, and we don't want those
+# errors to show up.
+-include $(DEPS)
 
 # END
