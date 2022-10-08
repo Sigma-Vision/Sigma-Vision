@@ -20,7 +20,8 @@ void shuffle(int *array, size_t n)
     }
 }
 
-int main() {
+int learn(const int NB_ITER)
+{
 
     static const int numInputs = 2;
     static const int numHiddenNodes = 2;
@@ -57,7 +58,7 @@ int main() {
 
     int trainingSetOrder[] = {0,1,2,3};
 
-    for (int n=0; n < 10000; n++) {
+    for (int n=0; n < NB_ITER; n++) {
         shuffle(trainingSetOrder,numTrainingSets);
         for (int x=0; x<numTrainingSets; x++) {
 
