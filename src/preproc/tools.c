@@ -57,6 +57,8 @@ void rotate90ccw(SDL_Surface* surface)
     {
         surface[i] = temp[i];
     }
+    
+    SDL_FreeSurface(temp);
 }
 
 /**
@@ -90,4 +92,6 @@ void rotate90cw(SDL_Surface* surface)
     {
         surface[i] = temp[i];
     }
+
+    SDL_FreeSurface(temp);
 }
