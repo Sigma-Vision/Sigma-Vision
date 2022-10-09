@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -34,7 +35,8 @@ SDL_Surface* load_image(const char* path)
 
 void rotate90ccw(SDL_Surface* surface)
 {
-    int width,height = surface->w, surface->h;
+    int width = surface->w;
+    int height = surface->h;
 
     SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
     // check si 32 est bon
@@ -69,7 +71,8 @@ void rotate90ccw(SDL_Surface* surface)
 
 void rotate90cw(SDL_Surface* surface)
 {
-    int width,height = surface->w, surface->h;
+    int width = surface->w;
+    int height = surface->h;
 
     SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
     // check si 32 est bon
