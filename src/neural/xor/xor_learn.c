@@ -60,6 +60,7 @@ int learn(const int NB_ITER)
 
     for (int n=0; n < NB_ITER; n++) {
         shuffle(trainingSetOrder,numTrainingSets);
+
         for (int x=0; x<numTrainingSets; x++) {
 
             int i = trainingSetOrder[x];
@@ -117,36 +118,38 @@ int learn(const int NB_ITER)
                 }
             }
         }
+
+        printf("\n");
     }
 
     // Print weights
     printf("Final Hidden Weights\n[ ");
     for (int j=0; j<numHiddenNodes; j++) {
-        printf("[ ");
+        printf("[");
         for(int k=0; k<numInputs; k++) {
-            printf("%f", hiddenWeights[k][j]);
+            printf(" %f ", hiddenWeights[k][j]);
         }
         printf("] ");
     }
     printf("]\n");
 
-    printf("Final Hidden Biases\n[ ");
+    printf("Final Hidden Biases\n[");
     for (int j=0; j<numHiddenNodes; j++) {
-        printf("%f", hiddenLayerBias[j]);
+        printf(" %f ", hiddenLayerBias[j]);
 
     }
     printf("]\n");
     printf("Final Output Weights\n");
     for (int j=0; j<numOutputs; j++) {
-        printf("[ ");
+        printf("[");
         for (int k=0; k<numHiddenNodes; k++) {
-            printf("%f", outputWeights[k][j]);
+            printf(" %f ", outputWeights[k][j]);
         }
         printf("]\n");
     }
-    printf("Final Output Biases\n[ ");
+    printf("Final Output Biases\n[");
     for (int j=0; j<numOutputs; j++) {
-        printf("%f", outputLayerBias[j]);
+        printf(" %f ", outputLayerBias[j]);
     }
     printf("]\n");
 
