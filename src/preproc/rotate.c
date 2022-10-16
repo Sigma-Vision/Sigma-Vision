@@ -121,11 +121,11 @@ void rotate90cw(SDL_Surface* surface)
 
 void rotateAny(SDL_Surface* surface,double angle)
 {
-    int width = surface->w;
-    int height = surface->h;
+    double width = surface->w;
+    double height = surface->h;
 
-    int center_x = height / 2;
-    int center_y = width / 2;
+    double center_x = height / 2;
+    double center_y = width / 2;
 
     SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
     // check si 32 est bon
@@ -135,25 +135,25 @@ void rotateAny(SDL_Surface* surface,double angle)
     if (SDL_LockSurface(temp) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    int newx;
-    int newy;
+    double newx;
+    double newy;
 
-    for (int i = 0;i < height;i++)
+    for (double i = 0;i < height;i++)
     {
-        for (int j = 0;j < width;j++)
+        for (double j = 0;j < width;j++)
         {
-            newx = (double)(i-center_x) * cos(angle) - (double)(j-center_y) * sin(angle) + center_x;
+            newx = (i-center_x) * cos(angle) - (j-center_y) * sin(angle) + center_x;
             
             if (newx < 0 || newx >= height)
                continue;
             
-            newy = (double)(i-center_x) * sin(angle) + (double)(j-center_y) * cos(angle) + center_y;
+            newy = (i-center_x) * sin(angle) + (j-center_y) * cos(angle) + center_y;
 
              
             if (newy < 0 || newy >= height)
                continue;
 
-            temp[newx * width + newy] = surface[i*width+j]; 
+            temp[(int)(newx * width + newy)] = surface[(int)(i*width+j)]; 
         }
     }
 
