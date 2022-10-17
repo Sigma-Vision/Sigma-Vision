@@ -76,18 +76,62 @@ int solve(int grid[N][N], int row, int col)
     return 0;
 }
 
-int main()
+void read(int grid[N][N], char* name)
 {
-    int grid[N][N] = { { 0, 0, 0, 0, 0, 4, 5, 8, 0 },
-                       { 0, 0, 0, 7, 2, 1, 0, 0, 3 },
-                       { 4, 0, 3, 0, 0, 0, 0, 0, 0 },
-                       { 2, 1, 0, 0, 6, 7, 0, 0, 4 },
-                       { 0, 7, 0, 0, 0, 0, 2, 0, 0 },
-                       { 6, 3, 0, 0, 4, 9, 0, 0, 1 },
-                       { 3, 0, 6, 0, 0, 0, 0, 0, 0 },
-                       { 0, 0, 0, 1, 5, 8, 0, 0, 6 },
-                       { 0, 0, 0, 0, 0, 6, 9, 5, 0 } };
+    FILE* file = NULL;
+    file = fopen(name, "r+");
 
+    if(file != NULL)
+    {
+        int c;
+        int row = 0;
+        int col = 0;
+        do
+        {
+            c = fgetc(file);
+            if (row == N)
+            {
+                row = 0;
+                col ++;
+            }
+
+            switch (c)
+            {
+                case ' ' :
+                case '\n' :
+                    break;
+
+                case '.' :
+                    row ++;
+                    break;
+
+                default :
+                    grid[col][row] = c == '.' ? 0 : c - 48;
+                    row ++;
+            }
+
+        } while (c != EOF);
+        fclose(file);
+    }
+}
+
+void write()
+{
+
+}
+
+int main(int argc, char *argv[])
+{
+    int grid[N][N] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+    read(grid, argv[1]);
     print(grid);
     if (solve(grid, 0, 0))
         print(grid);
