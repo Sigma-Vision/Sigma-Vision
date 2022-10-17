@@ -162,7 +162,7 @@ void write(int grid[N][N], char name[])
     }
 }
 
-int main(int argc, char *argv[])
+int solve_file(char name[])
 {
     int grid[N][N] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -173,11 +173,10 @@ int main(int argc, char *argv[])
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
-    read(grid, argv[1]);
-    print(grid);
+    read(grid, name);
     if (solve(grid, 0, 0))
     {
-        write(grid, argv[1]);
+        write(grid, name);
     }
     else
     {
