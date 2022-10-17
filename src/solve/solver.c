@@ -76,10 +76,26 @@ int solve(int grid[N][N], int row, int col)
     return 0;
 }
 
+void str_concat(char str1[], char str2[], char res[])
+{
+    int i = 0;
+    int j = 0;
+    while (str1[i] != '\0')
+    {
+        res[i] = str1[i];
+        i ++;
+    }
+    while (str2[j] != '\0')
+    {
+        res[i + j] = str2[j];
+        j ++;
+    }
+}
+
 void read(int grid[N][N], char* name)
 {
     FILE* file = NULL;
-    file = fopen(name, "r+");
+    file = fopen(name, "r");
 
     if(file != NULL)
     {
@@ -115,9 +131,35 @@ void read(int grid[N][N], char* name)
     }
 }
 
-void write()
+void write(int grid[N][N], char name[])
 {
+    // rename to name.result
+    char res[100] = "";
+    str_concat(name, ".result", res);
+    FILE* file = NULL;
+    file = fopen(res, "w");
 
+    if(file != NULL)
+    {
+        int row = 0;
+        int col = 0;
+        do
+        {
+            fputc(grid[col][row] + '0', file);
+            row ++;
+            if (row == N)
+            {
+                col++;
+                row = 0;
+                fputc('\n', file);
+            }
+            else if (row % 3 == 0)
+            {
+                fputc(' ', file);
+            }
+        } while (col != N);
+        fclose(file);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -134,10 +176,13 @@ int main(int argc, char *argv[])
     read(grid, argv[1]);
     print(grid);
     if (solve(grid, 0, 0))
-        print(grid);
+    {
+        write(grid, argv[1]);
+    }
     else
+    {
         printf("fail");
-
+    }
 
     return 0;
 }
