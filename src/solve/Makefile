@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra
 LDFLAGS =
 LDLIBS = -lm
 
-SRC = $(filter-out test.c, $(wildcard *.c))
+SRC = no-make/main.c solver.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
