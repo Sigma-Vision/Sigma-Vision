@@ -77,6 +77,11 @@ int solve(int grid[N][N], int row, int col)
     return 0;
 }
 
+/**
+ * Input : name of a file
+ * Output : the grid[N][N] of the file
+ * Description : make a grid with a file
+**/
 void read(int grid[N][N], char* name)
 {
     FILE* file = NULL;
@@ -116,6 +121,10 @@ void read(int grid[N][N], char* name)
     }
 }
 
+/**
+ * Input : name of a file
+ * Description : make a file with a grid
+**/
 void write(int grid[N][N], char name[])
 {
     // rename to name.result
@@ -150,6 +159,10 @@ void write(int grid[N][N], char name[])
     }
 }
 
+/**
+ * Input : name of a file
+ * Description : main fonction, solve a file `$name` and create a `$(name).result`
+**/
 int solve_file(char name[])
 {
     int grid[N][N] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -169,6 +182,7 @@ int solve_file(char name[])
     else
     {
         printf("fail");
+        return 1;
     }
 
     return 0;
