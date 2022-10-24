@@ -1,0 +1,13 @@
+# START
+l 1
+# INPUT
+n 2
+# HIDDEN
+n 2
+b 1 1
+w > 1 1 > 1 1
+# OUTPUT
+n 1
+b 1
+w > 1 1
+# END
