@@ -1,3 +1,5 @@
+#include <SDL2/SDL_image.h>
+
 #ifndef TOOLS_H
 #define TOOLS_H
 

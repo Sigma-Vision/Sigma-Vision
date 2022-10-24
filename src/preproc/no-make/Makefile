@@ -4,16 +4,18 @@ CC = gcc
 CPPFLAGS =
 CFLAGS = -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image`
 LDFLAGS =
-LDLIBS = `pkg-config --libs sdl2 SDL2_image`
+LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
-all: test neutralize
+all: neutralize test 
 
-SRC = test.c neutralize.c tools.c
+SRC = ../neutralize.c ../tools.c ../rotate.c test.c
 OBJ = ${SRC:.c=.o}
 EXE = ${SRC:.c=}
 
-test: test.o neutralize.o tools.o
-neutralize: neutralize.o tools.o
+test: ../rotate.o test.o ../neutralize.o ../tools.o ../rotate.h \
+	../neutralize.h ../tools.h
+neutralize: ../neutralize.o ../tools.o ../rotate.o ../rotate.h \
+	../neutralize.h ../tools.h
 
 .PHONY: clean
 
