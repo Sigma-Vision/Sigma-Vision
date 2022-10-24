@@ -138,6 +138,8 @@ void write(int grid[N][N], char name[])
                 col++;
                 row = 0;
                 fputc('\n', file);
+                if (col % 3 == 0)
+                    fputc('\n', file);
             }
             else if (row % 3 == 0)
             {
