@@ -71,7 +71,7 @@ int get_nb_layers()
 }
 
 
-int get_nb_nodes(int nb_layers, int* nb_nodes_p)
+void get_nb_nodes(int nb_layers, int* nb_nodes_p)
 {
     FILE* file_p = fopen(CONFIG_FILE, 'r');
 
@@ -85,6 +85,12 @@ int get_nb_nodes(int nb_layers, int* nb_nodes_p)
     char c;
     for (int i = 0; i < 2; i++)
         do { c = fgetc(file_p); } while (c != '\n');
+
+    if (fgetc(file_p, %c) != 's')
+    {
+        fprintf(stderr, "No `s` tag present on line 3 in %s\n", CONFIG_FILE);
+        exit(1);
+    }
 
     int nb;
     for (int i = 0; i < nb_layers; i++)
