@@ -59,7 +59,8 @@ int get_nb_layers()
 
     int nb = 0;
 
-    fscanf(file_p, "%*c %*s\n%*c %i", &nb);
+    // skip first line and first char `l` then retrieve number of layer as int
+    fscanf(file_p, "%*[^\n]\n%*c %i", &nb);
 
     if (nb)
         return nb;
@@ -67,4 +68,28 @@ int get_nb_layers()
     fprintf(stderr, "Invalid l value in %s\n.
             Must be a strictly positive integer.", CONFIG_FILE);
     exit(1);
+}
+
+
+int get_nb_nodes(int nb_layers, int* nb_nodes_p)
+{
+    FILE* file_p = fopen(CONFIG_FILE, 'r');
+
+    if (file_p == NULL)
+    {
+        fprintf(stderr, "Failed to open config file %s\n", CONFIG_FILE);
+        exit(1);
+    }
+
+    // skip first two lines
+    char c;
+    for (int i = 0; i < 2; i++)
+        do { c = fgetc(file_p); } while (c != '\n');
+
+    int nb;
+    for (int i = 0; i < nb_layers; i++)
+    {
+        fscanf(file_p, " %i", &nb);
+        *(nb_nodes_p + i) = nb;
+    }
 }
