@@ -12,38 +12,41 @@
 ## Tags
 
 - `#`   Comment (ignored during reading)
-- `l`   Number of hidden layers
-- `n`   Number of neurons (or inputs in INPUT section)
-- `b`   Biases values
-- `w`   Weights values
+- `l`   Number of hidden layers `l number`
+- `s`   Node number summary     `s inputs layer_1 [layer_2] [...] output`
+- `b`   Biases values           `b bias_1 [bias_2] [...]`
+- `w`   Weights values          `w > weight_1_1 [...] [> weight_2_1 [...]] [...]`
 
 ## Exemple
 
 ```
-# START
+# SUMMARY
 l 1
-# INPUT
-n 2
-# HIDDEN
-n 2
-b 1 1.5
-w > 0.2 3.12 > 4.2 6.9
-# OUTPUT
-n 1
-b 0.77
-w > 1.23 3.21
+s 2 2 3 1
+# DATA
+b 1 1
+w > 1 1 > 1 1
+b 1 1 1
+w > 1 1 > 1 1 > 1 1
+b 1
+w > 1 1 1
 ```
 
-This file stores a neural network with 2 inputs, 1 hidden layer of 2 neurons and
-1 output layer with a single neuron.
+This file stores a neural network with 2 inputs, 2 hidden layers with respectively
+2 and 3 nodes and 1 output layer with a single node.
+
+In this example every biases and weights are set to 1.
+
+--
 
 ```
-IN  HIDDEN
+IN |    HIDDEN    | OUT
 
- > ---()
-   \ /  \
-    X    () > OUT
-   / \  /
- > ---()
-
+  >-     (b)---(d)
+    \   /   \ /   \
+     (a)     X     (f)->
+    /   \   / \   /
+  >-     (c)---(e)
 ```
+
+In this example, order in file is `(a)-> (b -> c) -> (d -> e) -> (f)`
