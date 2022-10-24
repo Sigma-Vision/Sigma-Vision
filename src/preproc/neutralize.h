@@ -1,3 +1,5 @@
+#include <SDL2/SDL_image.h>
+
 #ifndef NEUTR_H
 #define NEUTR_H
 

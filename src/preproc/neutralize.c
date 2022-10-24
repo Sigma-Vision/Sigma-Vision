@@ -15,7 +15,7 @@ Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
     
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
     
-    r = g = b = ((r+g+b)/3)%255; 
+    r = g = b = (r+g+b)/3; 
     
     Uint32 color = SDL_MapRGB(format, r, g, b);
     
@@ -35,7 +35,7 @@ Uint32 binarize_pixel(Uint32 pixel_color, SDL_PixelFormat* format)
 
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
     
-    if (((r+g+b)/3)%255 > 127)
+    if ((r+g+b)/3 > 127)
         r = g = b = 255;
     else
         r = g = b = 0;
