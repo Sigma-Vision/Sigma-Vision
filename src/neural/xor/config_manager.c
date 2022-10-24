@@ -10,7 +10,7 @@ void write_config(int nb_inputs, int nb_layers, int* nb_nodes_p, int** biases_pp
     if (file_p == NULL)
     {
         fprintf(stderr, "Failed to open config file %s\n", CONFIG_FILE);
-        exit(1)
+        exit(1);
     }
 
     // SUMMARY block
@@ -44,4 +44,27 @@ void write_config(int nb_inputs, int nb_layers, int* nb_nodes_p, int** biases_pp
                         *(*(*(weights_ppp + layer_i) + node_i) + prev_i));
         }
     }
+}
+
+
+int get_nb_layers()
+{
+    FILE* file_p = fopen(CONFIG_FILE, 'r');
+
+    if (file_p == NULL)
+    {
+        fprintf(stderr, "Failed to open config file %s\n", CONFIG_FILE);
+        exit(1);
+    }
+
+    int nb = 0;
+
+    fscanf(file_p, "%*c %*s\n%*c %i", &nb);
+
+    if (nb)
+        return nb;
+
+    fprintf(stderr, "Invalid l value in %s\n.
+            Must be a strictly positive integer.", CONFIG_FILE);
+    exit(1);
 }
