@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define N 9
 
@@ -76,22 +77,6 @@ int solve(int grid[N][N], int row, int col)
     return 0;
 }
 
-void str_concat(char str1[], char str2[], char res[])
-{
-    int i = 0;
-    int j = 0;
-    while (str1[i] != '\0')
-    {
-        res[i] = str1[i];
-        i ++;
-    }
-    while (str2[j] != '\0')
-    {
-        res[i + j] = str2[j];
-        j ++;
-    }
-}
-
 void read(int grid[N][N], char* name)
 {
     FILE* file = NULL;
@@ -135,7 +120,8 @@ void write(int grid[N][N], char name[])
 {
     // rename to name.result
     char res[100] = "";
-    str_concat(name, ".result", res);
+    strcat(res, name);
+    strcat(res, ".result");
     FILE* file = NULL;
     file = fopen(res, "w");
 
