@@ -150,7 +150,7 @@ void write(int grid[N][N], char name[])
                 if (col % 3 == 0)
                     fputc('\n', file);
             }
-            else if (row % 3 == 0)
+            else if (row % 3 == 0 && col != 9)
             {
                 fputc(' ', file);
             }
