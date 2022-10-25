@@ -208,6 +208,10 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle)
     double newx;
     double newy;
 
+    FILE* f = fopen("debug.txt","w");
+
+    fprintf(f,"WIDTH = %i\nHEIGHT = %i\n",surface->w,surface->h);
+
     for (double i = 0;i < surface->h;i++)
     {
         for (double j = 0;j < surface->w;j++)
@@ -216,15 +220,19 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle)
             
             newy = (j-center_x) * sin(angle) + (i-center_y) * cos(angle) + center_y;
 
-            if (newx < 0 || newx >= surface->w || newy < 0 || newy >= surface->h)
+            if (newx <= 0 || newx >= surface->w || newy <= 0 || newy >= surface->h)
                 continue;
 
             // area mapping : use the first decimal of the double in order to
             // ponderate x,y ; x+1,y ; x,y+1 ; x+1,y+1.
             
             //currently debugging
-            printf("[DEBUG] :\n NEWX=");
+            Uint8 r, g, b;
 
+            SDL_GetRGB(pixels[(int)(i* surface->w +j)], surface->format, &r, &g, &b);
+ 
+            fprintf(f,"[DEBUG] :\n NEWX = %f  | NEWY = %f  | OLDY = %f | OLDX = %f | Index = %i  | pixels[i] = %u\n", newx, newy, i, j, (int) (i*surface->w + j), r);
+            
             npixels[(int)(newy * surface->w + newx)] = pixels[(int)(i* surface->w +j)]; 
         }
     }
