@@ -2,8 +2,8 @@
 
 CC = gcc
 CPPFLAGS =
-CFLAGS = -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image`
-LDFLAGS =
+CFLAGS = -fsanitize=address -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image`
+LDFLAGS = -fsanitize=address
 LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
 all: neutralize test 

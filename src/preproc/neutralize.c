@@ -34,8 +34,10 @@ Uint32 binarize_pixel(Uint32 pixel_color, SDL_PixelFormat* format)
     Uint8 r, g, b;
 
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
-    
-    if ((r+g+b)/3 > 127)
+   
+    int avg = 0.3*r + 0.59*g + 0.11*b;
+
+    if (avg > 127)
         r = g = b = 255;
     else
         r = g = b = 0;

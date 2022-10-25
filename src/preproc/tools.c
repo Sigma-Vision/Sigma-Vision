@@ -138,7 +138,6 @@ SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
         }
     }
 
-     
     SDL_FreeSurface(surface);
 
     SDL_UnlockSurface(temp);
@@ -149,7 +148,8 @@ SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
 SDL_Surface* SobelTransform(SDL_Surface* surface)
 {
     //we use a 5x5 kernel here, may not be needed or may need 7x7
-    int matx[25] = 
+    
+    /*int matx[25] = 
     {
         -5, -4, 0, 4, 5, 
         -8, -10, 0, 10, 8,
@@ -171,6 +171,30 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     Kernel Gy = { .radius = 5, .matrix = maty};
     
+    */
+
+    //radius = 3
+
+    int matx[9] = 
+    {
+        -1,0,1,
+        -2,0,2,
+        -1,0,1
+    };
+    
+    int maty[9] =
+    {
+        -1,-2,-1,
+        0,0,0,
+        -1,2,1
+    };
+
+    Kernel Gx = {.radius = 3, .matrix = matx};
+
+    Kernel Gy = {.radius = 3, .matrix = maty};
+    
+
+
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     
@@ -184,6 +208,8 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     int valuex;
     int valuey;
+    int G;
+    int value;
 
     //convolution
     for (int i = 0;i < surface-> h; i++)
@@ -191,22 +217,25 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
         for ( int j = 0; j < surface -> w; j++)
         {
             valuex = comp_el_value(surface,i,j,&Gx);
+            valuey = comp_el_value(surface,i,j,&Gy);
 
+            G = sqrt(valuex*valuex + valuey*valuey);
+
+            /*
             if (valuex != 0)
             {
                 npixels[i* surface->w + j] = SDL_MapRGB(format,255,255,255); 
                 continue;
             }
             
-            valuey = comp_el_value(surface,i,j,&Gy);
         
             if (valuey != 0)
             {
                 npixels[i* surface->w + j] = SDL_MapRGB(format,255,255,255); 
                 continue;
-            }
-            
-            npixels[i* surface->w + j] = SDL_MapRGB(format,0,0,0); 
+            }*/
+            value = G != 0 ? 255 : 0;
+            npixels[i* surface->w + j] = SDL_MapRGB(format,value,value,value); 
         }
     }
      
@@ -216,3 +245,5 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     return temp;
 }
+
+
