@@ -14,11 +14,13 @@ int main(int argc, char** argv)
     SDL_Surface* surface = load_image(argv[1]);
 
     // - Neutralizes the image and saves it.
-    //surface_to_grayscale(surface);
+    surface_to_grayscale(surface);
     
     //rotate180(surface);
 
-    surface = rotateAny(surface,45);
+    //surface = rotateAny(surface,45);
+
+    surface = GaussianBlur(surface,3);
 
     char* filename = argv[2];
     IMG_SaveJPG(surface,filename,100);

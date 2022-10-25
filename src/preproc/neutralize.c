@@ -63,7 +63,7 @@ void surface_to_grayscale(SDL_Surface* surface)
     
     for (int i = 0;i<len;i++)
     {
-        pixels[i] = pixel_to_grayscale(pixels[i],format);
+        pixels[i] = binarize_pixel(pixels[i],format);
     }
 
     SDL_UnlockSurface(surface);
