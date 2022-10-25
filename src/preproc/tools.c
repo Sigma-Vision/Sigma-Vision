@@ -17,6 +17,24 @@ typedef struct Kernel
     int full_kern_weight;
 }Kernel;
 
+Uint8 GetColor(SDL_Surface* surface, int i, int j)
+{
+    Uint8 r,g,b;
+
+    Uint32* pixels = surface->pixels;
+
+    SDL_GetRGB(pixels[i*surface->w+j] , surface->format,&r,&g,&b);
+
+    return r;
+}
+
+/*
+Uint32 SetColor(int value)
+{
+    return SDL_MapRGB(format, value,value,value);
+}
+*/
+
 
 SDL_Surface* load_image(const char* path)
 {
@@ -35,48 +53,46 @@ SDL_Surface* load_image(const char* path)
     return res;
 }
 
-Uint32 comp_el_value(SDL_Surface* surface, int i, int j, Kernel kernel)
+Uint32 comp_el_value(SDL_Surface* surface, int i, int j, const Kernel* kernel)
 {
     int radius = kernel->radius;
     int* matrix = kernel->matrix;
     int full_w = kernel->full_kern_weight;
 
-    Uint32* pixels = surface-> pixels;
     int width = surface->w;
     int height = surface->h;
 
     int value = 0;
+
+    int index_y;
+    int index_x;
     
     for (int k = 0; k < radius*radius; k++)
     {
-        index_y = i + (k/3 - radius/2);
+        index_y = i + (k/radius - radius/2);
 
         if (index_y < 0 || index_y >= height)
             continue;
 
 
-        index_x = j + (k % 3 - radius/2);
+        index_x = j + (k % radius - radius/2);
 
-        if (index_x < 0 || index_y >= height)
+        if (index_x < 0 || index_x >= width)
             continue;
 
-        value+= matrix[k] * pixels[index_y * width + index_y]; 
+        value+= matrix[k] * GetColor(surface,index_y,index_x); 
     }
-            
-    return value; 
+    
+    value /= full_w; 
+    return SDL_MapRGB(surface->format, value,value,value); 
 }
 
-SDL_Surface* GaussianBlur(SDL_Surface* surface)
+SDL_Surface* convolution (SDL_Surface* surface, const Kernel* kernel)
 {
-    //maybe not get a fixed kernel or with a higher radius 
-    Kernel kernel = { .radius = 3, .matrix = { 1, 2, 1, 2, 4, 2, 1, 2, 1},
-        .full_kern_weight = 16}; 
 
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     
-    Uint32* pixels = surface -> pixels; 
-   
     SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
 
     if (SDL_LockSurface(temp) < 0)
@@ -99,4 +115,45 @@ SDL_Surface* GaussianBlur(SDL_Surface* surface)
     SDL_UnlockSurface(temp);
 
     return temp;
+}
+
+SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
+{
+    //test with several radiuses
+
+    int* mat = calloc(radius*radius,sizeof(int));
+
+    int full_w = 0;
+    int mat_val = 1;
+
+    for (int k = 0;k < radius*radius;k++)
+    {
+        *(mat+k) = mat_val;
+        full_w += mat_val;
+        
+        if (k % radius == radius - 1)
+        {
+            if (k / radius < radius/2)
+               mat_val *= 2;
+            else
+               mat_val /= 2; 
+        }
+        else
+        {
+            if (k % radius < radius/2)
+                mat_val *= 2;
+            else
+                mat_val /= 2;
+        }
+    }
+
+    Kernel kernel = { .radius = radius, .matrix = mat,
+        .full_kern_weight = full_w};
+
+    return convolution (surface,&kernel);
+}
+
+SDL_Surface* SobelTransform(SDL_Surface* surface, int radius)
+{
+    
 }
