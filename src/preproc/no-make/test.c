@@ -20,11 +20,12 @@ int main(int argc, char** argv)
 
     //surface = rotateAny(surface,45);
 
-    surface = GaussianBlur(surface,3);
-
+    //surface = GaussianBlur(surface,3);
+    
+    surface = SobelTransform(surface);
+    
     char* filename = argv[2];
     IMG_SaveJPG(surface,filename,100);
-    
     // - Cleanup
     SDL_FreeSurface(surface);
     SDL_Quit();
