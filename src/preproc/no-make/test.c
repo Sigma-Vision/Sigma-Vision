@@ -4,6 +4,7 @@
 #include "../neutralize.h"
 #include "../tools.h"
 #include "../rotate.h"
+#include "../scale.h"
 
 int main(int argc, char** argv)
 {
@@ -23,6 +24,10 @@ int main(int argc, char** argv)
     //surface = GaussianBlur(surface,3);
     
     surface = SobelTransform(surface);
+    find_grid(surface);
+    //rotate180(surface);
+
+   // surface = rotateAny(surface,45);
     
     char* filename = argv[2];
     IMG_SaveJPG(surface,filename,100);
