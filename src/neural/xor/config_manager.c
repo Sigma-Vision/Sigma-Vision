@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include "config_manager.h"
 
-void write_config(int nb_inputs, int nb_layers, int* nb_nodes_p, int** biases_pp,
-                 int*** weights_ppp)
+void write_config(const int nb_inputs, const int nb_layers,
+                  const int* nb_nodes_p, const int** biases_pp,
+                  const int*** weights_ppp)
 {
     FILE* file_p = fopen(CONFIG_FILE, 'w');
 
@@ -71,7 +72,24 @@ int get_nb_layers()
 }
 
 
-void get_nb_nodes(int nb_layers, int* nb_nodes_p)
+// move file pointer to next nb line in file stream file_p
+void skip_line(const int nb; FILE* file_p)
+{
+    char c;
+    for (int i = 0; i < nb && fscanf(file_p, "%c") != EOF; i++)
+        do { c = fgetc(file_p); } while (c != '\n');
+}
+
+// move file pointer to next nb data subblock (separated by space)
+// in file stream file_p
+void skip_block(const int nb; FILE* file_p)
+{
+    char c;
+    for (int i = 0; i < nb && fscanf(file_p, "%c") != EOF; i++)
+        do { c = fgetc(file_p); } while (c != ' ' && c != '\n');
+}
+
+void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
 {
     FILE* file_p = fopen(CONFIG_FILE, 'r');
 
