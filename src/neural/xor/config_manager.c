@@ -69,6 +69,7 @@ void write_config(const int nb_inputs, const int nb_layers,
         }
     }
 
+    fprintf(file_p, "\n");
     fclose(file_p);
 }
 
