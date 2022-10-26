@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "config_manager.h"
+#include "../config_manager.h"
 
 void test_write()
 {
