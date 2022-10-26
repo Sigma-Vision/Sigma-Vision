@@ -68,6 +68,8 @@ void write_config(const int nb_inputs, const int nb_layers,
                         *(*(*(weights_ppp + layer_i) + node_i) + prev_i));
         }
     }
+
+    fclose(file_p);
 }
 
 
@@ -89,11 +91,15 @@ int get_nb_layers()
     fscanf(file_p, "%*[^\n]\n%*c %i", &nb);
 
     if (nb)
+    {
+        fclose(file_p);
         return nb;
+    }
 
     fprintf(stderr,
             "Invalid `l` value in %s.\n Must be a strictly positive integer.\n",
             CONFIG_FILE);
+    fclose(file_p);
     exit(1);
 }
 
@@ -113,11 +119,15 @@ int get_nb_inputs()
     fscanf(file_p, "%*[^\n]\n%*[^\n]\n%*c %i", &nb);
 
     if (nb)
+    {
+        fclose(file_p);
         return nb;
+    }
 
     fprintf(stderr,
             "Invalid first `s` value in %s.\n Must be a strictly positive integer.\n",
             CONFIG_FILE);
+    fclose(file_p);
     exit(1);
 }
 
@@ -143,6 +153,8 @@ void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
         *(nb_nodes_p + i) = nb;
         skip_block(1, file_p);
     }
+
+    fclose(file_p);
 }
 
 void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
@@ -175,6 +187,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         if (fgetc(file_p) != 'b')
         {
             fprintf(stderr, "Missing tag `b` in %s\n", CONFIG_FILE);
+            fclose(file_p);
             exit(1);
         }
         // skip space
@@ -195,6 +208,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         if (fgetc(file_p) != 'w')
         {
             fprintf(stderr, "Missing tag `w` in %s\n", CONFIG_FILE);
+            fclose(file_p);
             exit(1);
         }
         // skip space
@@ -210,6 +224,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
                 if (fgetc(file_p) != '>')
                 {
                     fprintf(stderr, "Missing tag `>` in %s\n", CONFIG_FILE);
+                    fclose(file_p);
                     exit(1);
                 }
                 // skip space
@@ -222,4 +237,6 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
             }
         }
     }
+
+    fclose(file_p);
 }
