@@ -64,6 +64,7 @@ void test_read()
     int prev_nb_nodes = nb_inputs;
     int curr_nb_nodes;
 
+    get_nb_nodes(nb_layers, nb_nodes_p);
 
     /* Allocate memory */
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
