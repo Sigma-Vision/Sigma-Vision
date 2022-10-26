@@ -26,8 +26,8 @@ void skip_block(const int nb; FILE* file_p)
 /** WRITE **/
 
 void write_config(const int nb_inputs, const int nb_layers,
-                  const int* nb_nodes_p, const int** biases_pp,
-                  const int*** weights_ppp)
+                  const int* nb_nodes_p, const double** biases_pp,
+                  const double*** weights_ppp)
 {
     FILE* file_p = fopen(CONFIG_FILE, 'w');
 
@@ -144,7 +144,7 @@ void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
 }
 
 void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
-                int** biases_pp, int*** weights_ppp)
+                double** biases_pp, double*** weights_ppp)
 {
     FILE* file_p = fopen(CONFIG_FILE, 'r');
 
@@ -177,7 +177,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         // skip space
         fgetc(file_p);
 
-        int* biases_p = *(biases_pp + layer_i);
+        double* biases_p = *(biases_pp + layer_i);
         for (int node_i = 0; node_i < nb_nodes; node_i++)
         {
             fscanf(file_p, " %f", &value_buf);
@@ -197,10 +197,10 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         // skip space
         fgetc(file_p);
 
-        int** weights_pp = *(weights_ppp + layer_i);
+        double** weights_pp = *(weights_ppp + layer_i);
         for (int node_i = 0; node_i < nb_nodes; node_i++)
         {
-            int* weights_p = *(weights_pp + node_i);
+            double* weights_p = *(weights_pp + node_i);
             for (int prev_node_i = 0; prev_node_i < prev_node_nb; prev_node_i++)
             {
                 // check tag
