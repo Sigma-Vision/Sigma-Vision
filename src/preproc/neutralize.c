@@ -1,6 +1,8 @@
+#include <stdio.h>
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "tools.h"
 
 /**
  * Converts a colored pixel into grayscale.
@@ -67,6 +69,127 @@ void surface_to_grayscale(SDL_Surface* surface)
     {
         pixels[i] = binarize_pixel(pixels[i],format);
     }
+
+    SDL_UnlockSurface(surface);
+}
+
+int* OtsuBuildHistogram(SDL_Surface* surface)
+{
+    int* histogram = calloc(256,sizeof(int));
+
+    int width = surface->w;
+    int height = surface->h;
+
+    for (int i = 0;i < height;i++)
+    {
+        for (int j = 0;j < width; j++)
+        {
+            //printf("working for : I = %i and J = %i\n",i,j);
+            int value = GetColor(surface,i,j);
+            
+            /*
+            if (value >= 256)
+                errx(1,"Image is not grayscaled/ has a color value above 255");
+            */
+
+            //if (i >= 1416 && j >= 2123)
+              //printf("VALUE = %i\n",value);  
+            
+            histogram[value] += 1;
+            //printf("%i\n",histogram[value]); 
+            //printf("working for : I = %i and J = %i\n",i,j);
+        }
+        //printf("out");
+    }
+    return histogram;
+}
+
+int OtsuGetMaxVariance(SDL_Surface* surface)
+{
+    int full_w = 0;
+
+    int* histogram = OtsuBuildHistogram(surface);
+    
+    for (int i = 0;i < 256;i++)
+    {
+        full_w += histogram[i];
+    }
+
+    int Wb;
+    int Wf;
+
+    int mub;
+    int muf;
+    int mu;
+
+    int variance;
+
+    int max_variance = 0;
+    int imax_variance = 0;
+
+    for (int i = 0;i < 256; i++)
+    {
+        Wb = 0;
+        mub = 0;
+
+        for (int k = 0;k < i;k++)
+        {
+           Wb += histogram[k];
+           mub += histogram[k]*k;
+        }
+        
+        mub /= Wb;
+        Wb /= full_w; 
+
+        Wf = 0;
+        muf = 0;
+        
+        for (int k = i;k < 256;k++)
+        {
+            Wf += histogram[k];
+            muf += histogram[k]*k;
+        }
+
+        muf /= Wf;
+        Wf /= full_w;
+    
+        mu = mub - muf;
+
+        variance = Wb*Wf*mu*mu;
+
+        if (variance > max_variance)
+        {
+            imax_variance = i; 
+            max_variance = variance;
+        }
+    }
+    
+    free(histogram);
+
+    return imax_variance;
+} 
+
+void OtsuBinarization(SDL_Surface* surface)
+{
+
+    if (SDL_LockSurface(surface) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    
+    int color_max_variance = OtsuGetMaxVariance(surface);
+     
+    Uint32* pixels = surface-> pixels;
+    SDL_PixelFormat* format = surface->format;
+
+    for (int i = 0; i < surface -> h; i++)
+    {
+        for (int j = 0; j < surface -> w; j++)
+        {
+            if (GetColor(surface,i,j) > color_max_variance)
+                pixels[i*surface->w+j] = SDL_MapRGB(format, 255, 255, 255);
+            else
+                pixels[i*surface->w+j] = SDL_MapRGB(format, 0, 0, 0);
+        }
+    } 
 
     SDL_UnlockSurface(surface);
 }
