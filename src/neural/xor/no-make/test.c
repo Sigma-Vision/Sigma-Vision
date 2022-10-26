@@ -7,16 +7,22 @@ void test_write()
     const int nb_layers = 3;
     const int nb_nodes[] = {2, 3, 1};
     const int* nb_nodes_p = nb_nodes;
-    double biases_pp[][3] = {{1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0}};
+    double** biases_pp = malloc(nb_layers * sizeof(double*));
     double*** weights_ppp = malloc(nb_layers * sizeof(double**));
 
-    /* Allocate memory for weights */
     int prev_nb_nodes = nb_inputs;
     int curr_nb_nodes;
+
+
+    /* Allocate memory */
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
         curr_nb_nodes = *(nb_nodes_p + layer_i);
 
+        // Biases
+        *(biases_pp + layer_i) = malloc(curr_nb_nodes * sizeof(double));
+
+        // Weights
         double** weights_pp = malloc(curr_nb_nodes * sizeof(double*));
         *(weights_ppp + layer_i) = weights_pp;
 
