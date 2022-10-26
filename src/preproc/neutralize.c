@@ -38,6 +38,7 @@ Uint32 binarize_pixel(Uint32 pixel_color, SDL_PixelFormat* format)
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
    
     int avg = 0.3*r + 0.59*g + 0.11*b;
+    //int avg = r+g+b/3;
 
     if (avg > 127)
         r = g = b = 0;
@@ -86,15 +87,10 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
         {
             //printf("working for : I = %i and J = %i\n",i,j);
             int value = GetColor(surface,i,j);
-            
-            /*
+           
             if (value >= 256)
-                errx(1,"Image is not grayscaled/ has a color value above 255");
-            */
+                errx(1,"Image has color value above 256");
 
-            //if (i >= 1416 && j >= 2123)
-              //printf("VALUE = %i\n",value);  
-            
             histogram[value] += 1;
             //printf("%i\n",histogram[value]); 
             //printf("working for : I = %i and J = %i\n",i,j);
@@ -127,7 +123,8 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
     int max_variance = 0;
     int imax_variance = 0;
 
-    for (int i = 0;i < 256; i++)
+    //if i = 0 or i = 255, we have either Wb or Wf = 0 so variance = 0
+    for (int i = 1;i < 255; i++)
     {
         Wb = 0;
         mub = 0;
@@ -149,7 +146,7 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
             Wf += histogram[k];
             muf += histogram[k]*k;
         }
-
+        
         muf /= Wf;
         Wf /= full_w;
     

@@ -15,16 +15,17 @@ int main(int argc, char** argv)
     SDL_Surface* surface = load_image(argv[1]);
 
     // - Neutralizes the image and saves it.
-    surface_to_grayscale(surface);
+    //surface_to_grayscale(surface);
     
+    //surface = GaussianBlur(surface,5);
     //rotate180(surface);
-
+    
+    //OtsuBinarization(surface); 
     //surface = rotateAny(surface,45);
 
-    //surface = GaussianBlur(surface,3);
     
-    surface = SobelTransform(surface);
-    find_grid(surface);
+    //surface = SobelTransform(surface);
+    //find_grid(surface);
     //rotate180(surface);
 
    // surface = rotateAny(surface,45);

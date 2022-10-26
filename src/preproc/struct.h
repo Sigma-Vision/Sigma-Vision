@@ -1,6 +1,12 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
+typedef struct Kernel
+{
+    int radius;
+    int* matrix;
+}Kernel;
+
 typedef struct Dot
 {
     int X;
