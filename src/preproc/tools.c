@@ -2,6 +2,7 @@
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "struct.h"
 
 /** 
  * Loads an image in a surface.
@@ -10,11 +11,6 @@
  * path: Path of the image.
  */
 
-typedef struct Kernel
-{
-    int radius;
-    int* matrix;
-}Kernel;
 
 Uint8 GetColor(SDL_Surface* surface, int i, int j)
 {
@@ -137,6 +133,8 @@ SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
             npixels[i* surface->w + j] = SDL_MapRGB(surface->format, value,value,value);  
         }
     }
+    
+    free(mat);
 
     SDL_FreeSurface(surface);
 
