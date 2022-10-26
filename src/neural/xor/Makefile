@@ -6,18 +6,18 @@ CFLAGS = -Wall -Wextra
 LDFLAGS =
 LDLIBS = -lm
 
-SRC = $(filter-out test.c, $(wildcard *.c))
+SRC = $(filter-out no-make/*, $(wildcard *.c))
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
-SRC_TEST = test.c
+SRC_TEST = no-make/test.c
 OBJ_TEST = ${SRC_TEST:.c=.o}
 DEP_TEST = ${SRC_TEST:.c=.d}
 
 
 xor: ${OBJ}
 
-test: ${OBJ} ${OBJ_TEST}
+no-make/test: ${OBJ} ${OBJ_TEST}
 
 
 -include ${DEP}
@@ -27,6 +27,6 @@ test: ${OBJ} ${OBJ_TEST}
 clean:
 	${RM} ${OBJ} ${OBJ_TEST}
 	${RM} ${DEP} ${DEP_TEST}
-	${RM} xor test
+	${RM} xor no-make/test
 
 # END
