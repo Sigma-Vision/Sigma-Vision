@@ -6,19 +6,19 @@
 /** TOOLS **/
 
 // move file pointer to next nb line in file stream file_p
-void skip_line(const int nb; FILE* file_p)
+void skip_line(int nb, FILE* file_p)
 {
     char c;
-    for (int i = 0; i < nb && fscanf(file_p, "%c") != EOF; i++)
+    for (int i = 0; i < nb && fscanf(file_p, "%*c") != EOF; i++)
         do { c = fgetc(file_p); } while (c != '\n');
 }
 
 // move file pointer to next nb data subblock (separated by space)
 // in file stream file_p
-void skip_block(const int nb; FILE* file_p)
+void skip_block(int nb, FILE* file_p)
 {
     char c;
-    for (int i = 0; i < nb && fscanf(file_p, "%c") != EOF; i++)
+    for (int i = 0; i < nb && fscanf(file_p, "%*c") != EOF; i++)
         do { c = fgetc(file_p); } while (c != ' ' && c != '\n');
 }
 
@@ -26,10 +26,10 @@ void skip_block(const int nb; FILE* file_p)
 /** WRITE **/
 
 void write_config(const int nb_inputs, const int nb_layers,
-                  const int* nb_nodes_p, const double** biases_pp,
-                  const double*** weights_ppp)
+                  const int* nb_nodes_p, double** biases_pp,
+                  double*** weights_ppp)
 {
-    FILE* file_p = fopen(CONFIG_FILE, 'w');
+    FILE* file_p = fopen(CONFIG_FILE, "w");
 
     if (file_p == NULL)
     {
@@ -48,7 +48,7 @@ void write_config(const int nb_inputs, const int nb_layers,
 
     // DATA block
     fprintf(file_p, "\n# DATA");
-    for (int layer_i = 1; layer_i < nb_layers; i++)
+    for (int layer_i = 1; layer_i < nb_layers; layer_i++)
     {
         int nb_nodes = *(nb_nodes_p + layer_i);
         int nb_nodes_prev = *(nb_nodes_p + layer_i - 1);
@@ -56,7 +56,7 @@ void write_config(const int nb_inputs, const int nb_layers,
         // biases
         fprintf(file_p, "\nb");
         for (int node_i = 0; node_i < nb_nodes; node_i++)
-            fprintf(file_p, " %f", *(*(biases_pp + layer_i) + node_i));
+            fprintf(file_p, " %lf", *(*(biases_pp + layer_i) + node_i));
 
         // weights
         fprintf(file_p, "\nw");
@@ -64,7 +64,7 @@ void write_config(const int nb_inputs, const int nb_layers,
         {
             fprintf(file_p, " >");
             for (int prev_i = 0; prev_i < nb_nodes_prev; prev_i++)
-                fprintf(file_p, " %f",
+                fprintf(file_p, " %lf",
                         *(*(*(weights_ppp + layer_i) + node_i) + prev_i));
         }
     }
@@ -75,7 +75,7 @@ void write_config(const int nb_inputs, const int nb_layers,
 
 int get_nb_layers()
 {
-    FILE* file_p = fopen(CONFIG_FILE, 'r');
+    FILE* file_p = fopen(CONFIG_FILE, "r");
 
     if (file_p == NULL)
     {
@@ -91,14 +91,15 @@ int get_nb_layers()
     if (nb)
         return nb;
 
-    fprintf(stderr, "Invalid `l` value in %s\n.
-            Must be a strictly positive integer.\n", CONFIG_FILE);
+    fprintf(stderr,
+            "Invalid `l` value in %s.\n Must be a strictly positive integer.\n",
+            CONFIG_FILE);
     exit(1);
 }
 
 int get_nb_inputs()
 {
-    FILE* file_p = fopen(CONFIG_FILE, 'r');
+    FILE* file_p = fopen(CONFIG_FILE, "r");
 
     if (file_p == NULL)
     {
@@ -114,14 +115,15 @@ int get_nb_inputs()
     if (nb)
         return nb;
 
-    fprintf(stderr, "Invalid first `s` value in %s\n.
-            Must be a strictly positive integer.\n", CONFIG_FILE);
+    fprintf(stderr,
+            "Invalid first `s` value in %s.\n Must be a strictly positive integer.\n",
+            CONFIG_FILE);
     exit(1);
 }
 
 void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
 {
-    FILE* file_p = fopen(CONFIG_FILE, 'r');
+    FILE* file_p = fopen(CONFIG_FILE, "r");
 
     if (file_p == NULL)
     {
@@ -146,7 +148,7 @@ void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
 void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
                 double** biases_pp, double*** weights_ppp)
 {
-    FILE* file_p = fopen(CONFIG_FILE, 'r');
+    FILE* file_p = fopen(CONFIG_FILE, "r");
 
     if (file_p == NULL)
     {
@@ -159,6 +161,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
     double value_buf;
     // number of nodes in previous layer
     int prev_nb_nodes = nb_inputs;
+    int nb_nodes;
 
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
@@ -180,8 +183,8 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         double* biases_p = *(biases_pp + layer_i);
         for (int node_i = 0; node_i < nb_nodes; node_i++)
         {
-            fscanf(file_p, " %f", &value_buf);
-            *(biases_p + node_i) = value_buff;
+            fscanf(file_p, " %lf", &value_buf);
+            *(biases_p + node_i) = value_buf;
             skip_block(1, file_p);
         }
 
@@ -201,7 +204,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         for (int node_i = 0; node_i < nb_nodes; node_i++)
         {
             double* weights_p = *(weights_pp + node_i);
-            for (int prev_node_i = 0; prev_node_i < prev_node_nb; prev_node_i++)
+            for (int prev_node_i = 0; prev_node_i < prev_nb_nodes; prev_node_i++)
             {
                 // check tag
                 if (fgetc(file_p) != '>')
@@ -213,8 +216,8 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
                 fgetc(file_p);
 
                 // get value
-                fscanf(file_p, " %f", &value_buf);
-                *(weights_p + prev_node_i) = value_buff;
+                fscanf(file_p, " %lf", &value_buf);
+                *(weights_p + prev_node_i) = value_buf;
                 skip_block(1, file_p);
             }
         }
