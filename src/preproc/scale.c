@@ -3,31 +3,34 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-void Step2_rec(int* label, int h, int w, int r, int c, int l)
+void Step2_rec(int* label, int h, int w, int i, int j, int l, int r)
 {
-    label[r * w + c] = l;
-    if (c + 1 < w)
-        if (label[r * w + c + 1] != 0 && label[r * w + c + 1] != l)
-            Step2_rec(label, h, w, r, c + 1, l);
-    if (c - 1 > 0)
-        if (label[r * w + c - 1] != 0 && label[r * w + c - 1] != l)
-            Step2_rec(label, h, w, r, c - 1, l);
-    if (r + 1 < h)
-        if (label[(r + 1) * w + c] != 0 && label[(r + 1) * w + c] != l)
-            Step2_rec(label, h, w, r + 1, c, l);
-    if (r - 1 > 0)
-        if (label[(r - 1) * w + c] != 0 && label[(r - 1) * w + c] != l)
-            Step2_rec(label, h, w, r - 1, c + 1, l);
+    label[i * w + j] = l;
+    if (r < 100000)
+    {
+        if (j + 1 < w - 1)
+            if (label[i * w + j + 1] != 0 && label[i * w + j + 1] != l)
+                Step2_rec(label, h, w, i, j + 1, l, r + 1);
+        if (j - 1 > 1)
+            if (label[i * w + j - 1] != 0 && label[i * w + j - 1] != l)
+                Step2_rec(label, h, w, i, j - 1, l, r + 1);
+        if (i + 1 < h - 1)
+            if (label[(i + 1) * w + j] != 0 && label[(i + 1) * w + j] != l)
+                Step2_rec(label, h, w, i + 1, j, l, r + 1);
+        if (i - 1 > 1)
+            if (label[(i - 1) * w + j] != 0 && label[(i - 1) * w + j] != l)
+                Step2_rec(label, h, w, i - 1, j + 1, l, r + 1);
+    }
 }
 
 void Step2(int* label, int h, int w)
 {
-    for (int i = 1; i < h - 1; i++)
+    for (int i = 0; i < h - 1; i++)
     {
-        for (int j = 1; j < w - 1; j++)
+        for (int j = 0; j < w - 1; j++)
         {
             if (label[i * w + j] != 0)
-                Step2_rec(label, h, w, i, j, label[i * w + j]);
+                Step2_rec(label, h, w, i, j, label[i * w + j], 0);
         }
     }
 }
@@ -115,11 +118,12 @@ void find_grid(SDL_Surface* surface)
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    int* label = calloc(w, sizeof(int) * h);
+    int* label = calloc(w + 1, sizeof(int) * h + 1);
     int maxLabel = 1;
-    for (int i = 1; i < h; i++)
+    printf("Labeling...");
+    for (int i = 1; i < h - 1; i++)
     {
-        for (int j = 1; j < w; j++)
+        for (int j = 1; j < w - 1; j++)
         {
             int l = IsLabeled(label[i * w + j - 1], label[(i - 1) * w + j], 
                     pixels[i * w + j], format);
@@ -129,29 +133,10 @@ void find_grid(SDL_Surface* surface)
                 label[i * w + j] = maxLabel++;
         }
     }
-
+    printf("DONE");
+    printf("Step 2");
     Step2(label, h, w);
-    /*for (int i = h - 1; i > 2; i--)
-    {
-        for (int j = w - 1; j > 2; j--)
-        {
-            if (label[i * w + j] != 0)
-            {
-                if (label[(i - 1) * w + j] != 0)
-                    label[(i - 1) * w + j] = label[i * w + j];
-                if (label[(i + 1) * w + j] != 0)
-                    label[(i + 1) * w + j] = label[i * w + j];
-                if (label[i * w + j - 1] != 0)
-                    label[i * w + j - 1] = label[i * w + j];
-                if (label[i * w + j + 1] != 0)
-                    label[i * w + j + 1] = label[i * w + j];
-                if (label[(i - 1) * w + j - 1] != 0)
-                    label[(i - 1) * w + j - 1] = label[i * w + j];
-                if (label[(i + 1) * w + j + 1] != 0)
-                    label[(i + 1) * w + j + 1] = label[i * w + j];
-            }
-        }
-    }*/
+    printf("DONE");
 
     int* label_stats = calloc(maxLabel, sizeof(int));
 
