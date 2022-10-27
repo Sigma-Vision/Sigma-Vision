@@ -8,9 +8,8 @@
 // move file pointer to next nb line in file stream file_p
 void skip_line(int nb, FILE* file_p)
 {
-    char c;
-    for (int i = 0; i < nb && fscanf(file_p, "%*c") != EOF; i++)
-        do { c = fgetc(file_p); } while (c != '\n');
+    for (; nb > 0; nb--)
+        fscanf(file_p, "%*[^\n]\n");
 }
 
 // move file pointer to next nb data subblock (separated by space)
@@ -89,7 +88,8 @@ int get_nb_layers()
     int nb = 0;
 
     // skip first line and first char `l` then retrieve number of layer as int
-    fscanf(file_p, "%*[^\n]\n%*c %i", &nb);
+    skip_line(1, file_p);
+    fscanf(file_p, "%*c %i", &nb);
 
     if (nb)
     {
@@ -117,7 +117,8 @@ int get_nb_inputs()
     int nb = 0;
 
     // skip first two lines and first char `s` then retrieve number of inputs as int
-    fscanf(file_p, "%*[^\n]\n%*[^\n]\n%*c %i", &nb);
+    skip_line(2, file_p);
+    fscanf(file_p, "%*c %i", &nb);
 
     if (nb)
     {
@@ -152,7 +153,6 @@ void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
     {
         fscanf(file_p, " %i", &nb);
         *(nb_nodes_p + i) = nb;
-        skip_block(1, file_p);
     }
 
     fclose(file_p);
@@ -174,12 +174,12 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
     double value_buf;
     // number of nodes in previous layer
     int prev_nb_nodes = nb_inputs;
-    int nb_nodes;
+    int curr_nb_nodes;
 
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
         // number of nodes in this layer
-        nb_nodes = *(nb_nodes_p + layer_i);
+        curr_nb_nodes = *(nb_nodes_p + layer_i);
 
 
         /* parse biases */
@@ -195,13 +195,14 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
         fgetc(file_p);
 
         double* biases_p = *(biases_pp + layer_i);
-        for (int node_i = 0; node_i < nb_nodes; node_i++)
+        for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
         {
             fscanf(file_p, " %lf", &value_buf);
             *(biases_p + node_i) = value_buf;
-            skip_block(1, file_p);
         }
 
+        // go to next line
+        fgetc(file_p);
 
         /* parse weights */
 
@@ -212,31 +213,33 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
             fclose(file_p);
             exit(1);
         }
-        // skip space
-        fgetc(file_p);
 
         double** weights_pp = *(weights_ppp + layer_i);
-        for (int node_i = 0; node_i < nb_nodes; node_i++)
+        for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
         {
+            // skip space
+            fgetc(file_p);
+            // check tag
+            if (fgetc(file_p) != '>')
+            {
+                fprintf(stderr, "Missing tag `>` in %s\n", CONFIG_FILE);
+                fclose(file_p);
+                exit(1);
+            }
+
             double* weights_p = *(weights_pp + node_i);
             for (int prev_node_i = 0; prev_node_i < prev_nb_nodes; prev_node_i++)
             {
-                // check tag
-                if (fgetc(file_p) != '>')
-                {
-                    fprintf(stderr, "Missing tag `>` in %s\n", CONFIG_FILE);
-                    fclose(file_p);
-                    exit(1);
-                }
-                // skip space
-                fgetc(file_p);
-
                 // get value
                 fscanf(file_p, " %lf", &value_buf);
                 *(weights_p + prev_node_i) = value_buf;
-                skip_block(1, file_p);
             }
         }
+
+        // go to next line
+        fgetc(file_p);
+
+        prev_nb_nodes = curr_nb_nodes;
     }
 
     fclose(file_p);
