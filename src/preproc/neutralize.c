@@ -2,7 +2,19 @@
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <math.h>
 #include "tools.h"
+
+/**
+ * value stay between 0 and 255
+**/
+int truncate(int value)
+{
+    if(value < 0) return 0;
+    if(value > 255) return 255;
+
+    return value;
+}
 
 /**
  * Converts a colored pixel into grayscale.
@@ -14,11 +26,10 @@
 Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
 {
     Uint8 r, g, b;
-    
+
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
-    
-    r = g = b = (r+g+b)/3; 
-    
+
+    r = g = b = (r+g+b) / 3;
     Uint32 color = SDL_MapRGB(format, r, g, b);
     
     return color;
@@ -36,11 +47,24 @@ Uint32 binarize_pixel(Uint32 pixel_color, SDL_PixelFormat* format)
     Uint8 r, g, b;
 
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
-   
-    int avg = 0.3*r + 0.59*g + 0.11*b;
+
+    //brightness
+    int bright = 0;
+    r = (Uint8) truncate((int) r - bright);
+    g = (Uint8) truncate((int) g - bright);
+    b = (Uint8) truncate((int) b - bright);
+
+    //contrast
+    int contrast = 0;
+    float factor = (259.0 * (contrast + 255.0)) / (255.0 * (259.0 - contrast));
+    r = (Uint8) truncate((int) (factor * (r - 128) + 128));
+    g = (Uint8) truncate((int) (factor * (g - 128) + 128));
+    b = (Uint8) truncate((int) (factor * (b - 128) + 128));
+
+    int avg = 0.2125*r + 0.7154*g + 0.0721*b;
     //int avg = r+g+b/3;
 
-    if (avg > 127)
+    if (avg > 113)
         r = g = b = 0;
     else
         r = g = b = 255;
@@ -65,7 +89,7 @@ void surface_to_grayscale(SDL_Surface* surface)
 
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
-    
+
     for (int i = 0;i<len;i++)
     {
         pixels[i] = binarize_pixel(pixels[i],format);
