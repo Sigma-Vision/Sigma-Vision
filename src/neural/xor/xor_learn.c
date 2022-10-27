@@ -98,7 +98,7 @@ int learn(const int NB_ITER)
 
     /* TRAINING LOOP */
 
-    for (int n = 0; n < NB_ITER; n++)
+    for (int iter_i = 0; iter_i < NB_ITER; iter_i++)
     {
         shuffle(training_set_order, nb_training_sets);
 
@@ -108,30 +108,50 @@ int learn(const int NB_ITER)
 
             /* Forward pass */
 
-            for (int j = 0; j < nb_hidden_nodes; j++)
+            int prev_nb_nodes = nb_inputs;
+            int curr_nb_nodes = nb_nodes[0];
+            double* nodes_p = *nodes_pp;
+            double* biases_p = *biases_pp;
+            double** weights_pp = *weights_pp;
+
+            // input layer
+            for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
             {
-                double activation = hidden_layer_bias[j];
+                double activation = *(biases_p + node_i);
+                double* weights_p = *(weights_pp + node_i);
 
-                for (int k = 0; k < nb_inputs; k++)
-                    activation += training_inputs[i][k] * hidden_weights[k][j];
+                for (int prev_node_i; prev_node_i < prev_nb_nodes; prev_node_i++)
+                    activation += *(prev_nodes_p + prev_node_i)
+                                * *(weights_p + prev_node_i);
 
-                hidden_layer[j] = sigmoid(activation);
+                *(nodes_p + node_i) = sigmoid(activation);
             }
 
-            for (int j = 0; j < nb_outputs; j++)
+            for (int layer_i = 1; layer_i < nb_layers; layer_i++)
             {
-                double activation = output_layer_bias[j];
+                curr_nb_nodes = *(nb_nodes_p + layer_i);
+                double* prev_nodes_p = *(nodes_pp + layer_i - 1);
+                nodes_p = *(nodes_pp + layer_i);
+                biases_p = *(biases_pp + layer_i);
+                weights_pp = *(weights_pp + layer_i);
 
-                for (int k = 0; k < nb_hidden_nodes; k++)
-                    activation += hidden_layer[k] * output_weights[k][j];
+                for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
+                {
+                    double activation = *(biases_p + node_i);
+                    double* weights_p = *(weights_pp + node_i);
 
-                output_layer[j] = sigmoid(activation);
+                    for (int prev_node_i; prev_node_i < prev_nb_nodes; prev_node_i++)
+                        activation += *(prev_nodes_p + prev_node_i)
+                                    * *(weights_p + prev_node_i);
+
+                    *(nodes_p + node_i) = sigmoid(activation);
+                }
             }
 
 
             printf("Input: %f %f", training_inputs[i][0],
                                    training_inputs[i][1]);
-            printf("    Output: %f", *());
+            printf("    Output: %f", *(*(nodes_pp + nb_layers - 1)));
             printf("    Expected Output: %f\n", training_outputs[i][0]);
 
 
