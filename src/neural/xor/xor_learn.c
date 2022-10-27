@@ -5,7 +5,7 @@
 #include "config_manager.h"
 
 void init_params(const int nb_inputs, const int nb_layers, int* nb_nodes_p,
-                     double** biases_pp, double*** weights_ppp)
+                 double** nodes_pp, double** biases_pp, double*** weights_ppp)
 {
     int prev_nb_nodes = nb_inputs;
     int curr_nb_nodes;
@@ -14,17 +14,20 @@ void init_params(const int nb_inputs, const int nb_layers, int* nb_nodes_p,
     {
         curr_nb_nodes = *(nb_nodes_p + layer_i);
 
-        int node_mem_to_alloc = prev_nb_nodes * sizeof(double);
-        double* biases_p = malloc(curr_nb_nodes * sizeof(double*));
-        double** weights_pp = malloc(curr_nb_nodes * sizeof(double*));
+        int layer_mem_size = curr_nb_nodes * sizeof(double);
+
+        *(nodes_pp + layer_i) = calloc(layer_mem_size);
+        double* biases_p = malloc(layer_mem_size);
+        double** weights_pp = malloc(layer_mem_size);
         *(biases_pp + layer_i) = biases_p;
         *(weights_ppp + layer_i) = weights_pp;
 
+        int node_mem_size = prev_nb_nodes * sizeof(double);
         for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
         {
             *(biases_p + node_i) = get_rand_double();
 
-            double* weights_p = malloc(node_mem_to_alloc);
+            double* weights_p = malloc(node_mem_size);
             *(weights_pp + node_i) = weights_p;
 
             for (int prev_node_i = 0; prev_node_i < prev_nb_nodes; prev_node_i++)
@@ -35,12 +38,16 @@ void init_params(const int nb_inputs, const int nb_layers, int* nb_nodes_p,
     }
 }
 
-void free_memory(const int nb_layers, int* nb_nodes_p, double** biases_pp,
-                 double*** weights_ppp)
+void free_memory(const int nb_layers, int* nb_nodes_p, double** nodes_pp,
+                 double** biases_pp, double*** weights_ppp)
 {
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
         curr_nb_nodes = *(nb_nodes_p + layer_i);
+
+        // Nodes
+        double* nodes_p = *(nodes_pp + layer_i);
+        free(nodes_p);
 
         // Biases
         double* biases_p = *(biases_pp + layer_i);
@@ -68,10 +75,11 @@ int learn(const int NB_ITER)
     const int nb_nodes[] = {2, 1};
     const int* nb_nodes_p = nb_nodes;
 
+    double** nodes_pp = malloc(nb_layers * sizeof(double*));
     double** biases_pp = malloc(nb_layers * sizeof(double*));
     double*** weights_ppp = malloc(nb_layers * sizeof(double**));
 
-    init_params(nb_inputs, nb_layers, nb_nodes_p, biases_pp, weights_ppp);
+    init_params(nb_inputs, nb_layers, nb_nodes_p, nodes_pp, biases_pp, weights_ppp);
 
 
     /* Training set */
@@ -123,7 +131,7 @@ int learn(const int NB_ITER)
 
             printf("Input: %f %f", training_inputs[i][0],
                                    training_inputs[i][1]);
-            printf("    Output: %f", output_layer[0]);
+            printf("    Output: %f", *());
             printf("    Expected Output: %f\n", training_outputs[i][0]);
 
 
