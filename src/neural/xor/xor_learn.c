@@ -1,51 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-
-/**
-** Basic sigmoid activation function
-*/
-double sigmoid(double x)
-{
-    return 1 / (1 + exp(-x));
-}
-
-/**
-** Derived of sigmoid activation function
-*/
-double dSigmoid(double x)
-{
-    return x * (1 - x);
-}
-
-/**
-** Generate random number
-*/
-double init_weight()
-{
-    return ((double)rand()) / ((double)RAND_MAX);
-}
-
-/**
-** Shuffle array of size n
-*/
-void shuffle(int *array, size_t n)
-{
-    if (n > 1)
-    {
-        size_t i;
-
-        for (i = 0; i < n - 1; i++)
-        {
-            size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
-            int tmp = array[j];
-
-            array[j] = array[i];
-            array[i] = tmp;
-        }
-    }
-}
+#include "nn_tools.h"
 
 
 /**
@@ -75,18 +31,18 @@ int learn(const int NB_ITER)
 
     for (int i = 0; i < nb_inputs; i++)
         for (int j = 0; j < nb_hidden_nodes; j++)
-            hidden_weights[i][j] = init_weight();
+            hidden_weights[i][j] = get_rand_double();
 
     for (int i = 0; i < nb_hidden_nodes; i++)
     {
-        hidden_layer_bias[i] = init_weight();
+        hidden_layer_bias[i] = get_rand_double();
 
         for (int j = 0; j < nb_outputs; j++)
-            output_weights[i][j] = init_weight();
+            output_weights[i][j] = get_rand_double();
     }
 
     for (int i = 0; i < nb_outputs; i++)
-        output_layer_bias[i] = init_weight();
+        output_layer_bias[i] = get_rand_double();
 
     int training_set_order[] = { 0, 1, 2, 3 };
 
@@ -135,7 +91,7 @@ int learn(const int NB_ITER)
             {
                 double errorOutput =
                     (training_outputs[i][j] - output_layer[j]);
-                delta_output[j] = errorOutput * dSigmoid(output_layer[j]);
+                delta_output[j] = errorOutput * d_sigmoid(output_layer[j]);
             }
 
             double delta_hidden[nb_hidden_nodes];
@@ -147,7 +103,7 @@ int learn(const int NB_ITER)
                 for (int k = 0; k < nb_outputs; k++)
                     error_hidden += delta_output[k] * output_weights[j][k];
 
-                delta_hidden[j] = error_hidden * dSigmoid(hidden_layer[j]);
+                delta_hidden[j] = error_hidden * d_sigmoid(hidden_layer[j]);
             }
 
             for (int j = 0; j < nb_outputs; j++)
