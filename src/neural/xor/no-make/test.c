@@ -44,12 +44,19 @@ void test_write()
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
         curr_nb_nodes = *(nb_nodes_p + layer_i);
+
+        // Biases
+        double* biases_p = *(biases_pp + layer_i);
+        free(biases_p);
+
+        // Weights
         double** weights_pp = *(weights_ppp + layer_i);
         for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
             free(*(weights_pp + node_i));
         free(weights_pp);
     }
 
+    free(biases_pp);
     free(weights_ppp);
 }
 
