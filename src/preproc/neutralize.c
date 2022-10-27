@@ -61,14 +61,15 @@ Uint32 binarize_pixel(Uint32 pixel_color, SDL_PixelFormat* format)
     g = (Uint8) truncate((int) (factor * (g - 128) + 128));
     b = (Uint8) truncate((int) (factor * (b - 128) + 128));
 
-    int avg = 0.2125*r + 0.7154*g + 0.0721*b;
+    int avg = 0.299 * r + 0.587 * g + 0.114 * b;
     //int avg = r+g+b/3;
 
-    if (avg > 113)
+/*    if (avg > 113)
         r = g = b = 0;
     else
         r = g = b = 255;
-
+*/
+    r = g = b = avg;
     Uint32 color = SDL_MapRGB(format, r, g, b);
     
     return color;
