@@ -5,6 +5,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "tools.h"
+
+#define PI 3.14159265
 
 /**
  * Rotates a surface 180 degrees in place
@@ -130,58 +133,60 @@ void get_max_coord(SDL_Surface* surface, double angle, int* maxx, int* minx,int*
     double center_x = surface->w / 2;
     double center_y = surface->h / 2;
 
-    double nmaxx = surface->w; 
-    double nminx = 0;
-    double nmaxy = surface->h;
-    double nminy = 0;
+    int nmaxx = surface->w; 
+    int nminx = 0;
+    int nmaxy = surface->h;
+    int nminy = 0;
 
-    double newx;
-    double newy;
+    int newx;
+    int newy;
 
-    for (double i = 0;i < surface->h;i++)
+    for (double y = 0;y < surface->h;y++)
     {
-        for (double j = 0;j < surface->w;j++)
+        for (double x = 0;x < surface->w;x++)
         {
-            newx = (j-center_x) * cos(angle) - (i-center_y) * sin(angle) + center_x;
+            newx = (x-center_x) * cos(angle) - (y-center_y) * sin(angle) + center_x;
             
             if (newx < nminx) 
                nminx = newx;
+            
             if (newx > nmaxx)
                 nmaxx = newx;
             
-            newy = (j-center_x) * sin(angle) + (i-center_y) * cos(angle) + center_y;
-             
+            newy = (x-center_x) * sin(angle) + (y-center_y) * cos(angle) + center_y;
             if (newy < nminy)
                nminy = newy;
-
             if (newy > nmaxy)
                 nmaxy = newy;
         }
     }
     
-    *maxx = (int) nmaxx;
-    *minx  = (int) nminx; 
-    *maxy = (int) nmaxy;
-    *miny = (int) nminy;
+    *maxx = nmaxx;
+    *minx = nminx; 
+    *maxy = nmaxy;
+    *miny = nminy;
 }
 
 /**
  *
- * rotateAny : Rotates a surface by an arbitrary angle in place.
- * surface : the surface to rotate in place.
+ * rotateAny : Rotates a surface by an arbitrary angle (in degrees).
+ * surface : the surface to rotate.
  * angle : the angle the surface will be rotated by.
+ * color_fill : the color for the "lost"pixels to be filled with. 
+ * 0 if black and 255 if white
  *
  * returns : the rotated surface
  */
 
-SDL_Surface* rotateAny(SDL_Surface* surface,double angle)
+SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
 {
     //width = x
     //height = y
 
+    angle = angle*PI/180;
+    // Angle from degrees to radian
+
     Uint32* pixels = surface -> pixels;
-    double center_x = surface->w / 2;
-    double center_y = surface->h / 2;
 
     int maxx;
     int minx;
@@ -198,42 +203,50 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle)
     //SDL_Surface* temp = SDL_CreateRGBSurface(0,(maxx - minx),(maxy - miny),32,0,0,0,0);
     // check si 32 est bon
 
-    
+    //printf("MAXX = %i | MINX = %i | MAXY = %i | MINY = %i\n",maxx,minx,maxy,miny);
+
+    //printf("temp->w = %i | temp->h = %i\n",temp->w,temp->h);
+
     SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
+    double center_x = temp->w / 2;
+    double center_y = temp->h / 2;
+    
     Uint32* npixels = temp->pixels;
 
     if (SDL_LockSurface(temp) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    double newx;
-    double newy;
+    int srcx;
+    int srcy;
 
-    FILE* f = fopen("debug.txt","w");
+    //FILE* f = fopen("debug.txt","w");
 
-    fprintf(f,"WIDTH = %i\nHEIGHT = %i\n",surface->w,surface->h);
+    //fprintf(f,"WIDTH = %i\nHEIGHT = %i\n",temp->w,temp->h);
 
-    for (double i = 0;i < surface->h;i++)
+    for (double y = 0;y < temp->h;y++)
     {
-        for (double j = 0;j < surface->w;j++)
+        for (double x = 0;x < temp->w;x++)
         {
-            newx = (j-center_x) * cos(angle) - (i-center_y) * sin(angle) + center_x;
+            srcx = (x-center_x) * cos(angle) + (y-center_y) * sin(angle) + center_x;
             
-            newy = (j-center_x) * sin(angle) + (i-center_y) * cos(angle) + center_y;
+            srcy = -(x-center_x) * sin(angle) + (y-center_y) * cos(angle) + center_y;
+            
 
-            if (newx <= 0 || newx >= surface->w || newy <= 0 || newy >= surface->h)
-                continue;
-
-            // area mapping : use the first decimal of the double in order to
+            if (srcx <= 0 || srcx >= surface->w || srcy <= 0 || srcy >= surface->h)
+            {
+                npixels[(int) y * temp->w + (int)x] = SDL_MapRGB( temp->format, color_fill,
+                        color_fill, color_fill);
+            } 
+            else
+                npixels[(int)y * temp->w + (int)x] = pixels[srcy * temp->w + srcx]; 
+                
+            //area mapping : use the first decimal of the double in order to
             // ponderate x,y ; x+1,y ; x,y+1 ; x+1,y+1.
             
             //currently debugging
-            Uint8 r, g, b;
-
-            SDL_GetRGB(pixels[(int)(i* surface->w +j)], surface->format, &r, &g, &b);
  
-            fprintf(f,"[DEBUG] :\n NEWX = %f  | NEWY = %f  | OLDY = %f | OLDX = %f | Index = %i  | pixels[i] = %u\n", newx, newy, i, j, (int) (i*surface->w + j), r);
+            //fprintf(f,"[DEBUG] :\n NEWX = %i  | NEWY = %i  | OLDY = %f | OLDX = %f | Index = %i  \n", (int) srcx, (int) srcy, y, x, (int) (y*temp->w + x));
             
-            npixels[(int)(newy * surface->w + newx)] = pixels[(int)(i* surface->w +j)]; 
         }
     }
 
