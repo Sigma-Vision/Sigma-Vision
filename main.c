@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-#include <gtk/gtkx.h>
 
 //Gtk variable declaration
 GtkBuilder      *builder;
