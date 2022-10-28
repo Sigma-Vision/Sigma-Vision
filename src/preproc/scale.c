@@ -25,12 +25,77 @@ void Step2_rec(int* label, int h, int w, int i, int j, int l, int r)
 
 void Step2(int* label, int h, int w)
 {
-    for (int i = 0; i < h - 1; i++)
+    for (int i = 0; i < h; i++)
     {
-        for (int j = 0; j < w - 1; j++)
+        for (int j = 0; j < w; j++)
         {
             if (label[i * w + j] != 0)
                 Step2_rec(label, h, w, i, j, label[i * w + j], 0);
+        }
+    }
+}
+
+int isSquare(int* label, int h, int w, int i, int j, int l)
+{
+    int i1 = i;
+    while (i1 < h && label[i1 * w + j] != l)
+        i1 += 1;
+    if (i1 >= h || label[i1 * w + j] != l)
+        return 0;
+
+    int j1 = j;
+    while (j1 < w && label[i * w + j1] != l)
+        j1 += 1;
+    if (j1 >= w || label[i * w + j1] != l)
+        return 0;
+
+    i1 = i - 1;
+    while (i1 > 0 && label[i1 * w + j] != l)
+        i1 -= 1;
+    if (i1 < 0 || label[i1 * w + j] != l)
+        return 0;
+
+    j1 = j;
+    while (j1 > 0 && label[i * w + j1] != l)
+        j1 -= 1;
+    if (j1 < 0 || label[i * w + j1] != l)
+        return 0;
+    return 1;
+}
+
+void fillSquare(int* label, int i, int j, int h, int w, int l)
+{
+    int i1 = i;
+    while (i1 < h && label[i1 * w + j] != l)
+    {
+        i1 += 1;
+        label[i1 * w + j] = l;
+    }
+
+    int j1 = j;
+    while (j1 < h && label[i * w + j1] != l)
+    {
+        j1 += 1;
+        label[i * w + j1] = l;
+    }
+}
+
+int fillLabel(int* label, int* bigLabel, int h, int w)
+{
+    int l1 = bigLabel[0];
+    int l2 = bigLabel[1];
+    printf("fill label : %i, %i", l1, l2);
+
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w - 1; j++)
+        {
+            if (label[i * w + j] == l1 && label[i * w + j + 1] != l1)
+                if (isSquare(label, h, w, i, j + 1, l1))
+                    fillSquare(label, i, j + 1, h, w, l1);
+            if (label[i * w + j] == l2 && label[i * w + j + 1] != l2)
+                if (isSquare(label, h, w, i, j + 1, l2))
+                    fillSquare(label, i, j + 1, h, w, l2);
         }
     }
 }
@@ -92,19 +157,31 @@ void find_coo(Uint32* pixel, int* label, int l, int h, int w)
     }
 }
 
-int max(int* label_stats, int l)
+void max(int* label_stats, int l, int* index)
 {
     int max = label_stats[0];
-    int index = 0;
+    int max2 = label_stats[0];
+    *index = 0;
+    *(index + 1) = 0;
     for (int i = 0; i < l; i++)
     {
-        if (label_stats[i] > max)
+        if (label_stats[i] > max2)
         {
-            max = label_stats[i];
-            index = i;
+            if (label_stats[i] > max)
+            {
+                *(index + 1) = *index;
+                max2 = max;
+                max = label_stats[i];
+                *index = i;
+            }
+            else
+            {
+                *(index + 1) = i;
+                max2 = label_stats[i];
+            }
         }
     }
-    return index;
+    printf("nb of max : %i, %i", max, max2);
 }
 
 void find_grid(SDL_Surface* surface)
@@ -120,7 +197,8 @@ void find_grid(SDL_Surface* surface)
 
     int* label = calloc(w + 1, sizeof(int) * h + 1);
     int maxLabel = 1;
-    printf("Labeling...");
+
+    // fill the label
     for (int i = 1; i < h - 1; i++)
     {
         for (int j = 1; j < w - 1; j++)
@@ -133,20 +211,34 @@ void find_grid(SDL_Surface* surface)
                 label[i * w + j] = maxLabel++;
         }
     }
-    printf("DONE");
-    printf("Step 2");
-    Step2(label, h, w);
-    printf("DONE");
 
+    // fix the label fill
+    Step2(label, h, w);
+
+    // Stats about labels
     int* label_stats = calloc(maxLabel, sizeof(int));
+    fillStats(label, label_stats, h, w);
+
+    // find the 2 biggest label
+    int big_label[] = {0, 0};
+    max(label_stats, maxLabel, big_label);
+    printf("Max : %i, max #2 : %i \n", big_label[0], big_label[1]);
+
+
+    // fill inside the label
+    fillLabel(label, big_label, h, w);
+
+    // stats to 0
+    for (int i = 0; i < maxLabel; i ++)
+        label_stats[i] = 0;
+
 
     fillStats(label, label_stats, h, w);
-    int big_label = max(label_stats, maxLabel);
-    printf("%i\n", big_label);
-    find_coo(pixels, label, big_label, h, w);
-    for (int i = 0; i < maxLabel; i ++)
-        if (label_stats[i] > 1000)
-            printf("%i ", label_stats[i]);
+    big_label[0] = 0;
+    max(label_stats, maxLabel, big_label);
+    printf("Max : %i, max #2 : %i \n", big_label[0], big_label[1]);
+
+    find_coo(pixels, label, big_label[0], h, w);
 
     free(label_stats);
     free(label);
