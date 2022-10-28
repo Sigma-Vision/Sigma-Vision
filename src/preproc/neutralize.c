@@ -29,7 +29,8 @@ Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
 
     SDL_GetRGB(pixel_color, format, &r, &g, &b);
 
-    r = g = b = (r+g+b) / 3;
+    //r = g = b = (r+g+b) / 3;
+    r = g = b = 0.3*r + 0.59*g + 0.11*b;
     Uint32 color = SDL_MapRGB(format, r, g, b);
     
     return color;
@@ -93,7 +94,8 @@ void surface_to_grayscale(SDL_Surface* surface)
 
     for (int i = 0;i<len;i++)
     {
-        pixels[i] = binarize_pixel(pixels[i],format);
+        //pixels[i] = binarize_pixel(pixels[i],format);
+        pixels[i] = pixel_to_grayscale(pixels[i],format);
     }
 
     SDL_UnlockSurface(surface);
@@ -136,12 +138,12 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
         full_w += histogram[i];
     }
 
-    int Wb;
-    int Wf;
+    double Wb;
+    double Wf;
 
-    int mub;
-    int muf;
-    int mu;
+    double mub;
+    double muf;
+    double mu;
 
     int variance;
 
@@ -159,7 +161,7 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
            Wb += histogram[k];
            mub += histogram[k]*k;
         }
-        
+       
         mub /= Wb;
         Wb /= full_w; 
 
@@ -177,7 +179,17 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
     
         mu = mub - muf;
 
-        variance = Wb*Wf*mu*mu;
+        variance = (int)(Wb*Wf*mu*mu);
+
+        /*
+        printf("VARIANCE = %i\n",variance);
+        printf("mu = %f\n",mu);
+        printf("Wb = %f\n",Wb);
+        printf("Wf = %f\n",Wf);
+
+
+        printf("------------------------------------\n");
+        */
 
         if (variance > max_variance)
         {
@@ -198,7 +210,7 @@ void OtsuBinarization(SDL_Surface* surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     
     int color_max_variance = OtsuGetMaxVariance(surface);
-     
+    
     Uint32* pixels = surface-> pixels;
     SDL_PixelFormat* format = surface->format;
 
@@ -206,7 +218,7 @@ void OtsuBinarization(SDL_Surface* surface)
     {
         for (int j = 0; j < surface -> w; j++)
         {
-            if (GetColor(surface,i,j) > color_max_variance)
+            if (GetColor(surface,i,j) < color_max_variance)
                 pixels[i*surface->w+j] = SDL_MapRGB(format, 255, 255, 255);
             else
                 pixels[i*surface->w+j] = SDL_MapRGB(format, 0, 0, 0);
