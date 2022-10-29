@@ -17,19 +17,18 @@ int main(int argc, char** argv)
     // - Neutralizes the image and saves it.
     surface_to_grayscale(surface);
 
-
-    surface = GaussianBlur(surface,5);
+    //surface = GaussianBlur(surface,5);
     //rotate180(surface);
 
     OtsuBinarization(surface); 
     //surface = rotateAny(surface,45);
 
-
     surface = SobelTransform(surface);
     find_grid(surface);
+    
     //rotate180(surface);
 
-   // surface = rotateAny(surface,45);
+    //surface = rotateAny(surface,-45,255);
     
     char* filename = argv[2];
     IMG_SaveJPG(surface,filename,100);
