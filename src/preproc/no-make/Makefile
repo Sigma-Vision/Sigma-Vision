@@ -1,6 +1,6 @@
 # Makefile
 
-CC = gcc
+CC = gcc 
 CPPFLAGS =
 CFLAGS = -fsanitize=address -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image`
 LDFLAGS = -fsanitize=address
