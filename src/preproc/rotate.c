@@ -6,6 +6,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "tools.h"
+#include "struct.h"
 
 #define PI 3.14159265
 
@@ -178,7 +179,7 @@ void get_max_coord(SDL_Surface* surface, double angle, int* maxx, int* minx,int*
  * returns : the rotated surface
  */
 
-SDL_Surface* rotateAny(SDL_Surface* surface,double angle,char* color_fill)
+SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
 {
     //width = x
     //height = y
@@ -220,19 +221,24 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,char* color_fill)
 
     switch (color_fill)
     {
-        case "blue":
+        case 0:
+            //blue
             color = SDL_MapRGB( temp->format, 0,0,255);
             break;
-        case "green":
+        case 1:
+            //green
             color = SDL_MapRGB( temp->format, 0, 255, 0);
             break;
-        case "red":
+        case 2:
+            //red
             color = SDL_MapRGB( temp->format, 255, 0, 0);
             break;
-        case "black":
+        case 3:
+            //black
             color = SDL_MapRGB( temp->format, 0, 0, 0);
             break;
-        case "white":
+        case 4:
+            //white
             color = SDL_MapRGB( temp->format, 255, 255, 255);
             break;
         default:
@@ -282,19 +288,19 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,char* color_fill)
 
 SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
 {
-    if (dot1->x == dot2->x)
+    if (dot1->X == dot2->X)
         errx(1,"RotateDetectedGrid: Length of the top line of the grid is 0.");
 
-    if (dot1->x > dot2->x)
+    if (dot1->X > dot2->X)
     {
         Dot* temp = dot1;
         dot1 = dot2;
         dot2 = temp;
     }
 
-    double angle = atan(( dot2->y - dot1->y ) / ( dot2->x - dot1->x ));
+    double angle = atan(( dot2->Y - dot1->Y ) / ( dot2->X - dot1->X ));
     
-    return rotateAny(surface,angle,""); 
+    return rotateAny(surface,angle,0); 
 }
 
 

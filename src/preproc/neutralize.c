@@ -101,10 +101,12 @@ void surface_to_grayscale(SDL_Surface* surface)
     SDL_UnlockSurface(surface);
 }
 
-int* OtsuNormalizeHistogram(int* histogram)
+void OtsuNormalizeHistogram(int* histogram)
 {
     int min_intensity = 0;
     int max_intensity = 255;
+
+    printf("working");
 
     for (; min_intensity< 256 && histogram[min_intensity] == 0; min_intensity++);
     for (; max_intensity >= 0 && histogram[max_intensity] == 0; max_intensity--);
@@ -144,6 +146,9 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
         }
         //printf("out");
     }
+    
+    //OtsuNormalizeHistogram(histogram);
+
     return histogram;
 }
 
