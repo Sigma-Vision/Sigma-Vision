@@ -15,27 +15,21 @@ typedef struct Dot
 
 typedef struct Line
 {
-    int StartX;
-    int StartY;
-    int EndX;
-    int EndY;
-    double theta;
+    Dot p1;
+    Dot p2;
 } Line;
 
 typedef struct LineList
 {
     Line *lines;
     int len;
-    double maxTheta;
 
 } LineList;
 
 typedef struct Square
 {
-    Line top;
-    Line bottom;
-    Line left;
-    Line right;
+    Dot topLeft;
+    Dot topRight;
 } Square;
 
 typedef struct SquareList
