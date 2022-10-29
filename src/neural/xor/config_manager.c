@@ -25,7 +25,7 @@ void skip_block(int nb, FILE* file_p)
 /** WRITE **/
 
 void write_config(const int nb_inputs, const int nb_layers,
-                  const int* nb_nodes_p, double** biases_pp,
+                  const int nb_nodes[], double** biases_pp,
                   double*** weights_ppp)
 {
     FILE* file_p = fopen(CONFIG_FILE, "w");
@@ -43,26 +43,26 @@ void write_config(const int nb_inputs, const int nb_layers,
     // number of inputs and nodes per layer
     fprintf(file_p, "s %i", nb_inputs);
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
-        fprintf(file_p, " %i", *(nb_nodes_p + layer_i));
+        fprintf(file_p, " %i", nb_nodes[layer_i]);
 
     // DATA block
     fprintf(file_p, "\n# DATA");
     for (int layer_i = 1; layer_i < nb_layers; layer_i++)
     {
-        int nb_nodes = *(nb_nodes_p + layer_i);
-        int nb_nodes_prev = *(nb_nodes_p + layer_i - 1);
+        int curr_nb_nodes = nb_nodes[layer_i];
+        int prev_nb_nodes = nb_nodes[layer_i - 1];
 
         // biases
         fprintf(file_p, "\nb");
-        for (int node_i = 0; node_i < nb_nodes; node_i++)
+        for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
             fprintf(file_p, " %lf", *(*(biases_pp + layer_i) + node_i));
 
         // weights
         fprintf(file_p, "\nw");
-        for (int node_i = 0; node_i < nb_nodes; node_i++)
+        for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
         {
             fprintf(file_p, " >");
-            for (int prev_i = 0; prev_i < nb_nodes_prev; prev_i++)
+            for (int prev_i = 0; prev_i < prev_nb_nodes; prev_i++)
                 fprintf(file_p, " %lf",
                         *(*(*(weights_ppp + layer_i) + node_i) + prev_i));
         }
@@ -133,7 +133,7 @@ int get_nb_inputs()
     exit(1);
 }
 
-void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
+void get_nb_nodes(const int nb_layers, int nb_nodes[])
 {
     FILE* file_p = fopen(CONFIG_FILE, "r");
 
@@ -152,13 +152,13 @@ void get_nb_nodes(const int nb_layers, int* nb_nodes_p)
     for (int i = 0; i < nb_layers; i++)
     {
         fscanf(file_p, " %i", &nb);
-        *(nb_nodes_p + i) = nb;
+        nb_nodes[i] = nb;
     }
 
     fclose(file_p);
 }
 
-void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
+void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
                 double** biases_pp, double*** weights_ppp)
 {
     FILE* file_p = fopen(CONFIG_FILE, "r");
@@ -179,7 +179,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int* nb_nodes_p,
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
         // number of nodes in this layer
-        curr_nb_nodes = *(nb_nodes_p + layer_i);
+        curr_nb_nodes = nb_nodes[layer_i];
 
 
         /* parse biases */
