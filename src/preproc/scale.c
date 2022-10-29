@@ -243,7 +243,7 @@ void max(int* label_stats, int l, int* index)
     printf("nb of max : %i, %i", max, max2);
 }
 
-void find_grid(SDL_Surface* surface)
+Square* find_grid(SDL_Surface* surface)
 {
     Uint32* pixels = surface->pixels;
     int w = surface -> w;
@@ -310,5 +310,7 @@ void find_grid(SDL_Surface* surface)
     free(label_stats);
     free(label);
     SDL_UnlockSurface(surface);
+    
+    return Area(&square1) > Area(&square2) ? &square1 : &square2;
 }
 
