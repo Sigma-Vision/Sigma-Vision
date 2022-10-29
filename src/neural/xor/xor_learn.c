@@ -4,19 +4,22 @@
 #include "nn_tools.h"
 #include "config_manager.h"
 
-void init_params(const int nb_inputs, const int nb_layers, int* nb_nodes_p,
-                 double** nodes_pp, double** biases_pp, double*** weights_ppp)
+void init_params(const int nb_inputs, const int nb_layers, const int nb_nodes[],
+                 double** nodes_pp, double** deltas_pp, double** biases_pp,
+                 double*** weights_ppp)
 {
-    int prev_nb_nodes = nb_inputs;
-    int curr_nb_nodes;
+    int prev_nb_nodes;
+    int curr_nb_nodes = nb_inputs;
 
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
-        curr_nb_nodes = *(nb_nodes_p + layer_i);
+        prev_nb_nodes = curr_nb_nodes;
+        curr_nb_nodes = nb_nodes[layer_i];
 
         int layer_mem_size = curr_nb_nodes * sizeof(double);
 
-        *(nodes_pp + layer_i) = calloc(layer_mem_size);
+        *(nodes_pp + layer_i) = calloc(curr_nb_nodes, sizeof(double));
+        *(deltas_pp + layer_i) = calloc(curr_nb_nodes, sizeof(double));
         double* biases_p = malloc(layer_mem_size);
         double** weights_pp = malloc(layer_mem_size);
         *(biases_pp + layer_i) = biases_p;
@@ -31,23 +34,26 @@ void init_params(const int nb_inputs, const int nb_layers, int* nb_nodes_p,
             *(weights_pp + node_i) = weights_p;
 
             for (int prev_node_i = 0; prev_node_i < prev_nb_nodes; prev_node_i++)
-                *(weights_p + prev_node_i) = get_rand_double;
+                *(weights_p + prev_node_i) = get_rand_double();
         }
 
-        prev_nb_nodes = curr_nb_nodes;
     }
 }
 
-void free_memory(const int nb_layers, int* nb_nodes_p, double** nodes_pp,
-                 double** biases_pp, double*** weights_ppp)
+void free_memory(const int nb_layers, const int nb_nodes[], double** nodes_pp,
+                 double** deltas_pp, double** biases_pp, double*** weights_ppp)
 {
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
-        curr_nb_nodes = *(nb_nodes_p + layer_i);
+        int curr_nb_nodes = nb_nodes[layer_i];
 
         // Nodes
         double* nodes_p = *(nodes_pp + layer_i);
         free(nodes_p);
+
+        // Deltas
+        double* deltas_p = *(deltas_pp + layer_i);
+        free(deltas_p);
 
         // Biases
         double* biases_p = *(biases_pp + layer_i);
@@ -73,21 +79,22 @@ int learn(const int NB_ITER)
     const int nb_inputs = 2;
     const int nb_layers = 2;
     const int nb_nodes[] = {2, 1};
-    const int* nb_nodes_p = nb_nodes;
 
     double** nodes_pp = malloc(nb_layers * sizeof(double*));
+    double** deltas_pp = malloc(nb_layers * sizeof(double*));
     double** biases_pp = malloc(nb_layers * sizeof(double*));
     double*** weights_ppp = malloc(nb_layers * sizeof(double**));
 
-    init_params(nb_inputs, nb_layers, nb_nodes_p, nodes_pp, biases_pp, weights_ppp);
+    init_params(nb_inputs, nb_layers, nb_nodes, nodes_pp, deltas_pp,
+                biases_pp, weights_ppp);
 
 
     /* Training set */
 
     static const int nb_training_sets = 4;
-    double training_inputs[nb_training_sets][2] =
+    double training_inputs[4][2] =
            { {0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f} };
-    double training_outputs[nb_training_sets][1] =
+    double training_outputs[4][1] =
            { {0.0f}, {1.0f}, {1.0f}, {0.0f} };
 
     int training_set_order[] = { 0, 1, 2, 3 };
@@ -105,14 +112,15 @@ int learn(const int NB_ITER)
         for (int x = 0; x < nb_training_sets; x++)
         {
             int i = training_set_order[x];
+            double* nodes_p = *nodes_pp;
+            double* biases_p = *biases_pp;
+            double** weights_pp = *weights_ppp;
 
-            /* Forward pass */
+
+            /* FORWARD PASS */
 
             int prev_nb_nodes = nb_inputs;
             int curr_nb_nodes = nb_nodes[0];
-            double* nodes_p = *nodes_pp;
-            double* biases_p = *biases_pp;
-            double** weights_pp = *weights_pp;
 
             // input layer
             for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
@@ -120,27 +128,30 @@ int learn(const int NB_ITER)
                 double activation = *(biases_p + node_i);
                 double* weights_p = *(weights_pp + node_i);
 
-                for (int prev_node_i; prev_node_i < prev_nb_nodes; prev_node_i++)
-                    activation += *(prev_nodes_p + prev_node_i)
-                                * *(weights_p + prev_node_i);
+                for (int input_i = 0; input_i < nb_inputs; input_i++)
+                    activation += training_inputs[i][input_i]
+                                * *(weights_p + input_i);
 
                 *(nodes_p + node_i) = sigmoid(activation);
             }
 
             for (int layer_i = 1; layer_i < nb_layers; layer_i++)
             {
-                curr_nb_nodes = *(nb_nodes_p + layer_i);
+                prev_nb_nodes = curr_nb_nodes;
+                curr_nb_nodes = nb_nodes[layer_i];
+
                 double* prev_nodes_p = *(nodes_pp + layer_i - 1);
                 nodes_p = *(nodes_pp + layer_i);
                 biases_p = *(biases_pp + layer_i);
-                weights_pp = *(weights_pp + layer_i);
+                weights_pp = *(weights_ppp + layer_i);
 
                 for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
                 {
                     double activation = *(biases_p + node_i);
                     double* weights_p = *(weights_pp + node_i);
 
-                    for (int prev_node_i; prev_node_i < prev_nb_nodes; prev_node_i++)
+                    for (int prev_node_i = 0; prev_node_i < prev_nb_nodes;
+                         prev_node_i++)
                         activation += *(prev_nodes_p + prev_node_i)
                                     * *(weights_p + prev_node_i);
 
@@ -155,45 +166,88 @@ int learn(const int NB_ITER)
             printf("    Expected Output: %f\n", training_outputs[i][0]);
 
 
-            // Backprop
+            /* BACK PROPAGATION */
 
-            double delta_output[nb_outputs];
+            /* Get deltas */
 
-            for (int j = 0; j < nb_outputs; j++)
+            prev_nb_nodes = nb_nodes[nb_layers - 1];
+            curr_nb_nodes = prev_nb_nodes;
+            nodes_p = *(nodes_pp + nb_layers - 1);
+            double* prev_deltas_p;
+            double* curr_deltas_p = *(deltas_pp + nb_layers - 1);
+
+            // output layer
+            for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
+                *(curr_deltas_p + node_i) = d_sigmoid(*(nodes_p + node_i))
+                    * (training_outputs[i][node_i] - *(nodes_p + node_i));
+
+            for (int layer_i = nb_layers - 2; layer_i >= 0; layer_i++)
             {
-                double errorOutput =
-                    (training_outputs[i][j] - output_layer[j]);
-                delta_output[j] = errorOutput * d_sigmoid(output_layer[j]);
+                prev_nb_nodes = curr_nb_nodes;
+                curr_nb_nodes = nb_nodes[layer_i];
+                nodes_p = *(nodes_pp + layer_i);
+                prev_deltas_p = curr_deltas_p;
+                curr_deltas_p = *(deltas_pp + layer_i);
+                // next layer weights!
+                weights_pp = *(weights_ppp + layer_i + 1);
+
+                for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
+                {
+                    double error = 0.0f;
+
+                    for (int prev_node_i = 0; prev_node_i < curr_nb_nodes;
+                            prev_node_i++)
+                        error += *(prev_deltas_p + prev_node_i)
+                               * *(*(weights_pp + prev_node_i) + node_i);
+                    *(curr_deltas_p + node_i) =
+                        error * d_sigmoid(*(nodes_p + node_i));
+                }
             }
 
-            double delta_hidden[nb_hidden_nodes];
 
-            for (int j = 0; j < nb_hidden_nodes; j++)
+            /* Adapt biases & weights */
+
+            prev_nb_nodes = nb_inputs;
+            curr_nb_nodes = nb_nodes[0];
+            double* deltas_p = *deltas_pp;
+            nodes_p = *nodes_pp;
+
+            // input layer
+            for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
             {
-                double error_hidden = 0.0f;
+                double factor = *(deltas_p + node_i) * learning_rate;
 
-                for (int k = 0; k < nb_outputs; k++)
-                    error_hidden += delta_output[k] * output_weights[j][k];
+                *(*biases_pp + node_i) += factor;
 
-                delta_hidden[j] = error_hidden * d_sigmoid(hidden_layer[j]);
+                double* weights_p = *(weights_pp + node_i);
+                for (int input_i = 0; input_i < nb_inputs; input_i++)
+                    *(weights_p + input_i) +=
+                        training_inputs[i][input_i] * factor;
             }
 
-            for (int j = 0; j < nb_outputs; j++)
+            for (int layer_i = 1; layer_i < nb_layers; layer_i++)
             {
-                output_layer_bias[j] += delta_output[j] * learning_rate;
+                prev_nb_nodes = curr_nb_nodes;
+                curr_nb_nodes = nb_nodes[layer_i];
 
-                for (int k = 0; k < nb_hidden_nodes; k++)
-                    output_weights[k][j] +=
-                        hidden_layer[k] * delta_output[j] * learning_rate;
-            }
+                double* prev_nodes_p = nodes_p;
+                nodes_p = *(nodes_pp + layer_i);
+                deltas_p = *(deltas_pp + layer_i);
+                biases_p = *(biases_pp + layer_i);
+                weights_pp = *(weights_ppp + layer_i);
 
-            for (int j = 0; j < nb_hidden_nodes; j++)
-            {
-                hidden_layer_bias[j] += delta_hidden[j] * learning_rate;
+                for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
+                {
+                    double factor = *(deltas_p + node_i) * learning_rate;
 
-                for (int k = 0; k < nb_inputs; k++)
-                    hidden_weights[k][j] +=
-                        training_inputs[i][k] * delta_hidden[j] * learning_rate;
+                    *(biases_p + node_i) += factor;
+
+                    double* weights_p = *(weights_pp + node_i);
+                    for (int prev_node_i = 0; prev_node_i < prev_nb_nodes;
+                         prev_node_i++)
+                        *(weights_p + prev_node_i) +=
+                            *(prev_nodes_p + prev_node_i) * factor;
+                }
             }
         }
 
@@ -201,7 +255,10 @@ int learn(const int NB_ITER)
     }
 
 
-    // Print weights
+    write_config(nb_inputs, nb_layers, nb_nodes, biases_pp, weights_ppp);
+
+
+    /*/ Print weights
 
     printf("Final Hidden Weights\n[ ");
     for (int j = 0; j < nb_hidden_nodes; j++)
@@ -232,6 +289,6 @@ int learn(const int NB_ITER)
         printf(" %f ", output_layer_bias[j]);
 
     printf("]\n");
-
+*/
     return 0;
 }
