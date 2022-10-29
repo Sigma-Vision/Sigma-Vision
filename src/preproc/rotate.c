@@ -178,7 +178,7 @@ void get_max_coord(SDL_Surface* surface, double angle, int* maxx, int* minx,int*
  * returns : the rotated surface
  */
 
-SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
+SDL_Surface* rotateAny(SDL_Surface* surface,double angle,char* color_fill)
 {
     //width = x
     //height = y
@@ -216,11 +216,35 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
     if (SDL_LockSurface(temp) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
+    Uint32 color;
+
+    switch (color_fill)
+    {
+        case "blue":
+            color = SDL_MapRGB( temp->format, 0,0,255);
+            break;
+        case "green":
+            color = SDL_MapRGB( temp->format, 0, 255, 0);
+            break;
+        case "red":
+            color = SDL_MapRGB( temp->format, 255, 0, 0);
+            break;
+        case "black":
+            color = SDL_MapRGB( temp->format, 0, 0, 0);
+            break;
+        case "white":
+            color = SDL_MapRGB( temp->format, 255, 255, 255);
+            break;
+        default:
+            // default case : color = blue
+            color = SDL_MapRGB( temp->format, 0,0,255);
+            break;
+    }
+
     int srcx;
     int srcy;
 
     //FILE* f = fopen("debug.txt","w");
-
     //fprintf(f,"WIDTH = %i\nHEIGHT = %i\n",temp->w,temp->h);
 
     for (double y = 0;y < temp->h;y++)
@@ -234,8 +258,7 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
 
             if (srcx <= 0 || srcx >= surface->w || srcy <= 0 || srcy >= surface->h)
             {
-                npixels[(int) y * temp->w + (int)x] = SDL_MapRGB( temp->format, color_fill,
-                        color_fill, color_fill);
+                npixels[(int) y * temp->w + (int)x] = color; 
             } 
             else
                 npixels[(int)y * temp->w + (int)x] = pixels[srcy * temp->w + srcx]; 
@@ -256,3 +279,22 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
 
     return temp;
 }
+
+SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
+{
+    if (dot1->x == dot2->x)
+        errx(1,"RotateDetectedGrid: Length of the top line of the grid is 0.");
+
+    if (dot1->x > dot2->x)
+    {
+        Dot* temp = dot1;
+        dot1 = dot2;
+        dot2 = temp;
+    }
+
+    double angle = atan(( dot2->y - dot1->y ) / ( dot2->x - dot1->x ));
+    
+    return rotateAny(surface,angle,""); 
+}
+
+
