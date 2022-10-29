@@ -101,6 +101,26 @@ void surface_to_grayscale(SDL_Surface* surface)
     SDL_UnlockSurface(surface);
 }
 
+int* OtsuNormalizeHistogram(int* histogram)
+{
+    int min_intensity = 0;
+    int max_intensity = 255;
+
+    for (; min_intensity< 256 && histogram[min_intensity] == 0; min_intensity++);
+    for (; max_intensity >= 0 && histogram[max_intensity] == 0; max_intensity--);
+
+
+    for (int i = 0; i < 256;i++)
+    {
+        histogram[i] = ((histogram[i]-min_intensity)/(max_intensity - min_intensity)) * 255; 
+    }
+}
+
+/*int* OtsuEqualizeHistogram (int* histogram)
+{
+    
+}*/
+
 int* OtsuBuildHistogram(SDL_Surface* surface)
 {
     int* histogram = calloc(256,sizeof(int));
@@ -129,15 +149,10 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
 
 int OtsuGetMaxVariance(SDL_Surface* surface)
 {
-    int full_w = 0;
+    int full_w = surface->w * surface->h;
 
     int* histogram = OtsuBuildHistogram(surface);
     
-    for (int i = 0;i < 256;i++)
-    {
-        full_w += histogram[i];
-    }
-
     double Wb;
     double Wf;
 

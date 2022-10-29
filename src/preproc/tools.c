@@ -147,7 +147,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 {
     //we use a 5x5 kernel here, may not be needed or may need 7x7
     
-    /*int matx[25] = 
+    int matx[25] = 
     {
         -5, -4, 0, 4, 5, 
         -8, -10, 0, 10, 8,
@@ -169,7 +169,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     Kernel Gy = { .radius = 5, .matrix = maty};
     
-    */
+    /*
 
     //radius = 3
 
@@ -191,7 +191,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     Kernel Gy = {.radius = 3, .matrix = maty};
     
-
+    */
 
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
@@ -206,8 +206,9 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     int valuex;
     int valuey;
-    int G;
+    double G;
     int value;
+    double angle;
 
     //convolution
     for (int i = 0;i < surface-> h; i++)
@@ -219,20 +220,14 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
             G = sqrt(valuex*valuex + valuey*valuey);
 
-            /*
-            if (valuex != 0)
-            {
-                npixels[i* surface->w + j] = SDL_MapRGB(format,255,255,255); 
-                continue;
-            }
-            
-        
-            if (valuey != 0)
-            {
-                npixels[i* surface->w + j] = SDL_MapRGB(format,255,255,255); 
-                continue;
-            }*/
-            value = G != 0 ? 255 : 0;
+            angle = atan((double)valuey / (double)valuex);
+
+            //compute the G of (x+1,y+1) et (x-1,y-1) (déterminés selon l'angle)
+            //determine if value = 0 or 255
+            //
+            //then put treshold in place
+            printf("%f\n",angle);
+
             npixels[i* surface->w + j] = SDL_MapRGB(format,value,value,value); 
         }
     }
@@ -243,5 +238,14 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     return temp;
 }
+
+
+/*SDL_Surface* CannyTransform(SDL_Surface* surface)
+{
+    if (SDL_LockSurface(surface) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    surface = SobelTransform(surface);
+}*/
 
 
