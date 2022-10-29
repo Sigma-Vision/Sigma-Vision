@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "struct.h"
 
 void Step2_rec(int* label, int h, int w, int i, int j, int l, int r)
 {
@@ -157,6 +158,58 @@ void find_coo(Uint32* pixel, int* label, int l, int h, int w)
     }
 }
 
+void find_square(int* label, int h, int w, int l, Square square)
+{
+    // Top Left
+    Dot topLeft;
+    int i = 0;
+    int j = 0;
+    while (i < h && label[i * w + j] != l)
+    {
+        while (j < w && label[i * w + j] != l)
+            j++;
+        if (label[i * w + j] != l)
+        {
+            i++;
+            j = 0;
+        }
+    }
+    topLeft.X = i;
+    topLeft.Y = j;
+
+    printf("Point 1 : %i, %i\n", i, j);
+
+    // Top Right
+    Dot topRight;
+    i = 0;
+    j = w - 1;
+    while (i < h && label[i * w + j] != l)
+    {
+        while (j > 0 && label[i * w + j] != l)
+            j--;
+        if (label[i * w + j] != l)
+        {
+            i++;
+            j = w - 1;
+        }
+    }
+    topRight.X = i;
+    topRight.Y = j;
+
+    printf("Point 1 : %i, %i\n", i, j);
+
+    square.topLeft = topLeft;
+    square.topRight = topRight;
+}
+
+int Area(Square square)
+{
+    float d = sqrt(pow(abs(square.topLeft.X - square.topRight.X), 2) +
+                pow(abs(square.topLeft.Y - square.topRight.Y), 2));
+    printf("Distance : %i \n", d);
+    return d * d;
+}
+
 void max(int* label_stats, int l, int* index)
 {
     int max = label_stats[0];
@@ -222,21 +275,29 @@ void find_grid(SDL_Surface* surface)
     // find the 2 biggest label
     int big_label[] = {0, 0};
     max(label_stats, maxLabel, big_label);
-    printf("Max : %i, max #2 : %i \n", big_label[0], big_label[1]);
 
+    Square square1;
+    Square square2;
+    
+    find_square(label, h, w, big_label[0], square1);
+    find_square(label, h, w, big_label[1], square2);
+
+    if (Area(square1) > Area(square2))
+        find_coo(pixels, label, big_label[0], h, w);
+    else
+        find_coo(pixels, label, big_label[1], h, w);
 
     // fill inside the label
-    fillLabel(label, big_label, h, w);
+    //fillLabel(label, big_label, h, w);
 
     // stats to 0
-    for (int i = 0; i < maxLabel; i ++)
-        label_stats[i] = 0;
+    //for (int i = 0; i < maxLabel; i ++)
+      //  label_stats[i] = 0;
 
 
-    fillStats(label, label_stats, h, w);
-    big_label[0] = 0;
-    max(label_stats, maxLabel, big_label);
-    printf("Max : %i, max #2 : %i \n", big_label[0], big_label[1]);
+    //fillStats(label, label_stats, h, w);
+   // big_label[0] = 0;
+    //max(label_stats, maxLabel, big_label);
 
     find_coo(pixels, label, big_label[0], h, w);
 
