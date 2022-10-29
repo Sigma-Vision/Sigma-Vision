@@ -25,7 +25,7 @@ GdkPixbuf		*pixOut;
 
 
 //File Loader function
-static void load_image(GtkWidget* button, gpointer window)
+static void load_image(gpointer window)
 {
     GtkWidget *dialog;
 
@@ -51,7 +51,7 @@ static void load_image(GtkWidget* button, gpointer window)
 }
 
 //Save function
-static void save_image(GtkWidget* button, gpointer window)
+static void save_image(gpointer window)
 {
 	GtkWidget *dialog;
 	GtkFileChooser *chooser;
@@ -79,22 +79,22 @@ static void save_image(GtkWidget* button, gpointer window)
 }
 	
 //All the window open/close function
-static void show_neural_training(GtkBuilder* builder)
+static void show_neural_training()
 {
 	gtk_widget_show (windowNNT);
 }	
 
-static void hide_neural_training(GtkBuilder* builder)
+static void hide_neural_training()
 {
 	gtk_widget_hide (windowNNT);
 }
 
-static void show_solve_menu(GtkBuilder* builder)
+static void show_solve_menu()
 {
 	gtk_widget_show (windowSolved);
 }
 
-static void hide_solve_menu(GtkBuilder* builder)
+static void hide_solve_menu()
 {
 	gtk_widget_hide (windowSolved);
 }
