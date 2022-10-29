@@ -220,14 +220,14 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
             G = sqrt(valuex*valuex + valuey*valuey);
 
-            angle = atan((double)valuey / (double)valuex);
+            //angle = atan((double)valuey / (double)valuex);
 
             //compute the G of (x+1,y+1) et (x-1,y-1) (déterminés selon l'angle)
             //determine if value = 0 or 255
             //
             //then put treshold in place
-            printf("%f\n",angle);
-
+            //printf("%f\n",angle);
+            value = G > 100 ? 255 : 0;
             npixels[i* surface->w + j] = SDL_MapRGB(format,value,value,value); 
         }
     }
