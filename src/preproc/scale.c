@@ -158,7 +158,7 @@ void find_coo(Uint32* pixel, int* label, int l, int h, int w)
     }
 }
 
-void find_square(int* label, int h, int w, int l, Square square)
+void find_square(int* label, int h, int w, int l, Square* square)
 {
     // Top Left
     Dot topLeft;
@@ -193,20 +193,26 @@ void find_square(int* label, int h, int w, int l, Square square)
             j = w - 1;
         }
     }
-    topRight.X = i;
+    topRight.X =i;
     topRight.Y = j;
 
     printf("Point 1 : %i, %i\n", i, j);
 
-    square.topLeft = topLeft;
-    square.topRight = topRight;
+    square->topLeft = topLeft;
+    square->topRight = topRight;
+
 }
 
-int Area(Square square)
+int Area(Square* square)
 {
-    float d = sqrt(pow(abs(square.topLeft.X - square.topRight.X), 2) +
-                pow(abs(square.topLeft.Y - square.topRight.Y), 2));
+    float d = sqrt(pow(abs(square->topLeft.X - square->topRight.X), 2) +
+                pow(abs(square->topLeft.Y - square->topRight.Y), 2));
+
+    printf("Pt 1 : %i, %i ; Pt 2 : %i, %i\n", square->topLeft.X,
+        square->topLeft.Y, square->topRight.X, square->topRight.Y);
+
     printf("Distance : %i \n", d);
+    printf("Area : %i\n", d * d);
     return d * d;
 }
 
@@ -279,10 +285,10 @@ void find_grid(SDL_Surface* surface)
     Square square1;
     Square square2;
     
-    find_square(label, h, w, big_label[0], square1);
-    find_square(label, h, w, big_label[1], square2);
+    find_square(label, h, w, big_label[0], &square1);
+    find_square(label, h, w, big_label[1], &square2);
 
-    if (Area(square1) > Area(square2))
+    if (Area(&square1) > Area(&square2))
         find_coo(pixels, label, big_label[0], h, w);
     else
         find_coo(pixels, label, big_label[1], h, w);
