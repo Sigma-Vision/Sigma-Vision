@@ -1,0 +1,32 @@
+# Sigma-Vision
+OCR of the project
+
+# comment l'utiliser :
+
+Pour l'instant seule une partie du projet fonctionne.
+
+## Le solver :
+```
+cd src/solve
+make
+```
+vous avez ensuite un utilisable du solveur de sudoku.
+
+## L' IA
+
+```
+cd src/ia/xor
+make
+```
+
+## Le preptraitement
+
+```
+cd src/preproc/no-make
+make
+./test image_a_traiter destination
+```
+
+## L'UI
+
+
