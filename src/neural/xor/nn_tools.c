@@ -106,10 +106,7 @@ void free_memory(const int nb_layers, const int nb_nodes[], double** nodes_pp,
         free(*(nodes_pp + layer_i));
 
         if (deltas_pp)
-        {
             free(*(deltas_pp + layer_i));
-            free(deltas_pp);
-        }
 
         free(*(biases_pp + layer_i));
 
