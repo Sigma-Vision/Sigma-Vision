@@ -291,6 +291,7 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
     Dot cdot1;
     cdot1.X = dot1->X;
     cdot1.Y = dot1->Y;
+
     Dot cdot2;
     cdot2.X = dot2->X;
     cdot2.Y = dot2->Y;
