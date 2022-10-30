@@ -99,6 +99,7 @@ int fillLabel(int* label, int* bigLabel, int h, int w)
                     fillSquare(label, i, j + 1, h, w, l2);
         }
     }
+    return 1;
 }
 
 int IsLabeled(int prev, int prev_top, Uint32 p, SDL_PixelFormat* format)
@@ -114,7 +115,7 @@ int IsLabeled(int prev, int prev_top, Uint32 p, SDL_PixelFormat* format)
     return -1;
 }
 
-int fillStats(int* label, int* label_stats, int h, int w)
+void fillStats(int* label, int* label_stats, int h, int w)
 {
     for (int i = 1; i < h; i ++)
     {
