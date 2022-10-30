@@ -261,7 +261,7 @@ void max(int* label_stats, int l, int* index)
     }
 }
 
-Square* find_grid(SDL_Surface* surface)
+void find_grid(SDL_Surface* surface, Square* s)
 {
     Uint32* pixels = surface->pixels;
     int w = surface -> w;
@@ -312,11 +312,17 @@ Square* find_grid(SDL_Surface* surface)
     printf("Area 1 : %i, Area 2 : %i\n", a1, a2);
     if (a1 > a2)
     {
+        s->topLeft = square1.topLeft;
+        s->topRight = square1.topRight;
+        s->bottomLeft = square1.bottomLeft;
         find_coo(pixels, label, big_label[0], h, w);
         printf("Label : %i\n", big_label[0]);
     }
     else
     {
+        s->topLeft = square2.topLeft;
+        s->topRight = square2.topRight;
+        s->bottomLeft = square2.bottomLeft;
         find_coo(pixels, label, big_label[1], h, w);
         printf("Label : %i\n", big_label[1]);
     }
@@ -337,7 +343,5 @@ Square* find_grid(SDL_Surface* surface)
     free(label_stats);
     free(label);
     SDL_UnlockSurface(surface);
-    
-    return a1 >= a2 ? &square1 : &square2;
 }
 
