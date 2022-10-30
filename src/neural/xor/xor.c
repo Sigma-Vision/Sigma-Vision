@@ -4,7 +4,7 @@
 #include <err.h>
 #include "xor.h"
 
-int xor(int argc, char** argv)
+int main(int argc, char** argv)
 {
   if (argc < 2)
     errx(EXIT_FAILURE, "missing parameters");
@@ -20,7 +20,13 @@ int xor(int argc, char** argv)
   }
   else if (strcmp(argv[1], "-u") == 0)
   {
-    // TODO
+    if (argc != 4)
+        errx(EXIT_FAILURE, "missing parameters");
+    double inputs[] = { (double)atoi(argv[2]), (double)atoi(argv[3]) };
+    if (inputs[0] < 0 || inputs[0] > 1 ||
+        inputs[1] < 0 || inputs[1] > 1)
+        errx(EXIT_FAILURE, "xor input must be 0 or 1");
+    use(inputs, 2);
   }
   else
     errx(EXIT_FAILURE, "unknown parameter %s", argv[1]);
