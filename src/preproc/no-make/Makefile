@@ -12,10 +12,12 @@ SRC = ../neutralize.c ../tools.c ../rotate.c ../scale.c test.c
 OBJ = ${SRC:.c=.o}
 EXE = ${SRC:.c=}
 
-test: ../rotate.o test.o ../neutralize.o ../tools.o ../scale.c ../rotate.h \
-	../neutralize.h ../tools.h
-neutralize: ../neutralize.o ../tools.o ../rotate.o ../scale.c ../rotate.h \
-	../neutralize.h ../tools.h
+test: ../rotate.o test.o ../neutralize.o ../tools.o ../rotate.h \
+	../neutralize.h ../tools.h ../scale.h ../scale.o
+neutralize: ../neutralize.o ../tools.o ../rotate.o ../rotate.h \
+	../neutralize.h ../tools.h ../scale.h ../scale.o
+
+rotate: ../rotate.h ../rotate.o
 
 .PHONY: clean
 
