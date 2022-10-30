@@ -14,5 +14,5 @@
 #ifndef SCALE_H
 #define SCALE_H
 
-void find_grid(SDL_Surface* surface);
+void find_grid(SDL_Surface* surface, Square* s);
 #endif
