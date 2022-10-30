@@ -208,7 +208,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
     int valuey;
     double G;
     int value;
-    double angle;
+    //double angle;
 
     //convolution
     for (int i = 0;i < surface-> h; i++)
@@ -251,7 +251,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 SDL_Surface* GridCropping (SDL_Surface* surface, Dot* dot1,Dot* dot2)
 {
     int width = surface->w;
-    int height = surface->h;
+    //int height = surface->h;
     Uint32* pixels = surface->pixels;
 
     int side_len = dot2->X - dot1->X;
