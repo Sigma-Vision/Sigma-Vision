@@ -198,22 +198,42 @@ void find_square(int* label, int h, int w, int l, Square* square)
 
     printf("Point 1 : %i, %i\n", i, j);
 
+    // Top Left
+    Dot bottomLeft;
+    i = h - 1;
+    j = 0;
+    while (i > 0 && label[i * w + j] != l)
+    {
+        while (j < w && label[i * w + j] != l)
+            j++;
+        if (label[i * w + j] != l)
+        {
+            i--;
+            j = 0;
+        }
+    }
+    bottomLeft.X = i;
+    bottomLeft.Y = j;
+
+
     square->topLeft = topLeft;
     square->topRight = topRight;
-
+    square->bottomLeft = bottomLeft;
 }
 
 int Area(Square* square)
 {
     float d = sqrt(pow(abs(square->topLeft.X - square->topRight.X), 2) +
-                pow(abs(square->topLeft.Y - square->topRight.Y), 2));
+                pow(abs(square->topLeft.Y - square->topRight.Y), 2)) * 
+                sqrt(pow(abs(square->topLeft.X - square->bottomLeft.X), 2) +
+                pow(abs(square->topLeft.Y - square->bottomLeft.Y), 2));
 
     printf("Pt 1 : %i, %i ; Pt 2 : %i, %i\n", square->topLeft.X,
         square->topLeft.Y, square->topRight.X, square->topRight.Y);
 
     printf("Distance : %i \n", d);
     printf("Area : %i\n", d * d);
-    return d * d;
+    return d;
 }
 
 void max(int* label_stats, int l, int* index)

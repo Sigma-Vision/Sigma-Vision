@@ -288,8 +288,12 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
 
 SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
 {
-    Dot cdot1 = dot1;
-    Dot cdot2 = dot2;
+    Dot cdot1;
+    cdot1.X = dot1->X;
+    cdot1.Y = dot1->Y;
+    Dot cdot2;
+    cdot2.X = dot2->X;
+    cdot2.Y = dot2->Y;
 
     double center_x = surface->w / 2;
     double center_y = surface->h / 2;
@@ -300,11 +304,13 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
     if (dot1->X > dot2->X)
     {
         Dot* temp = dot1;
-        cdot1 = dot2;
-        cdot2 = temp;
+        cdot1.X = dot2->X;
+        cdot1.Y = dot2->Y;
+        cdot2.X = temp->X;
+        cdot2.Y = temp->Y;
     }
 
-    double angle = atan(( cdot2->Y - cdot1->Y ) / ( cdot2->X - cdot1->X ));
+    double angle = atan(( cdot2.Y - cdot1.Y ) / ( cdot2.X - cdot1.X ));
 
     //we compute the future coordinates of the dots in order to not lose the 
     //square we found
