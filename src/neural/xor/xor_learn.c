@@ -95,12 +95,14 @@ int learn(const int NB_ITER)
             }
 
 
+            /*
             printf("Input: %f %f", training_inputs[i][0],
                                    training_inputs[i][1]);
             printf("    Output: %f %f", *(*(nodes_pp + nb_layers - 1))
                                       , *(*(nodes_pp + nb_layers - 1) + 1));
             printf("    Expected Output: %f %f\n", training_outputs[i][0]
                                                  , training_outputs[i][1]);
+            */
 
 
             /* BACK PROPAGATION */
@@ -185,7 +187,7 @@ int learn(const int NB_ITER)
             }
         }
 
-        printf("\n");
+        //printf("\n");
     }
 
 
