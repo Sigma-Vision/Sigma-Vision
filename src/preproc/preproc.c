@@ -1,13 +1,13 @@
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "../neutralize.h"
-#include "../tools.h"
-#include "../struct.h"
-#include "../rotate.h"
-#include "../scale.h"
+#include "neutralize.h"
+#include "tools.h"
+#include "struct.h"
+#include "rotate.h"
+#include "scale.h"
 
-int main(int argc, char** argv)
+int preproc(int argc, char** argv)
 {
     if (argc != 3)
         errx(EXIT_FAILURE, "Usage: neutralize <image-file> <outfile>");
