@@ -179,12 +179,12 @@ void get_max_coord(SDL_Surface* surface, double angle, int* maxx, int* minx,int*
  * returns : the rotated surface
  */
 
-SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
+SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill,int rad)
 {
     //width = x
     //height = y
-
-    angle = angle*PI/180;
+    if (!rad)
+        angle = angle*PI/180;
     // Angle from degrees to radian
 
     Uint32* pixels = surface -> pixels;
@@ -318,8 +318,7 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
         cdot2.Y = temp->Y;
     }
 
-    double angle = atan(( cdot2.X - cdot1.X ) / ( cdot2.Y - cdot1.Y ));
-
+    double angle = -atan((double)( cdot2.X - cdot1.X ) / (double)( cdot2.Y - cdot1.Y ));
     //we compute the future coordinates of the dots in order to not lose the 
     //square we found
 
@@ -335,7 +334,7 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
     dot2->X = (dot2->Y - center_y) * sin(angle) 
         + (dot2->X - center_x) * cos(angle) + center_x;
 
-    return rotateAny(surface,angle,0); 
+    return rotateAny(surface,angle,0,1); 
 }
 
 
