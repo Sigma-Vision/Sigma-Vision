@@ -1,5 +1,4 @@
-#define CONFIG_FILE "test.nnconf"
-#define DEFAULT_CONFIG_FILE "default_xor.nnconf"
+#define CONFIG_FILE "xor.nnconf"
 
 void write_config(const int nb_inputs, const int nb_layers,
                   const int nb_nodes[], double** biases_pp,
