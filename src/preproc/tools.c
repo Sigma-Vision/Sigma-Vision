@@ -250,23 +250,34 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
 SDL_Surface* GridCropping (SDL_Surface* surface, Dot* dot1,Dot* dot2)
 {
+    /**
+     * WARNING : THIS FUNCTION DOES NOT FREE THE SURFACE surface, 
+     * BUT STILL RETURNS ANOTHER SURFACE. PLEASE FREE THE SUPPLIED 
+     * SURFACE IF YOU DO NOT NEED IT AFTERWARDS
+     */
+    
     int width = surface->w;
-    //int height = surface->h;
     Uint32* pixels = surface->pixels;
 
-    int side_len = dot2->X - dot1->X;
+    int side_len = dot2->Y - dot1->Y;
 
     SDL_Surface* res = SDL_CreateRGBSurface(0,side_len,side_len,32,0,0,0,0);
     Uint32* respixels = res->pixels;
+    
+
+    if (SDL_LockSurface(res) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
 
     for (int i = 0; i < side_len; i++)
     {
         for (int j = 0 ; j < side_len; j++)
         {
-            respixels[i*side_len+j] = pixels[(i+dot1->X)*width+(j+dot1->X)];
+            respixels[i*side_len+j] = pixels[(i+dot1->X)*width+(j+dot1->Y)];
         }
-    } 
-    
+    }
+
+    SDL_UnlockSurface(res);
+
     return res;
 }
 
@@ -280,26 +291,28 @@ void GridSplit(SDL_Surface* surface)
     int w9 = width/9;
     int h9 = height/9;
     
-    char filename[30];
+    char filename[15];
 
+    Dot dot1;
+    Dot dot2;
+    
     for (int i = 0;i < 9;i++)
     {
         for (int j = 0;j < 9;j++)
         {
-            Dot dot1;
-            dot1.X = w9*j;
-            dot1.Y = h9*i;
+            dot1.Y = w9*j;
+            dot1.X = h9*i;
 
-            Dot dot2;
-            dot2.X = w9*(j+1);
-            dot2.Y = h9*(i+1);
+            dot2.Y = w9*(j+1);
+            dot2.X = h9*(i+1);
 
             SDL_Surface* temp = GridCropping(surface,&dot1,&dot2);
-            
-            snprintf(filename,sizeof(filename),"case_r%c_c%c",i+48,j+48);
+
+            snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
             IMG_SaveJPG(temp, filename,100);
 
             SDL_FreeSurface(temp);
         }
     }
+
 }

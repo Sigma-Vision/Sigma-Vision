@@ -25,26 +25,27 @@ int main(int argc, char** argv)
     OtsuBinarization(surface); 
     //surface = rotateAny(surface,45);
 
-<<<<<<< Updated upstream
     surface = SobelTransform(surface);
 
     Square s;
     find_grid(surface, &s);
     
-=======
-    //surface = SobelTransform(surface);
-    //Square* square = find_grid(surface);    
-    //surface = RotateDetectedGrid(surface,square->topLeft, square->topRight);
+    surface = RotateDetectedGrid(surface,&(s.topLeft), &(s.topRight));
+    
+    SDL_Surface* newsurface = GridCropping(surface,&(s.topLeft),&(s.topRight));
+    
+    //need to free because not freed by GridCropping
+    SDL_FreeSurface(surface);
 
->>>>>>> Stashed changes
+    GridSplit(newsurface);
     //rotate180(surface);
 
     //surface = rotateAny(surface,-45,0);
 
     char* filename = argv[2];
-    IMG_SaveJPG(surface,filename,100);
+    IMG_SaveJPG(newsurface,filename,100);
     // - Cleanup
-    SDL_FreeSurface(surface);
+    SDL_FreeSurface(newsurface);
     SDL_Quit();
     
     return EXIT_SUCCESS;

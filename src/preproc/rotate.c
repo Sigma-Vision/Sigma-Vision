@@ -288,6 +288,9 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
 
 SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
 {
+    //X = VERTICAL
+    //Y = HORIZONTAL
+
     Dot cdot1;
     cdot1.X = dot1->X;
     cdot1.Y = dot1->Y;
@@ -296,13 +299,17 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
     cdot2.X = dot2->X;
     cdot2.Y = dot2->Y;
 
-    double center_x = surface->w / 2;
-    double center_y = surface->h / 2;
+    double center_y = surface->w / 2;
+    double center_x = surface->h / 2;
 
-    if (dot1->X == dot2->X)
+    //if (dot1->Y != dot2->Y)
+        //printf("DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i",dot1->X,dot1->Y,dot2->X,dot2->Y);    
+    
+
+    if (dot1->Y == dot2->Y)
         errx(1,"RotateDetectedGrid: Length of the top line of the grid is 0.");
 
-    if (dot1->X > dot2->X)
+    if (dot1->Y > dot2->Y)
     {
         Dot* temp = dot1;
         cdot1.X = dot2->X;
@@ -311,22 +318,22 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
         cdot2.Y = temp->Y;
     }
 
-    double angle = atan(( cdot2.Y - cdot1.Y ) / ( cdot2.X - cdot1.X ));
+    double angle = atan(( cdot2.X - cdot1.X ) / ( cdot2.Y - cdot1.Y ));
 
     //we compute the future coordinates of the dots in order to not lose the 
     //square we found
 
-    dot1->X = (dot1->X - center_x)*cos(angle) 
-        - (dot1->Y - center_y) * sin(angle) + center_x;
+    dot1->Y = (dot1->Y - center_y)*cos(angle) 
+        - (dot1->X - center_x) * sin(angle) + center_y;
 
-    dot1->Y = (dot1->X - center_x) * sin(angle) 
-        + (dot1->Y - center_y) * cos(angle) + center_y;
+    dot1->X = (dot1->Y - center_y) * sin(angle) 
+        + (dot1->X - center_x) * cos(angle) + center_x;
     
-    dot2->X = (dot2->X - center_x)*cos(angle) 
-        - (dot2->Y - center_y) * sin(angle) + center_x;
+    dot2->Y = (dot2->Y - center_y)*cos(angle) 
+        - (dot2->X - center_x) * sin(angle) + center_y;
 
-    dot2->Y = (dot2->X - center_x) * sin(angle) 
-        + (dot2->Y - center_y) * cos(angle) + center_y;
+    dot2->X = (dot2->Y - center_y) * sin(angle) 
+        + (dot2->X - center_x) * cos(angle) + center_x;
 
     return rotateAny(surface,angle,0); 
 }
