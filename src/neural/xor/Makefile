@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra
 LDFLAGS =
 LDLIBS = -lm
 
-SRC = $(filter-out no-make/*, $(wildcard *.c))
+SRC = no-make/main.c $(filter-out no-make/*, $(wildcard *.c))
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
