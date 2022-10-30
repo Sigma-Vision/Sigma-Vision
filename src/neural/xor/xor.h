@@ -1,4 +1,4 @@
 #pragma once
 
-void learn(int NB_ITER);
-void use(int a, int b);
+int learn(int NB_ITER);
+int use(double inputs[], int nb_inputs);

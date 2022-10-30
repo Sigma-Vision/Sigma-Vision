@@ -45,12 +45,15 @@ void write_config(const int nb_inputs, const int nb_layers,
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
         fprintf(file_p, " %i", nb_nodes[layer_i]);
 
+    int prev_nb_nodes;
+    int curr_nb_nodes = nb_inputs;
+
     // DATA block
     fprintf(file_p, "\n# DATA");
-    for (int layer_i = 1; layer_i < nb_layers; layer_i++)
+    for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
-        int curr_nb_nodes = nb_nodes[layer_i];
-        int prev_nb_nodes = nb_nodes[layer_i - 1];
+        prev_nb_nodes = curr_nb_nodes;
+        curr_nb_nodes = nb_nodes[layer_i];
 
         // biases
         fprintf(file_p, "\nb");
@@ -172,15 +175,13 @@ void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
     skip_line(4, file_p);
 
     double value_buf;
-    // number of nodes in previous layer
-    int prev_nb_nodes = nb_inputs;
-    int curr_nb_nodes;
+    int prev_nb_nodes;
+    int curr_nb_nodes = nb_inputs;
 
     for (int layer_i = 0; layer_i < nb_layers; layer_i++)
     {
-        // number of nodes in this layer
+        prev_nb_nodes = curr_nb_nodes;
         curr_nb_nodes = nb_nodes[layer_i];
-
 
         /* parse biases */
 
@@ -191,8 +192,6 @@ void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
             fclose(file_p);
             exit(1);
         }
-        // skip space
-        fgetc(file_p);
 
         double* biases_p = *(biases_pp + layer_i);
         for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
@@ -205,11 +204,11 @@ void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
         fgetc(file_p);
 
         /* parse weights */
-
+        char c;
         // check tag
-        if (fgetc(file_p) != 'w')
+        if ((c = fgetc(file_p)) != 'w')
         {
-            fprintf(stderr, "Missing tag `w` in %s\n", CONFIG_FILE);
+            fprintf(stderr, "Missing tag `w` in %s got %c\n", CONFIG_FILE, c);
             fclose(file_p);
             exit(1);
         }
@@ -219,6 +218,7 @@ void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
         {
             // skip space
             fgetc(file_p);
+
             // check tag
             if (fgetc(file_p) != '>')
             {
@@ -230,7 +230,6 @@ void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
             double* weights_p = *(weights_pp + node_i);
             for (int prev_node_i = 0; prev_node_i < prev_nb_nodes; prev_node_i++)
             {
-                // get value
                 fscanf(file_p, " %lf", &value_buf);
                 *(weights_p + prev_node_i) = value_buf;
             }
@@ -238,8 +237,6 @@ void get_config(const int nb_inputs, const int nb_layers, const int nb_nodes[],
 
         // go to next line
         fgetc(file_p);
-
-        prev_nb_nodes = curr_nb_nodes;
     }
 
     fclose(file_p);
