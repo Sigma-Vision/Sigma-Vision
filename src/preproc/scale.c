@@ -126,9 +126,9 @@ int fillStats(int* label, int* label_stats, int h, int w)
 
 void find_coo(Uint32* pixel, int* label, int l, int h, int w)
 {
-    int i = 0;
+    int i = h - 1;
     int j = 0;
-    while(i < h && label[i * w + j] != l)
+    while(i > 0 && label[i * w + j] != l)
     {
         while (j < w)
         {
@@ -138,12 +138,12 @@ void find_coo(Uint32* pixel, int* label, int l, int h, int w)
                 break;
             j += 1;
         }
-        i += 1;
+        i -= 1;
         j = 0;
     }
-    i = h - 1;
+    i = 0;
     j = w - 1;
-    while(i > 0 && label[i * w + j] != l)
+    while(i < h && label[i * w + j] != l)
     {
         while (j > 0)
         {
@@ -153,8 +153,8 @@ void find_coo(Uint32* pixel, int* label, int l, int h, int w)
                 break;
             j -= 1;
         }
-        i -= 1;
-        j = w;
+        i += 1;
+        j = w - 1;
     }
 }
 
@@ -164,11 +164,11 @@ void find_square(int* label, int h, int w, int l, Square* square)
     Dot topLeft;
     int i = 0;
     int j = 0;
-    while (i < h && label[i * w + j] != l)
+    while (i < h && j < w&& label[i * w + j] != l)
     {
         while (j < w && label[i * w + j] != l)
             j++;
-        if (label[i * w + j] != l)
+        if (j <= w && label[i * w + j] != l)
         {
             i++;
             j = 0;
@@ -177,39 +177,35 @@ void find_square(int* label, int h, int w, int l, Square* square)
     topLeft.X = i;
     topLeft.Y = j;
 
-    printf("Point 1 : %i, %i\n", i, j);
-
     // Top Right
     Dot topRight;
     i = 0;
     j = w - 1;
-    while (i < h && label[i * w + j] != l)
+    while (j > 0 && i < h && label[i * w + j] != l)
     {
-        while (j > 0 && label[i * w + j] != l)
-            j--;
-        if (label[i * w + j] != l)
-        {
+        while (i < h - 1 && label[i * w + j] != l)
             i++;
-            j = w - 1;
+        if (i < h && label[i * w + j] != l)
+        {
+            j--;
+            i = 0;
         }
     }
     topRight.X =i;
     topRight.Y = j;
 
-    printf("Point 1 : %i, %i\n", i, j);
-
     // Top Left
     Dot bottomLeft;
     i = h - 1;
     j = 0;
-    while (i > 0 && label[i * w + j] != l)
+    while (j < w && i > 0 && label[i * w + j] != l)
     {
-        while (j < w && label[i * w + j] != l)
-            j++;
-        if (label[i * w + j] != l)
-        {
+        while (i > 0 && label[i * w + j] != l)
             i--;
-            j = 0;
+        if (i >= 0 && label[i * w + j] != l)
+        {
+            j++;
+            i = h - 1;
         }
     }
     bottomLeft.X = i;
@@ -223,17 +219,19 @@ void find_square(int* label, int h, int w, int l, Square* square)
 
 int Area(Square* square)
 {
-    float d = sqrt(pow(abs(square->topLeft.X - square->topRight.X), 2) +
-                pow(abs(square->topLeft.Y - square->topRight.Y), 2)) * 
-                sqrt(pow(abs(square->topLeft.X - square->bottomLeft.X), 2) +
+    double d1 = sqrt(pow(abs(square->topLeft.X - square->topRight.X), 2) +
+                pow(abs(square->topLeft.Y - square->topRight.Y), 2));
+
+    double d2 = sqrt(pow(abs(square->topLeft.X - square->bottomLeft.X), 2) +
                 pow(abs(square->topLeft.Y - square->bottomLeft.Y), 2));
 
-    printf("Pt 1 : %i, %i ; Pt 2 : %i, %i\n", square->topLeft.X,
-        square->topLeft.Y, square->topRight.X, square->topRight.Y);
+    printf("Pt 1 : %i, %i ; Pt 2 : %i, %i ; Pt 3 : %i, %i\n", square->topLeft.X,
+        square->topLeft.Y, square->topRight.X, square->topRight.Y, 
+         square->bottomLeft.X, square->bottomLeft.Y);
 
-    printf("Distance : %i \n", d);
-    printf("Area : %i\n", d * d);
-    return d;
+    printf("Distance : %i ; %i \n", (int) d1, (int) d2);
+    printf("Area : %i\n\n", (int) (d1 * d2));
+    return (int) (d1 * d2);
 }
 
 void max(int* label_stats, int l, int* index)
@@ -260,7 +258,6 @@ void max(int* label_stats, int l, int* index)
             }
         }
     }
-    printf("nb of max : %i, %i", max, max2);
 }
 
 Square* find_grid(SDL_Surface* surface)
@@ -301,6 +298,7 @@ Square* find_grid(SDL_Surface* surface)
     // find the 2 biggest label
     int big_label[] = {0, 0};
     max(label_stats, maxLabel, big_label);
+    printf("Label 1 : %i ; Label 2 : %i\n\n", big_label[0], big_label[1]);
 
     Square square1;
     Square square2;
@@ -308,10 +306,19 @@ Square* find_grid(SDL_Surface* surface)
     find_square(label, h, w, big_label[0], &square1);
     find_square(label, h, w, big_label[1], &square2);
 
-    if (Area(&square1) > Area(&square2))
+    int a1 = Area(&square1);
+    int a2 = Area(&square2);
+    printf("Area 1 : %i, Area 2 : %i\n", a1, a2);
+    if (a1 > a2)
+    {
         find_coo(pixels, label, big_label[0], h, w);
+        printf("Label : %i\n", big_label[0]);
+    }
     else
+    {
         find_coo(pixels, label, big_label[1], h, w);
+        printf("Label : %i\n", big_label[1]);
+    }
 
     // fill inside the label
     //fillLabel(label, big_label, h, w);
@@ -325,12 +332,11 @@ Square* find_grid(SDL_Surface* surface)
    // big_label[0] = 0;
     //max(label_stats, maxLabel, big_label);
 
-    find_coo(pixels, label, big_label[0], h, w);
 
     free(label_stats);
     free(label);
     SDL_UnlockSurface(surface);
     
-    return Area(&square1) > Area(&square2) ? &square1 : &square2;
+    return a1 >= a2 ? &square1 : &square2;
 }
 
