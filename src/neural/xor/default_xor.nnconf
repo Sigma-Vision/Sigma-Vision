@@ -1,8 +1,0 @@
-# SUMMARY
-l 1
-s 2 2 1
-# DATA
-b 1 1
-w > 1 1 > 1 1
-b 1
-w > 1 1
