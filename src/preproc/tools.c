@@ -248,4 +248,58 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
     surface = SobelTransform(surface);
 }*/
 
+SDL_Surface* GridCropping (SDL_Surface* surface, Dot* dot1,Dot* dot2)
+{
+    int width = surface->w;
+    int height = surface->h;
+    Uint32* pixels = surface->pixels;
 
+    int side_len = dot2->X - dot1->X;
+
+    SDL_Surface* res = SDL_CreateRGBSurface(0,side_len,side_len,32,0,0,0,0);
+    Uint32* respixels = res->pixels;
+
+    for (int i = 0; i < side_len; i++)
+    {
+        for (int j = 0 ; j < side_len; j++)
+        {
+            respixels[i*side_len+j] = pixels[(i+dot1->X)*width+(j+dot1->X)];
+        }
+    } 
+    
+    return res;
+}
+
+
+
+void GridSplit(SDL_Surface* surface)
+{
+    int width = surface->w;
+    int height = surface->h;
+
+    int w9 = width/9;
+    int h9 = height/9;
+    
+    char filename[30];
+
+    for (int i = 0;i < 9;i++)
+    {
+        for (int j = 0;j < 9;j++)
+        {
+            Dot dot1;
+            dot1.X = w9*j;
+            dot1.Y = h9*i;
+
+            Dot dot2;
+            dot2.X = w9*(j+1);
+            dot2.Y = h9*(i+1);
+
+            SDL_Surface* temp = GridCropping(surface,&dot1,&dot2);
+            
+            snprintf(filename,sizeof(filename),"case_r%c_c%c",i+48,j+48);
+            IMG_SaveJPG(temp, filename,100);
+
+            SDL_FreeSurface(temp);
+        }
+    }
+}
