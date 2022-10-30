@@ -1,23 +1,32 @@
 # Makefile
 
 CC = gcc
-CPPFLAGS =
+CPPFLAGS = -MMD
 CFLAGS = -Wall -Wextra -g -O2 `pkg-config --cflags gtk+-3.0` 
 LDFLAGS =
-LDLIBS = `pkg-config --libs gtk+-3.0`
+LDLIBS = -lm `pkg-config --libs gtk+-3.0`
 
-SRC = main.c
+SRC = ui.c no-make/main.c
 OBJ = ${SRC:.c=.o}
-EXE = ${SRC:.c=}
+DEP = ${SRC:.c=.d}
 
-ui: main.o $(OBJ)
+SRC_TEST = test.c
+OBJ_TEST = ${SRC_TEST:.c=.o}
+DEP_TEST = ${SRC_TEST:.c=.d}
+
+
+ui: ${OBJ}
+
+test: ${OBJ} ${OBJ_TEST}
+
 
 -include ${DEP}
 
 .PHONY: clean
 
 clean:
-	${RM} ${OBJ}
-	${RM} UI
+	${RM} ${OBJ} ${OBJ_TEST}
+	${RM} ${DEP} ${DEP_TEST}
+	${RM} ui
 
 # END

@@ -99,7 +99,7 @@ static void hide_solve_menu()
 	gtk_widget_hide (windowSolved);
 }
 
-int main (int argc, char *argv[])
+int ui (int argc, char *argv[])
 {
     gtk_init (&argc, &argv);
     builder = gtk_builder_new ();
