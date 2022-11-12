@@ -314,5 +314,4 @@ void GridSplit(SDL_Surface* surface)
             SDL_FreeSurface(temp);
         }
     }
-
 }
