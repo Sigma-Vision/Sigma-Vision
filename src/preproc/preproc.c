@@ -28,11 +28,19 @@ int preproc(int argc, char** argv)
 
     Square s;
     find_grid(surface, &s);
+  
     
+
     //rotate180(surface);
 
-    //surface = rotateAny(surface,-45,255);
+//  surface = rotateAny(surface,0,255,1);
     
+    surface = RotateDetectedGrid(surface,&s); 
+
+    SDL_Surface* to_free = surface;
+    surface = GridCropping(to_free,&s);
+    SDL_FreeSurface(to_free);
+
     char* filename = argv[2];
     IMG_SaveJPG(surface,filename,100);
     // - Cleanup

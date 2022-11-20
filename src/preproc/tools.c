@@ -248,7 +248,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
     surface = SobelTransform(surface);
 }*/
 
-SDL_Surface* GridCropping (SDL_Surface* surface, Dot* dot1,Dot* dot2)
+SDL_Surface* GridCropping (SDL_Surface* surface, Square* s)
 {
     /**
      * WARNING : THIS FUNCTION DOES NOT FREE THE SURFACE surface, 
@@ -256,24 +256,35 @@ SDL_Surface* GridCropping (SDL_Surface* surface, Dot* dot1,Dot* dot2)
      * SURFACE IF YOU DO NOT NEED IT AFTERWARDS
      */
     
+    // X = vertical | Y = horizontal
+
+
     int width = surface->w;
     Uint32* pixels = surface->pixels;
 
-    int side_len = dot2->Y - dot1->Y;
+    int side_len_y = s->topRight.Y - s->topLeft.Y;
+    int side_len_x = s->topLeft.X - s->bottomLeft.X;
 
-    SDL_Surface* res = SDL_CreateRGBSurface(0,side_len,side_len,32,0,0,0,0);
+    Dot dot1 = s->topLeft; 
+
+    printf("side len : x = %i _ y = %i | img width = %i\n",side_len_x,side_len_x,surface->h); 
+
+    SDL_Surface* res = SDL_CreateRGBSurface(0,side_len_y,side_len_x,32,0,0,0,0);
     Uint32* respixels = res->pixels;
     
-
+    //pb : i > h
     if (SDL_LockSurface(res) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    for (int i = 0; i < side_len; i++)
+    for (int i = 0; i < side_len_y; i++)
     {
-        for (int j = 0 ; j < side_len; j++)
+        for (int j = 0 ; j < side_len_x; j++)
         {
-            respixels[i*side_len+j] = pixels[(i+dot1->X)*width+(j+dot1->Y)];
+            respixels[i*side_len_y+j] = pixels[(i+dot1.Y)*width+(j+dot1.X)];
         }
+
+        //if (i > 1414)
+          //  errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i",dot1->X,dot1->Y,s->topRight->X,s->topRight->Y);    
     }
 
     SDL_UnlockSurface(res);
