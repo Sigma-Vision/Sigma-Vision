@@ -4,6 +4,9 @@
 #include <SDL2/SDL_image.h>
 #include "struct.h"
 
+/**
+ * recursive for Step2
+**/
 void Step2_rec(int* label, int h, int w, int i, int j, int l, int r)
 {
     label[i * w + j] = l;
@@ -24,6 +27,9 @@ void Step2_rec(int* label, int h, int w, int i, int j, int l, int r)
     }
 }
 
+/**
+ * Description : labeling the grid (label (h * w)
+**/
 void Step2(int* label, int h, int w)
 {
     for (int i = 0; i < h; i++)
@@ -36,72 +42,12 @@ void Step2(int* label, int h, int w)
     }
 }
 
-int isSquare(int* label, int h, int w, int i, int j, int l)
-{
-    int i1 = i;
-    while (i1 < h && label[i1 * w + j] != l)
-        i1 += 1;
-    if (i1 >= h || label[i1 * w + j] != l)
-        return 0;
-
-    int j1 = j;
-    while (j1 < w && label[i * w + j1] != l)
-        j1 += 1;
-    if (j1 >= w || label[i * w + j1] != l)
-        return 0;
-
-    i1 = i - 1;
-    while (i1 > 0 && label[i1 * w + j] != l)
-        i1 -= 1;
-    if (i1 < 0 || label[i1 * w + j] != l)
-        return 0;
-
-    j1 = j;
-    while (j1 > 0 && label[i * w + j1] != l)
-        j1 -= 1;
-    if (j1 < 0 || label[i * w + j1] != l)
-        return 0;
-    return 1;
-}
-
-void fillSquare(int* label, int i, int j, int h, int w, int l)
-{
-    int i1 = i;
-    while (i1 < h && label[i1 * w + j] != l)
-    {
-        i1 += 1;
-        label[i1 * w + j] = l;
-    }
-
-    int j1 = j;
-    while (j1 < h && label[i * w + j1] != l)
-    {
-        j1 += 1;
-        label[i * w + j1] = l;
-    }
-}
-
-int fillLabel(int* label, int* bigLabel, int h, int w)
-{
-    int l1 = bigLabel[0];
-    int l2 = bigLabel[1];
-    printf("fill label : %i, %i", l1, l2);
-
-    for (int i = 0; i < h; i++)
-    {
-        for (int j = 0; j < w - 1; j++)
-        {
-            if (label[i * w + j] == l1 && label[i * w + j + 1] != l1)
-                if (isSquare(label, h, w, i, j + 1, l1))
-                    fillSquare(label, i, j + 1, h, w, l1);
-            if (label[i * w + j] == l2 && label[i * w + j + 1] != l2)
-                if (isSquare(label, h, w, i, j + 1, l2))
-                    fillSquare(label, i, j + 1, h, w, l2);
-        }
-    }
-    return 1;
-}
-
+/** 
+ * check if the cell must be labeled
+ * return 
+ *      lebel of the cell if the cell must be labeled
+ *      -1 else
+**/
 int IsLabeled(int prev, int prev_top, Uint32 p, SDL_PixelFormat* format)
 {
     Uint8 r, g, b;
@@ -115,6 +61,12 @@ int IsLabeled(int prev, int prev_top, Uint32 p, SDL_PixelFormat* format)
     return -1;
 }
 
+/** 
+ * Fill the array label_stats with the label array
+ * label : array (h * w) with the differents label of the image
+ * label_stats : array (nb Label)
+ * Description : foreach label store the number of cells
+**/
 void fillStats(int* label, int* label_stats, int h, int w)
 {
     for (int i = 1; i < h; i ++)
@@ -125,7 +77,12 @@ void fillStats(int* label, int* label_stats, int h, int w)
     }
 }
 
-void find_coo(Uint32* pixel, int* label, int l, int h, int w)
+/**
+ * Fill everything else than the label in blue
+ * label : grid (h * w) witch store the differents labels
+ * l : label to save
+**/
+void add_color(Uint32* pixel, int* label, int l, int h, int w)
 {
     int i = h - 1;
     int j = 0;
@@ -159,6 +116,12 @@ void find_coo(Uint32* pixel, int* label, int l, int h, int w)
     }
 }
 
+/**
+ * Descriptiom : find the coo of the label :
+ * Find the right top angle
+ * Find the right bottom angle
+ * Find the left top angle
+**/
 void find_square(int* label, int h, int w, int l, Square* square)
 {
     // Top Left
@@ -218,6 +181,9 @@ void find_square(int* label, int h, int w, int l, Square* square)
     square->bottomLeft = bottomLeft;
 }
 
+/**
+ * Description : calculate the area of a square
+**/
 int Area(Square* square)
 {
     double d1 = sqrt(pow(abs(square->topLeft.X - square->topRight.X), 2) +
@@ -235,6 +201,9 @@ int Area(Square* square)
     return (int) (d1 * d2);
 }
 
+/**
+ * find the index of the max of the array of label_stats and store it in *index
+**/
 void max(int* label_stats, int l, int* index)
 {
     int max = label_stats[0];
@@ -261,6 +230,9 @@ void max(int* label_stats, int l, int* index)
     }
 }
 
+/**
+ * Find the grid of the imge
+**/
 void find_grid(SDL_Surface* surface, Square* s)
 {
     Uint32* pixels = surface->pixels;
@@ -315,7 +287,7 @@ void find_grid(SDL_Surface* surface, Square* s)
         s->topLeft = square1.topLeft;
         s->topRight = square1.topRight;
         s->bottomLeft = square1.bottomLeft;
-        find_coo(pixels, label, big_label[0], h, w);
+        add_color(pixels, label, big_label[0], h, w);
         printf("Label : %i\n", big_label[0]);
     }
     else
@@ -323,21 +295,9 @@ void find_grid(SDL_Surface* surface, Square* s)
         s->topLeft = square2.topLeft;
         s->topRight = square2.topRight;
         s->bottomLeft = square2.bottomLeft;
-        find_coo(pixels, label, big_label[1], h, w);
+        add_color(pixels, label, big_label[1], h, w);
         printf("Label : %i\n", big_label[1]);
     }
-
-    // fill inside the label
-    //fillLabel(label, big_label, h, w);
-
-    // stats to 0
-    //for (int i = 0; i < maxLabel; i ++)
-      //  label_stats[i] = 0;
-
-
-    //fillStats(label, label_stats, h, w);
-   // big_label[0] = 0;
-    //max(label_stats, maxLabel, big_label);
 
 
     free(label_stats);
