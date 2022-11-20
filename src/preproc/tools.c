@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <err.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_image.h> 
 #include "struct.h"
 
 /** 
@@ -48,205 +48,6 @@ SDL_Surface* load_image(const char* path)
     return res;
 }
 
-int comp_el_value(SDL_Surface* surface, int i, int j, const Kernel* kernel)
-{
-    int radius = kernel->radius;
-    int* matrix = kernel->matrix;
-
-    int width = surface->w;
-    int height = surface->h;
-
-    int value = 0;
-
-    int index_y;
-    int index_x;
-    
-    for (int k = 0; k < radius*radius; k++)
-    {
-        index_y = i + (k/radius - radius/2);
-
-        if (index_y < 0 || index_y >= height)
-            continue;
-
-
-        index_x = j + (k % radius - radius/2);
-
-        if (index_x < 0 || index_x >= width)
-            continue;
-
-        value+= matrix[k] * GetColor(surface,index_y,index_x); 
-    }
-    
-    return value; 
-}
-
-SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
-{
-    //test with several radiuses
-
-    int* mat = calloc(radius*radius,sizeof(int));
-
-    int full_w = 0;
-    int mat_val = 1;
-
-    for (int k = 0;k < radius*radius;k++)
-    {
-        *(mat+k) = mat_val;
-        full_w += mat_val;
-        
-        if (k % radius == radius - 1)
-        {
-            if (k / radius < radius/2)
-               mat_val *= 2;
-            else
-               mat_val /= 2; 
-        }
-        else
-        {
-            if (k % radius < radius/2)
-                mat_val *= 2;
-            else
-                mat_val /= 2;
-        }
-    }
-
-    Kernel kernel = { .radius = radius, .matrix = mat};
-
-
-    if (SDL_LockSurface(surface) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    
-    SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
-
-    if (SDL_LockSurface(temp) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    Uint32* npixels = temp-> pixels;
-
-    int value;
-    for (int i = 0;i < surface-> h; i++)
-    {
-        for ( int j = 0; j < surface -> w; j++)
-        {
-            value = comp_el_value(surface,i,j,&kernel) / full_w;
-
-            npixels[i* surface->w + j] = SDL_MapRGB(surface->format, value,value,value);  
-        }
-    }
-    
-    free(mat);
-
-    SDL_FreeSurface(surface);
-
-    SDL_UnlockSurface(temp);
-
-    return temp;
-}
-
-SDL_Surface* SobelTransform(SDL_Surface* surface)
-{
-    //we use a 5x5 kernel here, may not be needed or may need 7x7
-    
-    int matx[25] = 
-    {
-        -5, -4, 0, 4, 5, 
-        -8, -10, 0, 10, 8,
-        -10, -20, 0, 20, 10,
-        -8, -10, 0, 10, 8,
-        -5, -4, 0, 4, 5
-    };
-
-    int maty[25] = 
-    {
-        -5,-8,-10,-8,-5,
-        -4,-10,-20,-10,-4,
-        0,0,0,0,0,
-        4,10,20,10,4,
-        5,8,10,8,5
-    };
-
-    Kernel Gx = { .radius = 5, .matrix = matx};
-
-    Kernel Gy = { .radius = 5, .matrix = maty};
-    
-    /*
-
-    //radius = 3
-
-    int matx[9] = 
-    {
-        -1,0,1,
-        -2,0,2,
-        -1,0,1
-    };
-    
-    int maty[9] =
-    {
-        -1,-2,-1,
-        0,0,0,
-        -1,2,1
-    };
-
-    Kernel Gx = {.radius = 3, .matrix = matx};
-
-    Kernel Gy = {.radius = 3, .matrix = maty};
-    
-    */
-
-    if (SDL_LockSurface(surface) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    
-    SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
-
-    if (SDL_LockSurface(temp) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    Uint32* npixels = temp-> pixels;
-    SDL_PixelFormat* format = surface->format;
-
-    int valuex;
-    int valuey;
-    double G;
-    int value;
-    //double angle;
-
-    //convolution
-    for (int i = 0;i < surface-> h; i++)
-    {
-        for ( int j = 0; j < surface -> w; j++)
-        {
-            valuex = comp_el_value(surface,i,j,&Gx);
-            valuey = comp_el_value(surface,i,j,&Gy);
-
-            G = sqrt(valuex*valuex + valuey*valuey);
-
-            //angle = atan((double)valuey / (double)valuex);
-
-            //compute the G of (x+1,y+1) et (x-1,y-1) (déterminés selon l'angle)
-            //determine if value = 0 or 255
-            //
-            //then put treshold in place
-            //printf("%f\n",angle);
-            value = G > 100 ? 255 : 0;
-            npixels[i* surface->w + j] = SDL_MapRGB(format,value,value,value); 
-        }
-    }
-     
-    SDL_FreeSurface(surface);
-
-    SDL_UnlockSurface(temp);
-
-    return temp;
-}
-
-
-/*SDL_Surface* CannyTransform(SDL_Surface* surface)
-{
-    if (SDL_LockSurface(surface) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    surface = SobelTransform(surface);
-}*/
 
 SDL_Surface* GridCropping (SDL_Surface* surface, Square* s)
 {
@@ -263,28 +64,28 @@ SDL_Surface* GridCropping (SDL_Surface* surface, Square* s)
     Uint32* pixels = surface->pixels;
 
     int side_len_y = s->topRight.Y - s->topLeft.Y;
-    int side_len_x = s->topLeft.X - s->bottomLeft.X;
+    int side_len_x =  s->bottomLeft.X - s->topLeft.X ;
 
     Dot dot1 = s->topLeft; 
 
-    printf("side len : x = %i _ y = %i | img width = %i\n",side_len_x,side_len_x,surface->h); 
+    printf("side len : x = %i _ y = %i | img width = %i\n",side_len_x,side_len_y,surface->h); 
 
     SDL_Surface* res = SDL_CreateRGBSurface(0,side_len_y,side_len_x,32,0,0,0,0);
     Uint32* respixels = res->pixels;
     
-    //pb : i > h
     if (SDL_LockSurface(res) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    for (int i = 0; i < side_len_y; i++)
+    for (int i = 0; i < side_len_x; i++)
     {
-        for (int j = 0 ; j < side_len_x; j++)
+        for (int j = 0 ; j < side_len_y; j++)
         {
-            respixels[i*side_len_y+j] = pixels[(i+dot1.Y)*width+(j+dot1.X)];
+            respixels[i*side_len_y+j] = pixels[(i+dot1.X)*width+(j+dot1.Y)];
         }
 
-        //if (i > 1414)
-          //  errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i",dot1->X,dot1->Y,s->topRight->X,s->topRight->Y);    
+        //if (i > 1000)
+            printf("DOT3 : X = %i and Y = %i\n",s->bottomLeft.X, s->bottomLeft.Y);
+            errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i\n",dot1.X,dot1.Y,s->topRight.X,s->topRight.Y);    
     }
 
     SDL_UnlockSurface(res);
@@ -304,20 +105,22 @@ void GridSplit(SDL_Surface* surface)
     
     char filename[15];
 
-    Dot dot1;
-    Dot dot2;
+    Square s;
     
     for (int i = 0;i < 9;i++)
     {
         for (int j = 0;j < 9;j++)
         {
-            dot1.Y = w9*j;
-            dot1.X = h9*i;
+            s.topLeft.Y = w9*j;
+            s.topLeft.X = h9*i;
 
-            dot2.Y = w9*(j+1);
-            dot2.X = h9*(i+1);
+            s.topRight.Y = w9*(j+1);
+            s.topRight.X = h9*i;
 
-            SDL_Surface* temp = GridCropping(surface,&dot1,&dot2);
+            s.bottomLeft.Y = w9*j;
+            s.bottomLeft.X = h9*(j+1);
+
+            SDL_Surface* temp = GridCropping(surface,&s);
 
             snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
             IMG_SaveJPG(temp, filename,100);

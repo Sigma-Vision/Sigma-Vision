@@ -6,6 +6,7 @@
 #include "struct.h"
 #include "rotate.h"
 #include "scale.h"
+#include "transform.h"
 
 int preproc(int argc, char** argv)
 {

@@ -311,7 +311,7 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
 
     if (s->topLeft.Y > s->topRight.Y)
     {
-        Dot* temp = &s->topLeft;
+        Dot temp = s->topLeft;
         cdot1.X = s->topRight.X;
         cdot1.Y = s->topRight.Y;
         cdot2.X = temp.X;
