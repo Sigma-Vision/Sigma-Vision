@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "neutralize.h"
+#include "transform.h"
 #include "tools.h"
 #include "struct.h"
 #include "rotate.h"
