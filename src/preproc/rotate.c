@@ -305,6 +305,8 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
     //if (topLeft->Y != topRight->Y)
         //printf("DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i",topLeft->X,topLeft->Y,topRight->X,topRight->Y);    
     
+    //printf("DOT3 : X = %i and Y = %i\n",s->bottomLeft.X, s->bottomLeft.Y);
+    //errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i\n",s->topLeft.X,s->topLeft.Y,s->topRight.X,s->topRight.Y);    
 
     if (s->topLeft.Y == s->topRight.Y)
         errx(1,"RotateDetectedGrid: Length of the top line of the grid is 0.");
