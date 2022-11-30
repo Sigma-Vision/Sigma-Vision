@@ -27,6 +27,6 @@ no-make/test: ${OBJ} ${OBJ_TEST}
 clean:
 	${RM} ${OBJ} ${OBJ_TEST}
 	${RM} ${DEP} ${DEP_TEST}
-	${RM} network no-make/test *.nnconf
+	${RM} network no-make/test
 
 # END
