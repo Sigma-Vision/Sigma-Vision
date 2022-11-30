@@ -33,7 +33,7 @@ int use(double inputs[])
     if (INPUT_SIZE != get_nb_inputs())
     {
         fprintf(stderr, "Invalid number of inputs. %i in config file, %i in header.\n",
-                get_nb_inputs, INPUT_SIZE());
+                get_nb_inputs(), INPUT_SIZE);
         exit(1);
     }
 
@@ -93,7 +93,7 @@ int use(double inputs[])
         }
     }
 
-    char result = get_output(*(nodes_pp + nb_layers - 1);
+    char result = get_output(*(nodes_pp + nb_layers - 1));
     printf("RESULT: %i\n", result);
 
     free_memory(nb_layers, nb_nodes, nodes_pp, 0, biases_pp,
