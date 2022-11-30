@@ -3,14 +3,15 @@
 #include <stdio.h>
 #include "nn_tools.h"
 #include "config_manager.h"
+#include "digit_net.h"
 
 
 /**
-** Extract bit array from picture updating double* bit_a values
+** Extract bit array from picture updating double* inputs values
 ** digit: value represented in picture (1-9)
 ** n: file identifier number
 */
-void get_bit_array(char digit, long n, double* bit_a);
+void get_inputs(int digit, long n, double inputs[]);
 
 
 /**
@@ -18,6 +19,8 @@ void get_bit_array(char digit, long n, double* bit_a);
 */
 int learn(const int NB_ITER)
 {
+    init_rand();
+
     /* Network configuration */
     const int nb_inputs = 2;
     const int nb_layers = 2;
@@ -31,17 +34,10 @@ int learn(const int NB_ITER)
     init_params(nb_inputs, nb_layers, nb_nodes, nodes_pp, deltas_pp,
                 biases_pp, weights_ppp, 1);
 
-
     /* Training set */
-
-    static const int nb_training_sets = 4;
-    double training_inputs[4][2] =
-           { {0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f} };
-    double training_outputs[4][2] =
-           { {1.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 1.0f}, {1.0f, 0.0f} };
-
-    int training_set_order[] = { 0, 1, 2, 3 };
-
+    static const int nb_digits = 9;
+    int digit_set_order[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8};
+    double training_inputs[INPUT_SIZE];
 
     const double learning_rate = 0.1f;
 
@@ -50,11 +46,14 @@ int learn(const int NB_ITER)
 
     for (int iter_i = 0; iter_i < NB_ITER; iter_i++)
     {
-        shuffle(training_set_order, nb_training_sets);
+        shuffle(digit_set_order, nb_digits);
+        long file_id = get_rand_long(DATASET_SIZE);
 
-        for (int x = 0; x < nb_training_sets; x++)
+        for (int x = 0; x < nb_digits; x++)
         {
-            int i = training_set_order[x];
+            int i = digit_set_order[x];
+            get_inputs(i, file_id, training_inputs);
+
             double* nodes_p = *nodes_pp;
             double* biases_p = *biases_pp;
             double** weights_pp = *weights_ppp;
@@ -72,7 +71,7 @@ int learn(const int NB_ITER)
                 double* weights_p = *(weights_pp + node_i);
 
                 for (int input_i = 0; input_i < nb_inputs; input_i++)
-                    activation += training_inputs[i][input_i]
+                    activation += training_inputs[input_i]
                                 * *(weights_p + input_i);
 
                 *(nodes_p + node_i) = sigmoid(activation);
@@ -103,16 +102,6 @@ int learn(const int NB_ITER)
             }
 
 
-            /*
-            printf("Input: %f %f", training_inputs[i][0],
-                                   training_inputs[i][1]);
-            printf("    Output: %f %f", *(*(nodes_pp + nb_layers - 1))
-                                      , *(*(nodes_pp + nb_layers - 1) + 1));
-            printf("    Expected Output: %f %f\n", training_outputs[i][0]
-                                                 , training_outputs[i][1]);
-            */
-
-
             /* BACK PROPAGATION */
 
             /* Get deltas */
@@ -124,8 +113,8 @@ int learn(const int NB_ITER)
 
             // output layer
             for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
-                *(curr_deltas_p + node_i) = d_sigmoid(*(nodes_p + node_i))
-                    * (training_outputs[i][node_i] - *(nodes_p + node_i));
+                *(curr_deltas_p + node_i) = -*(nodes_p + node_i);
+            *(curr_deltas_p + i) = d_sigmoid(*(nodes_p + i)) - *(nodes_p + i);
 
             for (int layer_i = nb_layers - 2; layer_i >= 0; layer_i--)
             {
@@ -166,7 +155,7 @@ int learn(const int NB_ITER)
                 double* weights_p = *(weights_pp + node_i);
                 for (int input_i = 0; input_i < nb_inputs; input_i++)
                     *(weights_p + input_i) +=
-                        training_inputs[i][input_i] * factor;
+                        training_inputs[input_i] * factor;
             }
 
             for (int layer_i = 1; layer_i < nb_layers; layer_i++)

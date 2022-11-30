@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 /**
 ** Basic sigmoid activation function
@@ -18,7 +19,23 @@ double d_sigmoid(double x)
 }
 
 /**
-** Generate random number
+** Init random number generation
+*/
+void init_rand()
+{
+    srand(time(NULL));
+}
+
+/**
+** Generate random number long between 0 and n-1
+*/
+long get_rand_long(long n)
+{
+    return (long) rand() % n;
+}
+
+/**
+** Generate random number between 0 and 1
 */
 double get_rand_double()
 {
@@ -36,7 +53,7 @@ void shuffle(int *array, size_t n)
 
         for (i = 0; i < n - 1; i++)
         {
-            size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
+            size_t j = i + (rand() * (n - i + 1)) / RAND_MAX;
             int tmp = array[j];
 
             array[j] = array[i];

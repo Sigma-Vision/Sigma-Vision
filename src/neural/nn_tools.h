@@ -3,6 +3,8 @@
 double sigmoid(double x);
 double d_sigmoid(double x);
 
+void init_rand();
+long get_rand_long(long n);
 double get_rand_double();
 
 void shuffle(int* array, size_t n);
