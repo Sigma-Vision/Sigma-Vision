@@ -116,6 +116,10 @@ void add_color(Uint32* pixel, int* label, int l, int h, int w)
     }
 }
 
+
+
+
+
 /**
  * Descriptiom : find the coo of the label :
  * Find the right top angle
@@ -172,6 +176,75 @@ void find_square(int* label, int h, int w, int l, Square* square)
             i = h - 1;
         }
     }
+    bottomLeft.X = i;
+    bottomLeft.Y = j;
+
+
+    square->topLeft = topLeft;
+    square->topRight = topRight;
+    square->bottomLeft = bottomLeft;
+}
+
+void find_square2(int* label, int h, int w, int l, Square* square)
+{
+    // Top Left
+    Dot topLeft;
+    int i = 0;
+    int j = 0;
+    while (i < h && label[i * w + j] != l)
+    {
+        while (j < i && j < w && label[i * w + j] != l)
+        {
+            j++;
+        }
+        if (i < h && j < w && label[i * w + j] != l)
+        {
+            i++;
+            j = 0;
+        }
+    }
+
+    topLeft.X = i;
+    topLeft.Y = j;
+
+    // Top Right
+    Dot topRight;
+    i = 0;
+    j = w - 1;
+    while (i < h && label[i * w + j] != l)
+    {
+        while (j > i && j < w && label[i * w + j] != l)
+        {
+            j--;
+        }
+        if (i < h && j < w && label[i * w + j] != l)
+        {
+            i++;
+            j = w - 1;
+        }
+    }
+
+    topRight.X = i;
+    topRight.Y = j;
+
+    // Bottom Left
+    Dot bottomLeft;
+    i = h - 1;
+    j = 0;
+
+    while (j < w && label[i * w + j] != l)
+    {
+        while (i > j && i < h && label[i * w + j] != l)
+        {
+            i--;
+        }
+        if (i < h && j < w && label[i * w + j] != l)
+        {
+            j++;
+            i = h - 1;
+        }
+    }
+
     bottomLeft.X = i;
     bottomLeft.Y = j;
 
@@ -284,6 +357,7 @@ void find_grid(SDL_Surface* surface, Square* s)
     printf("Area 1 : %i, Area 2 : %i\n", a1, a2);
     if (a1 > a2)
     {
+    	find_square2(label, h, w, big_label[0], &square1);
         s->topLeft = square1.topLeft;
         s->topRight = square1.topRight;
         s->bottomLeft = square1.bottomLeft;
@@ -292,6 +366,7 @@ void find_grid(SDL_Surface* surface, Square* s)
     }
     else
     {
+    	find_square2(label, h, w, big_label[1], &square2);
         s->topLeft = square2.topLeft;
         s->topRight = square2.topRight;
         s->bottomLeft = square2.bottomLeft;
