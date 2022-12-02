@@ -82,7 +82,7 @@ int solve(int grid[N][N], int row, int col)
  * Output : the grid[N][N] of the file
  * Description : make a grid with a file
 **/
-void read(int grid[N][N], char* name)
+void solver_read(int grid[N][N], char* name)
 {
     FILE* file = NULL;
     file = fopen(name, "r");
@@ -125,7 +125,7 @@ void read(int grid[N][N], char* name)
  * Input : name of a file
  * Description : make a file with a grid
 **/
-void write(int grid[N][N], char name[])
+void solver_write(int grid[N][N], char name[])
 {
     // rename to name.result
     char res[100] = "";
@@ -174,10 +174,10 @@ int solve_file(char name[])
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                        { 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
-    read(grid, name);
+    solver_read(grid, name);
     if (solve(grid, 0, 0))
     {
-        write(grid, name);
+        solver_write(grid, name);
     }
     else
     {
