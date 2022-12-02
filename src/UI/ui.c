@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#define UNUSED(x) (void)(x)
 
 //Gtk variable declaration
 GtkBuilder      *builder;
@@ -88,26 +89,31 @@ static void save_image(gpointer window)
 
 void changeStackVisibleS (GtkButton* a, gpointer user_data)
 {
+    UNUSED(a);
 	gtk_stack_set_visible_child(user_data, SFixed);
 }
 
 void changeStackVisibleM (GtkButton *a, gpointer user_data)
 {
+    UNUSED(a);
 	gtk_stack_set_visible_child(user_data, NNTFixed);
 }
 
 void changeStackVisibleN (GtkButton *a, gpointer user_data)
 {
+    UNUSED(a);
 	gtk_stack_set_visible_child(user_data, normal_grid);
 }
 
 void changeStackVisibleSo (GtkButton *a, gpointer user_data)
 {
+    UNUSED(a);
 	gtk_stack_set_visible_child(user_data, SoFixed);
 }
 
 void changeBigStackVisible (GtkButton *a, gpointer user_data)
 {
+    UNUSED(a);
 	gtk_stack_set_visible_child(user_data, main_grid); 
 }
 
