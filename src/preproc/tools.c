@@ -118,7 +118,7 @@ void GridSplit(SDL_Surface* surface)
             s.topRight.X = h9*i;
 
             s.bottomLeft.Y = w9*j;
-            s.bottomLeft.X = h9*(j+1);
+            s.bottomLeft.X = h9*(i+1);
 
             SDL_Surface* temp = GridCropping(surface,&s);
 
