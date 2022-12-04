@@ -30,7 +30,7 @@
             </child>
             <child>
               <object class="GtkButton" id="ButtonHomepage">
-                <property name="label" translatable="yes">Démarer</property>
+                <property name="label" translatable="yes">Démarrer</property>
                 <property name="width-request">102</property>
                 <property name="height-request">44</property>
                 <property name="visible">True</property>
