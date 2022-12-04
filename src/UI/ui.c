@@ -117,6 +117,12 @@ void changeBigStackVisible (GtkButton *a, gpointer user_data)
     gtk_stack_set_visible_child(user_data, main_grid); 
 }
 
+void ui_solve(GtkButton *a, gpointer user_data)
+{
+    UNUSED(a);
+    char* c = "test.jpeg";
+    preproc(filename, c);
+}
 
 int ui (int argc, char *argv[])
 {
@@ -162,6 +168,7 @@ int ui (int argc, char *argv[])
     g_signal_connect(button_neural_network, "clicked", G_CALLBACK(changeStackVisibleM), Stack);
     g_signal_connect(button_normal_menu, "clicked", G_CALLBACK(changeStackVisibleN), Stack);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
+    g_signal_connect(button_solve, "clicked", G_CALLBACK(ui_solve), Stack);
 
     g_signal_connect(button_load_file, "selection_changed", G_CALLBACK(load_image), NULL);
 

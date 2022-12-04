@@ -85,7 +85,7 @@ SDL_Surface* GridCropping (SDL_Surface* surface, Square* s)
 
         //if (i > 1000)
             printf("DOT3 : X = %i and Y = %i\n",s->bottomLeft.X, s->bottomLeft.Y);
-            errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i\n",dot1.X,dot1.Y,s->topRight.X,s->topRight.Y);    
+            //errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i\n",dot1.X,dot1.Y,s->topRight.X,s->topRight.Y);    
     }
 
     SDL_UnlockSurface(res);
