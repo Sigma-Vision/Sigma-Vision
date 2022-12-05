@@ -16,9 +16,12 @@ GtkWidget		*button_solve;
 GtkWidget		*button_save_image;
 GtkWidget		*button_rotate_left;
 GtkWidget		*button_rotate_right;
+GtkWidget		*button_rotate_auto;
 GtkWidget		*button_settings;
 GtkWidget		*button_normal_menu;
 GtkWidget		*button_homepage;
+
+GtkWidget		*progress_bar;
 
 GtkWidget		*image1;
 
@@ -157,6 +160,9 @@ int ui (int argc, char *argv[])
 
     button_rotate_right = GTK_WIDGET (gtk_builder_get_object (builder, "rotate_right"));
     button_rotate_left = GTK_WIDGET (gtk_builder_get_object (builder, "rotate_left"));
+	button_rotate_auto = GTK_WIDGET (gtk_builder_get_object (builder, "auto_rotate"));
+
+	progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
 
     g_object_unref (G_OBJECT (builder));
 

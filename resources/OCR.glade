@@ -241,7 +241,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="auto_rotate">
                             <property name="label" translatable="yes">Rotation automatique</property>
                             <property name="width-request">149</property>
                             <property name="height-request">56</property>
@@ -255,7 +255,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkProgressBar">
+                          <object class="GtkProgressBar" id="progress">
                             <property name="width-request">381</property>
                             <property name="height-request">27</property>
                             <property name="visible">True</property>
