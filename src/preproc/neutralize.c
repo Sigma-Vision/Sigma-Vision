@@ -106,8 +106,6 @@ void OtsuNormalizeHistogram(int* histogram)
     int min_intensity = 0;
     int max_intensity = 255;
 
-    printf("working");
-
     for (; min_intensity< 256 && histogram[min_intensity] == 0; min_intensity++);
     for (; max_intensity >= 0 && histogram[max_intensity] == 0; max_intensity--);
 
@@ -134,20 +132,14 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
     {
         for (int j = 0;j < width; j++)
         {
-            //printf("working for : I = %i and J = %i\n",i,j);
             int value = GetColor(surface,i,j);
            
             if (value >= 256)
                 errx(1,"Image has color value above 256");
 
             histogram[value] += 1;
-            //printf("%i\n",histogram[value]); 
-            //printf("working for : I = %i and J = %i\n",i,j);
         }
-        //printf("out");
     }
-    
-    //OtsuNormalizeHistogram(histogram);
 
     return histogram;
 }
@@ -157,6 +149,8 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
     int full_w = surface->w * surface->h;
 
     int* histogram = OtsuBuildHistogram(surface);
+    
+    OtsuNormalizeHistogram(histogram);
     
     double Wb;
     double Wf;
@@ -201,16 +195,6 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
 
         variance = (int)(Wb*Wf*mu*mu);
 
-        /*
-        printf("VARIANCE = %i\n",variance);
-        printf("mu = %f\n",mu);
-        printf("Wb = %f\n",Wb);
-        printf("Wf = %f\n",Wf);
-
-
-        printf("------------------------------------\n");
-        */
-
         if (variance > max_variance)
         {
             imax_variance = i; 
@@ -246,4 +230,65 @@ void OtsuBinarization(SDL_Surface* surface)
     } 
 
     SDL_UnlockSurface(surface);
+}
+
+/**
+ * Dilates an already binarized surface.
+ */
+
+SDL_Surface* Dilation(SDL_Surface* surface,int radius)
+{
+    int width = surface->w;
+    int height = surface->h;
+
+    SDL_PixelFormat* format = surface->format;
+    
+    SDL_Surface* res = 
+        SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+   
+    //we create a white surface
+
+    if (SDL_LockSurface(res) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    Uint32* respixels = res-> pixels;
+    for (int i = 0; i < height;i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            respixels[i*width+j] = SDL_MapRGB(format,255,255,255);
+        }
+    }
+
+    for (int i = 0; i < height; i++)
+    {
+        
+        for (int j = 0; j < width; j++)
+        {
+            if (GetColor(surface,i,j) == 255)
+            {
+                for (int i2 = -radius; i2 <= radius;i2++)
+                {
+                    
+                    for (int j2 = -radius; j2 <= radius;j2++)
+                    {
+                        int x = (i+i2);
+                        int y = (j+j2);
+                        
+                        if (x >= 0 && x < height && y>= 0 && y < width && 
+                                abs(i2) + abs(j2) <= radius) 
+                        {
+                            respixels[x* width +y] = SDL_MapRGB(format,0,0,0); 
+                        }
+                    }
+                }
+            }
+        } 
+    }
+
+    SDL_UnlockSurface(res);
+
+    SDL_FreeSurface(surface);
+
+    return res;
 }

@@ -179,12 +179,12 @@ void get_max_coord(SDL_Surface* surface, double angle, int* maxx, int* minx,int*
  * returns : the rotated surface
  */
 
-SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
+SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill,int rad)
 {
     //width = x
     //height = y
-
-    angle = angle*PI/180;
+    if (!rad)
+        angle = angle*PI/180;
     // Angle from degrees to radian
 
     Uint32* pixels = surface -> pixels;
@@ -286,49 +286,66 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill)
     return temp;
 }
 
-SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Dot* dot1, Dot* dot2)
+SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
 {
+    //X = VERTICAL
+    //Y = HORIZONTAL
+
     Dot cdot1;
-    cdot1.X = dot1->X;
-    cdot1.Y = dot1->Y;
+    cdot1.X = s->topLeft.X;
+    cdot1.Y = s->topLeft.Y;
 
     Dot cdot2;
-    cdot2.X = dot2->X;
-    cdot2.Y = dot2->Y;
+    cdot2.X = s->topRight.X;
+    cdot2.Y = s->topRight.Y;
 
-    double center_x = surface->w / 2;
-    double center_y = surface->h / 2;
+    double center_y = surface->w / 2;
+    double center_x = surface->h / 2;
 
-    if (dot1->X == dot2->X)
+    //if (topLeft->Y != topRight->Y)
+        //printf("DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i",topLeft->X,topLeft->Y,topRight->X,topRight->Y);    
+    
+    //printf("DOT3 : X = %i and Y = %i\n",s->bottomLeft.X, s->bottomLeft.Y);
+    //errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i\n",s->topLeft.X,s->topLeft.Y,s->topRight.X,s->topRight.Y);    
+
+    if (s->topLeft.Y == s->topRight.Y)
         errx(1,"RotateDetectedGrid: Length of the top line of the grid is 0.");
 
-    if (dot1->X > dot2->X)
+    if (s->topLeft.Y > s->topRight.Y)
     {
-        Dot* temp = dot1;
-        cdot1.X = dot2->X;
-        cdot1.Y = dot2->Y;
-        cdot2.X = temp->X;
-        cdot2.Y = temp->Y;
+        Dot temp = s->topLeft;
+        cdot1.X = s->topRight.X;
+        cdot1.Y = s->topRight.Y;
+        cdot2.X = temp.X;
+        cdot2.Y = temp.Y;
     }
 
-    double angle = atan(( cdot2.Y - cdot1.Y ) / ( cdot2.X - cdot1.X ));
-
+    double angle = -atan((double)( cdot2.X - cdot1.X ) / (double)( cdot2.Y - cdot1.Y ));
+    
     //we compute the future coordinates of the dots in order to not lose the 
     //square we found
 
-    dot1->X = (dot1->X - center_x)*cos(angle) 
-        - (dot1->Y - center_y) * sin(angle) + center_x;
+    s->topLeft.Y = (cdot1.Y - center_y)*cos(angle) 
+        - (cdot1.X - center_x) * sin(angle) + center_y;
 
-    dot1->Y = (dot1->X - center_x) * sin(angle) 
-        + (dot1->Y - center_y) * cos(angle) + center_y;
+    s->topLeft.X = (cdot1.Y - center_y) * sin(angle) 
+        + (cdot1.X - center_x) * cos(angle) + center_x;
     
-    dot2->X = (dot2->X - center_x)*cos(angle) 
-        - (dot2->Y - center_y) * sin(angle) + center_x;
+    s->topRight.Y = (cdot2.Y - center_y)*cos(angle) 
+        - (cdot2.X - center_x) * sin(angle) + center_y;
 
-    dot2->Y = (dot2->X - center_x) * sin(angle) 
-        + (dot2->Y - center_y) * cos(angle) + center_y;
+    s->topRight.X = (cdot2.Y - center_y) * sin(angle) 
+        + (cdot2.X - center_x) * cos(angle) + center_x;
 
-    return rotateAny(surface,angle,0); 
+    Dot cdot3 = s->bottomLeft; 
+    
+    s->bottomLeft.Y = (cdot3.Y - center_y)*cos(angle) 
+        - (cdot3.X - center_x) * sin(angle) + center_y;
+    
+    s->bottomLeft.X = (cdot3.Y - center_y) * sin(angle) 
+        + (cdot3.X - center_x) * cos(angle) + center_x;
+
+    return rotateAny(surface,angle,0,1); 
 }
 
 
