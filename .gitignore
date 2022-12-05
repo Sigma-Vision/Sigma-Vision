@@ -57,5 +57,8 @@ dkms.conf
 # Swap files
 *.swp
 
+# result files
+*.result
+
 # build dir
 /build/
