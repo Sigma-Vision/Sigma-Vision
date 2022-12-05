@@ -110,21 +110,8 @@
                     <property name="title" translatable="yes"/>
                   </object>
                   <packing>
-                    <property name="y">190</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="pretraitement">
-                    <property name="label" translatable="yes">Pré-Traitement
-   de l'image</property>
-                    <property name="width-request">166</property>
-                    <property name="height-request">60</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                  </object>
-                  <packing>
-                    <property name="y">244</property>
+                    <property name="x">1</property>
+                    <property name="y">205</property>
                   </packing>
                 </child>
                 <child>
@@ -137,7 +124,7 @@
                     <property name="receives-default">True</property>
                   </object>
                   <packing>
-                    <property name="y">308</property>
+                    <property name="y">279</property>
                   </packing>
                 </child>
                 <child>
