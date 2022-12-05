@@ -17,7 +17,6 @@ GtkWidget		*button_save_image;
 GtkWidget		*button_rotate_left;
 GtkWidget		*button_rotate_right;
 GtkWidget		*button_settings;
-GtkWidget		*button_pretraitement;
 GtkWidget		*button_normal_menu;
 GtkWidget		*button_homepage;
 
@@ -150,7 +149,6 @@ int ui (int argc, char *argv[])
     button_homepage = GTK_WIDGET (gtk_builder_get_object (builder, "ButtonHomepage"));
 
     button_load_file = GTK_WIDGET (gtk_builder_get_object (builder, "load_file"));
-    button_pretraitement = GTK_WIDGET (gtk_builder_get_object (builder, "pretraitement"));
     button_solve = GTK_WIDGET (gtk_builder_get_object (builder, "solve"));
     button_save_image = GTK_WIDGET (gtk_builder_get_object (builder, "save_result"));
     button_normal_menu = GTK_WIDGET (gtk_builder_get_object (builder, "NormalMenu"));
