@@ -205,6 +205,8 @@ int ui (int argc, char *argv[])
 
     progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
 
+	progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
+
     g_object_unref (G_OBJECT (builder));
 
     //Button Action

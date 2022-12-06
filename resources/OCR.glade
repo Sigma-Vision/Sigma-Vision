@@ -236,22 +236,8 @@
                             <property name="receives-default">True</property>
                           </object>
                           <packing>
-                            <property name="x">15</property>
-                            <property name="y">45</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="auto_rotate">
-                            <property name="label" translatable="yes">Rotation automatique</property>
-                            <property name="width-request">149</property>
-                            <property name="height-request">56</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                          </object>
-                          <packing>
-                            <property name="x">185</property>
-                            <property name="y">40</property>
+                            <property name="x">100</property>
+                            <property name="y">48</property>
                           </packing>
                         </child>
                         <child>
@@ -277,8 +263,8 @@
                             <property name="receives-default">True</property>
                           </object>
                           <packing>
-                            <property name="x">396</property>
-                            <property name="y">46</property>
+                            <property name="x">327</property>
+                            <property name="y">44</property>
                           </packing>
                         </child>
                         <child>
