@@ -180,12 +180,19 @@ void get_bit_array(int digit, long n, double bit_a[])
 
 
 /**
-** Extract bit array from picture updating double* inputs values
-** digit: value represented in picture (1-9)
-** n: file identifier number
+** Determine most probable output
 */
-void get_inputs(int digit, long n, double inputs[])
+char get_output(double* outputs)
 {
-    char* path = malloc(sizeof(char) * 10);
-    sprintf(path,·
+    double max_v = 0;
+    char res;
+
+    for (char i = 0; i < 9; i++)
+        if (*(outputs + i) > max_v)
+        {
+            max_v = *(outputs + i);
+            res = i;
+        }
+
+    return res;
 }
