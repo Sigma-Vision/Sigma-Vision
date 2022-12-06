@@ -24,6 +24,9 @@ int preproc(char* file, char* output)
     //rotate180(surface);
 
     OtsuBinarization(surface); 
+    
+    //surface = ResizeSurface(surface,1000,1000); 
+
     //surface = rotateAny(surface,45);
 
     surface = SobelTransform(surface);
@@ -31,8 +34,6 @@ int preproc(char* file, char* output)
     Square s;
     find_grid(surface, &s);
   
-    
-
     //rotate180(surface);
 
 //  surface = rotateAny(surface,0,255,1);

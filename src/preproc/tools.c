@@ -51,6 +51,95 @@ SDL_Surface* load_image(const char* path)
 
     return res;
 }
+
+/**
+ * WARNING : LOSES A LOT OF PRECISON WHEN SCALING UP IMAGES
+ */
+SDL_Surface* ResizeSurface (SDL_Surface* surface,int n_width,int n_height)
+{
+
+    if (surface == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    int width = surface->w;
+    int height = surface->h;
+
+    SDL_Surface* res = SDL_CreateRGBSurface(0,n_width,n_height,32,0,0,0,0);
+    Uint32* respixels = res->pixels;
+    
+    if (res == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    if (SDL_LockSurface(res) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+   
+    GlobalMean* arr = calloc(n_width*n_height,sizeof(GlobalMean));
+
+    double ratio_w = (double)n_width/(double)width;
+    double ratio_h = (double)n_height/(double)height;
+    
+    printf("w = %lf\nh = %lf\n",ratio_w,ratio_h);
+
+    int x;
+    int y;
+
+    for (int i = 0; i < height;i++)
+    {
+        for (int j = 0;j < width;j++)
+        {
+            //get future coords
+            //x = future i avec 0 <= x < n_height
+            
+            x = i*ratio_h;
+
+            //y = future j avec 0 <= y < n_width
+            y = j*ratio_w;
+            
+            arr[x*n_width+y].value += GetColor(surface,i,j);
+            arr[x*n_width+y].num++;
+        }
+    }
+
+    //in case of non set value at a certain coordinates, set default values for it 
+    //uncomment to set default as white
+    //current default : black
+    //
+    /*for (int i = 0;i < n_height;i++)
+    {
+        for (int j = 0;j < n_width;j++)
+        {
+            respixels[i*n_width+j] = SDL_MapRGB(surface->format,255,255,255);
+        }
+    }*/
+    Uint8 color;
+    for (int i = 0;i < n_height;i++)
+    {
+        for (int j = 0;j < n_width;j++)
+        {
+            /*
+            if (arr[i*n_width+j].num != 0 && arr[i*n_width+j].value / arr[i*n_width+j].num > 127)
+                respixels[i*n_width+j] = SDL_MapRGB(surface->format,255,255,255);
+            else 
+               respixels[i*n_width+j] = 0; 
+            */
+            if (arr[i*n_width+j].num == 0)
+                respixels[i*n_width+j] = 0;
+            else
+            {
+                color = arr[i*n_width+j].value / arr[i*n_width+j].num;
+                respixels[i*n_width+j] = SDL_MapRGB(surface->format,color,color,color);
+            }
+        }
+    }
+    
+    free(arr);
+
+    SDL_UnlockSurface(res);
+
+    SDL_FreeSurface(surface);
+
+    return res;
+}
+
 SDL_Surface* GridCropping (SDL_Surface* surface, Square* s)
 {
     /**
@@ -121,6 +210,7 @@ void GridSplit(SDL_Surface* surface)
             s.bottomLeft.X = h9*(i+1);
 
             SDL_Surface* temp = GridCropping(surface,&s);
+            temp = ResizeSurface(temp,8,8);
 
             snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
             IMG_SaveJPG(temp, filename,100);
@@ -131,18 +221,18 @@ void GridSplit(SDL_Surface* surface)
 }
 
 //tester sans normalisation histogramme otsu
-int case_white(SDL_Surface* surface)
+int case_empty(SDL_Surface* surface)
 {
     int var = OtsuGetMaxVariance(surface);    
 
-    return var > 127;
+    return var < 50;
 }
 
 int** ParseOutput()
 {
     int** res = malloc(sizeof(int*)*81);
 
-    int case_size = 28*28;
+    int case_size = 32*32;
     char filename[15];
 
     for (int i = 0;i < 9;i++)
@@ -151,11 +241,10 @@ int** ParseOutput()
         {
             snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
             SDL_Surface* surface = load_image(filename);
-            Uint32* pixels = surface->pixels;        
 
             int* arr = malloc(sizeof(int)*case_size);
 
-            if (! case_white(surface))
+            if (! case_empty(surface))
             {
                 for (int k = 0;k < case_size;k++)
                 {
@@ -166,7 +255,8 @@ int** ParseOutput()
             {
                 for (int k = 0;k < case_size;k++)
                 {
-                    arr[k] = SDL_MapRGB(surface->format,255,255,255);
+                    //arr[k] = SDL_MapRGB(surface->format,255,255,255);
+                    arr[k] = 0;
                 }
             }
 
@@ -179,65 +269,3 @@ int** ParseOutput()
 
 
 
-SDL_Surface* ResizeSurface (SDL_Surface* surface,int n_width,int n_height)
-{
-    if (surface == NULL)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    int width = surface->w;
-    int height = surface->h;
-    Uint32* pixels = surface->pixels;
-
-    SDL_Surface* res = SDL_CreateRGBSurface(0,n_width,n_height,32,0,0,0,0);
-    Uint32* respixels = res->pixels;
-    
-    if (res == NULL)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    if (SDL_LockSurface(res) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-   
-    GlobalMean* arr = calloc(n_width*n_height,sizeof(GlobalMean));
-
-    for (int i = 0; i < height;i++)
-    {
-        for (int j = 0; < width;j++)
-        {
-            //get future coords
-            //x = future i avec 0 <= x < n_height
-            //y = future j avec 0 <= y < n_width
-            //arr[x*n_width+y].value += GetColor(surface,i,j);
-            //arr[x*n_width+y].num++;
-        }
-    }
-
-    //in case of non set value at a certain coordinates, set default values for it 
-    //uncomment to set default as white
-    //current default : black
-    //
-    /*for (int i = 0;i < n_height;i++)
-    {
-        for (int j = 0;j < n_width;j++)
-        {
-            respixels[i*n_width+j] = SDL_MapRGB(surface->format,255,255,255);
-        }
-    }*/
-
-    for (int i = 0;i < n_height;i++)
-    {
-        for (int j = 0;j < n_width;j++)
-        {
-            if (arr[i*n_width+j].value / arr[i*n_width+j].sum > 127)
-                respixels[i*n_width+j] = SDL_MapRGB(surface->format,255,255,255);
-            else
-               respixes[i*n_width+j] = 0; 
-        }
-    }
-    
-    free(arr);
-
-    SDL_UnlockSurface(res);
-
-    SDL_FreeSurface(surface);
-
-    return res;
-}

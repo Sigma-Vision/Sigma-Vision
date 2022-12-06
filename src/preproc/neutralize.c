@@ -246,8 +246,6 @@ SDL_Surface* Dilation(SDL_Surface* surface,int radius)
     SDL_Surface* res = 
         SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
    
-    //we create a white surface
-
     if (SDL_LockSurface(res) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
@@ -291,4 +289,21 @@ SDL_Surface* Dilation(SDL_Surface* surface,int radius)
     SDL_FreeSurface(surface);
 
     return res;
+}
+
+SDL_Surface* Erosion(SDL_Surface* surface, int radius)
+{
+    int width = surface->w;
+    int height = surface->h;
+
+    SDL_PixelFormat* format = surface->format;
+
+    SDL_Surface* res = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+
+    if (SDL_LockSurface(res) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    
+    Uint32* respixels = res-> pixels;
+
+
 }
