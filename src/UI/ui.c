@@ -1,4 +1,7 @@
 #include <gtk/gtk.h>
+#include <SDL2/SDL.h>
+#include "../preproc/preproc.h"
+#include "../preproc/tools.h"
 #define UNUSED(x) (void)(x)
 
 //Gtk variable declaration
@@ -35,31 +38,67 @@ gchar			*filename;
 
 
 //Pixbuf declaration for the rescale of the image displayed
+Uint32                  src_format;
+Uint32                  dst_format;
+int                     rowstride;
+gboolean                has_alpha;
+SDL_Surface*            surface;
+guchar                  *pixels;
+
 GdkPixbuf		*pix;
 GdkPixbuf		*pixIn;
 GdkPixbuf		*pixOut;
 
-
-
-//File Loader function
-static void load_image(GtkFileChooser *chooser)
+static void display_surface()
 {
-    filename = gtk_file_chooser_get_filename (chooser);
-
     //If an image is already display, we delete it
     if (image1)
         gtk_container_remove (GTK_CONTAINER (ImageFixed), image1);
 
-    //Rescale the image for the display
-    pixIn = gdk_pixbuf_new_from_file (filename, NULL);
+    src_format = surface->format->format;
+
+    has_alpha = SDL_ISPIXELFORMAT_ALPHA(src_format);
+    if (has_alpha) {
+        dst_format = SDL_PIXELFORMAT_RGBA32;
+    }
+    else {
+        dst_format = SDL_PIXELFORMAT_RGB24;
+    }
+    // create pixbuf                                                            
+    pixIn = gdk_pixbuf_new (GDK_COLORSPACE_RGB, has_alpha, 8,
+            surface->w, surface->h);
+    rowstride = gdk_pixbuf_get_rowstride (pixIn);
+    pixels = gdk_pixbuf_get_pixels (pixIn);
+
+    // copy pixels                                                              
+    SDL_LockSurface(surface);
+    SDL_ConvertPixels (surface->w, surface->h, src_format,
+            surface->pixels, surface->pitch,
+            dst_format,
+            pixels,
+            rowstride);
+    SDL_UnlockSurface(surface);
+
     pix = gdk_pixbuf_scale_simple (pixIn, 415, 405, GDK_INTERP_NEAREST);
+    // create GtkImage from pixbuf                                              
     image1 = gtk_image_new_from_pixbuf (pix);
+
     gtk_container_add(GTK_CONTAINER (ImageFixed), image1);
     gtk_fixed_move (GTK_FIXED (ImageFixed), image1, 39, 10);
 
     //We show the image to the user
     gtk_widget_show(image1);
+    
+}
 
+//File Loader function
+static void load_image_from_chooser(GtkFileChooser *chooser)
+{
+    filename = gtk_file_chooser_get_filename (chooser);
+    // - Create a surface from the image.
+    surface = load_image(filename);
+
+    display_surface();
 }
 
 //Save function
@@ -122,8 +161,10 @@ void changeBigStackVisible (GtkButton *a, gpointer user_data)
 void ui_solve(GtkButton *a, gpointer user_data)
 {
     UNUSED(a);
-    char* c = "test.jpeg";
-    preproc(filename, c);
+    UNUSED(user_data);
+    if (surface)
+        surface = preproc(surface);
+    display_surface();
 }
 
 int ui (int argc, char *argv[])
@@ -160,9 +201,9 @@ int ui (int argc, char *argv[])
 
     button_rotate_right = GTK_WIDGET (gtk_builder_get_object (builder, "rotate_right"));
     button_rotate_left = GTK_WIDGET (gtk_builder_get_object (builder, "rotate_left"));
-	button_rotate_auto = GTK_WIDGET (gtk_builder_get_object (builder, "auto_rotate"));
+    button_rotate_auto = GTK_WIDGET (gtk_builder_get_object (builder, "auto_rotate"));
 
-	progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
+    progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
 
     g_object_unref (G_OBJECT (builder));
 
@@ -174,7 +215,10 @@ int ui (int argc, char *argv[])
     g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(ui_solve), Stack);
 
-    g_signal_connect(button_load_file, "selection_changed", G_CALLBACK(load_image), NULL);
+    //g_signal_connect(button_rotate_auto, "clicked", G_CALLBACK(rotateDetectedGrid()), Stack);
+
+    g_signal_connect(button_load_file, "selection_changed",
+            G_CALLBACK(load_image_from_chooser), NULL);
 
     g_signal_connect(button_save_image, "clicked", G_CALLBACK (save_image), NULL);
 

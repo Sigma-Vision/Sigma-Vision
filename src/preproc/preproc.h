@@ -1,6 +1,9 @@
 # ifndef PREPROC_H
 # define PREPROC_H
 
-int preproc(char* file, char* output);
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+SDL_Surface* preproc(SDL_Surface* surface);
 
 # endif
