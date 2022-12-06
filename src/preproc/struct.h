@@ -39,5 +39,11 @@ typedef struct SquareList
     int len;
 } SquareList;
 
+typedef struct GlobalMean
+{
+    unsigned long value;
+    int num;
+}GlobalMean;
+
 #endif
 
