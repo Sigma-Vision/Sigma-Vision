@@ -88,7 +88,6 @@ static void display_surface()
 
     //We show the image to the user
     gtk_widget_show(image1);
-    
 }
 
 //File Loader function
@@ -165,6 +164,7 @@ void ui_solve(GtkButton *a, gpointer user_data)
     if (surface)
         surface = preproc(surface);
     display_surface();
+    ///gtk_stack_set_visible_child(user_data, _grid); 
 }
 
 int ui (int argc, char *argv[])
@@ -212,12 +212,12 @@ int ui (int argc, char *argv[])
     g_signal_connect(button_settings, "clicked", G_CALLBACK(changeStackVisibleS), Stack);
     g_signal_connect(button_neural_network, "clicked", G_CALLBACK(changeStackVisibleM), Stack);
     g_signal_connect(button_normal_menu, "clicked", G_CALLBACK(changeStackVisibleN), Stack);
-    g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
+    //g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(ui_solve), Stack);
 
     //g_signal_connect(button_rotate_auto, "clicked", G_CALLBACK(rotateDetectedGrid()), Stack);
 
-    g_signal_connect(button_load_file, "selection_changed",
+    g_signal_connect(button_load_file, "selection_changed", 
             G_CALLBACK(load_image_from_chooser), NULL);
 
     g_signal_connect(button_save_image, "clicked", G_CALLBACK (save_image), NULL);
