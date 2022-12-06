@@ -7,24 +7,6 @@
 
 
 /**
-** Determine most probable expected output
-*/
-char get_output(double* outputs)
-{
-    double max_v = 0;
-    char res;
-
-    for (char i = 0; i < 9; i++)
-        if (*(outputs + i) > max_v)
-        {
-            max_v = *(outputs + i);
-            res = i + 1;
-        }
-    return res;
-}
-
-
-/**
 ** Guess digit value present in bit array inputs
 */
 int use(double inputs[])

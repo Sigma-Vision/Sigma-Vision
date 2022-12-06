@@ -15,7 +15,7 @@ OBJ_TEST = ${SRC_TEST:.c=.o}
 DEP_TEST = ${SRC_TEST:.c=.d}
 
 
-network: ${OBJ}
+digit_net: ${OBJ}
 
 no-make/test: ${OBJ} ${OBJ_TEST}
 
@@ -27,6 +27,6 @@ no-make/test: ${OBJ} ${OBJ_TEST}
 clean:
 	${RM} ${OBJ} ${OBJ_TEST}
 	${RM} ${DEP} ${DEP_TEST}
-	${RM} network no-make/test
+	${RM} digit_net no-make/test
 
 # END

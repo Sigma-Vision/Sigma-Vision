@@ -7,14 +7,6 @@
 
 
 /**
-** Extract bit array from picture updating double* inputs values
-** digit: value represented in picture (1-9)
-** n: file identifier number
-*/
-void get_inputs(int digit, long n, double inputs[]);
-
-
-/**
 ** Train neural network based on NB_ITER iterations
 */
 int learn(const int NB_ITER)
@@ -52,7 +44,7 @@ int learn(const int NB_ITER)
         for (int x = 0; x < nb_digits; x++)
         {
             int i = digit_set_order[x];
-            get_inputs(i, file_id, training_inputs);
+            get_bit_array(i, file_id, training_inputs);
 
             double* nodes_p = *nodes_pp;
             double* biases_p = *biases_pp;
