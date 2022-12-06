@@ -291,19 +291,54 @@ SDL_Surface* Dilation(SDL_Surface* surface,int radius)
     return res;
 }
 
-SDL_Surface* Erosion(SDL_Surface* surface, int radius)
+SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
 {
-    int width = surface->w;
-    int height = surface->h;
+    for (int iter = 0;iter < iterations;iter++)
+    {
+        int width = surface->w;
+        int height = surface->h;
 
-    SDL_PixelFormat* format = surface->format;
+        SDL_PixelFormat* format = surface->format;
 
-    SDL_Surface* res = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+        SDL_Surface* res = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
 
-    if (SDL_LockSurface(res) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
+        if (SDL_LockSurface(res) < 0)
+            errx(EXIT_FAILURE, "%s", SDL_GetError());
     
-    Uint32* respixels = res-> pixels;
+        Uint32* respixels = res-> pixels;
 
+        for (int i = 0;i < height;i++)
+        {
+            for (int j = 0;j < width;j++)
+            {
+                if (GetColor(surface,i,j) == 255)
+                {
+                    if ((i<=0 || GetColor(surface,i-1,j) == 255) 
+                            && (i+1 >= height || GetColor(surface,i+1,j) == 255) 
+                            && (j <= 0 || GetColor(surface,i,j-1) == 255)
+                            && (j+1 >= width || GetColor(surface,i,j+1) == 255))
+                    {
+                        if (i > 0)
+                            respixels[(i-1)*width+j] = 0;
+                        if (i+1 < height)
+                            respixels[(i+1)*width+j] = 0;
+                        if (j > 0)
+                            respixels[i*width+(j-1)] = 0;
+                        if (j+1 >= width)
+                            respixels[i*width+(j+1)] = 0;
+                    }
 
+                } 
+            }
+        } 
+
+        SDL_UnlockSurface(res);
+
+        SDL_FreeSurface(surface);
+
+        surface = res;
+ 
+    }
+    
+    return surface;
 }
