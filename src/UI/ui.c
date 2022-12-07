@@ -1,8 +1,12 @@
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
-#include "../preproc/preproc.h"
+#include "../preproc/neutralize.h"
+#include "../preproc/transform.h"
 #include "../preproc/tools.h"
+#include "../preproc/struct.h"
 #include "../preproc/rotate.h"
+#include "../preproc/scale.h"
+#include "../preproc/transform.h"
 #define UNUSED(x) (void)(x)
 
 //Gtk variable declaration
@@ -80,7 +84,7 @@ static void display_surface()
             rowstride);
     SDL_UnlockSurface(surface);
 
-    pix = gdk_pixbuf_scale_simple (pixIn, 415, 405, GDK_INTERP_NEAREST);
+    pix = gdk_pixbuf_scale_simple (pixIn, 715, 600, GDK_INTERP_NEAREST);
     // create GtkImage from pixbuf                                              
     image1 = gtk_image_new_from_pixbuf (pix);
 
@@ -163,9 +167,19 @@ void ui_solve(GtkButton *a, gpointer user_data)
     UNUSED(a);
     UNUSED(user_data);
     if (surface)
-        surface = preproc(surface);
-    display_surface();
-    ///gtk_stack_set_visible_child(user_data, _grid); 
+    {
+        //gtk_progress_bar_set_text(progress_bar, "progressssss ");
+        display_surface();
+        OtsuBinarization(surface); 
+        display_surface();
+        surface = SobelTransform(surface);
+        display_surface();
+        Square s;
+        find_grid(surface, &s);
+        display_surface();
+        surface = RotateDetectedGrid(surface,&s); 
+        display_surface();
+    }
 }
 
 void ui_rotate_right(GtkButton *a, gpointer user_data)
