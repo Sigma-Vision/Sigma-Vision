@@ -17,29 +17,29 @@
             <property name="can-focus">False</property>
             <child>
               <object class="GtkImage">
-                <property name="width-request">350</property>
-                <property name="height-request">371</property>
+                <property name="width-request">500</property>
+                <property name="height-request">500</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="pixbuf">sigmavision_logo_big.png</property>
               </object>
               <packing>
-                <property name="x">207</property>
-                <property name="y">49</property>
+                <property name="x">305</property>
+                <property name="y">29</property>
               </packing>
             </child>
             <child>
               <object class="GtkButton" id="ButtonHomepage">
                 <property name="label" translatable="yes">Démarrer</property>
-                <property name="width-request">102</property>
-                <property name="height-request">44</property>
+                <property name="width-request">183</property>
+                <property name="height-request">81</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
               </object>
               <packing>
-                <property name="x">336</property>
-                <property name="y">482</property>
+                <property name="x">449</property>
+                <property name="y">622</property>
               </packing>
             </child>
             <child>
@@ -56,8 +56,8 @@
                 </attributes>
               </object>
               <packing>
-                <property name="x">149</property>
-                <property name="y">374</property>
+                <property name="x">301</property>
+                <property name="y">467</property>
               </packing>
             </child>
             <child>
@@ -69,8 +69,39 @@
                 <property name="pixbuf">epita_logo.png</property>
               </object>
               <packing>
-                <property name="x">651</property>
-                <property name="y">497</property>
+                <property name="x">977</property>
+                <property name="y">691</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="width-request">184</property>
+                <property name="height-request">148</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Malo GARNIER
+Paul DUFOUR
+Josef TOURRAND
+Eloi COUDERC</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans Oblique 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="y">628</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="width-request">100</property>
+                <property name="height-request">80</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">By:</property>
+              </object>
+              <packing>
+                <property name="x">29</property>
+                <property name="y">586</property>
               </packing>
             </child>
           </object>
@@ -90,41 +121,36 @@
                 <property name="can-focus">False</property>
                 <child>
                   <object class="GtkImage">
-                    <property name="width-request">120</property>
-                    <property name="height-request">120</property>
+                    <property name="width-request">162</property>
+                    <property name="height-request">199</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="pixbuf">sigmavision_logo.png</property>
                   </object>
-                  <packing>
-                    <property name="x">10</property>
-                    <property name="y">24</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkFileChooserButton" id="load_file">
-                    <property name="width-request">167</property>
-                    <property name="height-request">50</property>
+                    <property name="width-request">182</property>
+                    <property name="height-request">60</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="title" translatable="yes"/>
                   </object>
                   <packing>
-                    <property name="x">1</property>
-                    <property name="y">205</property>
+                    <property name="y">262</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="solve">
                     <property name="label" translatable="yes">Solve</property>
-                    <property name="width-request">166</property>
-                    <property name="height-request">45</property>
+                    <property name="width-request">180</property>
+                    <property name="height-request">59</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                   </object>
                   <packing>
-                    <property name="y">279</property>
+                    <property name="y">387</property>
                   </packing>
                 </child>
                 <child>
@@ -138,14 +164,14 @@
                   </object>
                   <packing>
                     <property name="x">12</property>
-                    <property name="y">532</property>
+                    <property name="y">726</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="settings">
                     <property name="label">gtk-properties</property>
-                    <property name="width-request">166</property>
-                    <property name="height-request">35</property>
+                    <property name="width-request">180</property>
+                    <property name="height-request">45</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -153,33 +179,33 @@
                     <property name="always-show-image">True</property>
                   </object>
                   <packing>
-                    <property name="y">496</property>
+                    <property name="y">621</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="neural_network">
                     <property name="label" translatable="yes">Réseau Neuronal</property>
-                    <property name="width-request">167</property>
-                    <property name="height-request">40</property>
+                    <property name="width-request">180</property>
+                    <property name="height-request">45</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                   </object>
                   <packing>
-                    <property name="y">454</property>
+                    <property name="y">566</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="NormalMenu">
                     <property name="label" translatable="yes">Menu</property>
-                    <property name="width-request">168</property>
-                    <property name="height-request">35</property>
+                    <property name="width-request">180</property>
+                    <property name="height-request">45</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                   </object>
                   <packing>
-                    <property name="y">415</property>
+                    <property name="y">513</property>
                   </packing>
                 </child>
               </object>
@@ -205,15 +231,14 @@
                         <property name="can-focus">False</property>
                         <child>
                           <object class="GtkImage" id="image1">
-                            <property name="width-request">450</property>
-                            <property name="height-request">450</property>
+                            <property name="width-request">650</property>
+                            <property name="height-request">650</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="pixbuf">sigmavision_logo_big.png</property>
                           </object>
                           <packing>
-                            <property name="x">65</property>
-                            <property name="y">10</property>
+                            <property name="x">146</property>
                           </packing>
                         </child>
                       </object>
@@ -229,20 +254,20 @@
                         <child>
                           <object class="GtkButton" id="rotate_left">
                             <property name="label" translatable="yes">Rotation Gauche</property>
-                            <property name="width-request">127</property>
-                            <property name="height-request">43</property>
+                            <property name="width-request">214</property>
+                            <property name="height-request">62</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                           </object>
                           <packing>
-                            <property name="x">100</property>
-                            <property name="y">48</property>
+                            <property name="x">162</property>
+                            <property name="y">47</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkProgressBar" id="progress">
-                            <property name="width-request">381</property>
+                            <property name="width-request">494</property>
                             <property name="height-request">27</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -250,21 +275,21 @@
                             <property name="show-text">True</property>
                           </object>
                           <packing>
-                            <property name="x">84</property>
+                            <property name="x">215</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkButton" id="rotate_right">
                             <property name="label" translatable="yes">Rotation Droite</property>
-                            <property name="width-request">123</property>
-                            <property name="height-request">44</property>
+                            <property name="width-request">211</property>
+                            <property name="height-request">62</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                           </object>
                           <packing>
-                            <property name="x">327</property>
-                            <property name="y">44</property>
+                            <property name="x">550</property>
+                            <property name="y">50</property>
                           </packing>
                         </child>
                         <child>
@@ -275,8 +300,8 @@
                             <property name="can-focus">False</property>
                           </object>
                           <packing>
-                            <property name="x">555</property>
-                            <property name="y">5</property>
+                            <property name="x">882</property>
+                            <property name="y">17</property>
                           </packing>
                         </child>
                       </object>
@@ -297,15 +322,15 @@
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">100</property>
+                        <property name="width-request">132</property>
                         <property name="height-request">29</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Dark Mode (NIY)</property>
                       </object>
                       <packing>
-                        <property name="x">71</property>
-                        <property name="y">108</property>
+                        <property name="x">136</property>
+                        <property name="y">232</property>
                       </packing>
                     </child>
                     <child>
@@ -316,26 +341,26 @@
                         <property name="can-focus">True</property>
                       </object>
                       <packing>
-                        <property name="x">320</property>
-                        <property name="y">111</property>
+                        <property name="x">499</property>
+                        <property name="y">236</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkSeparator">
                         <property name="width-request">300</property>
-                        <property name="height-request">3</property>
+                        <property name="height-request">24</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                       </object>
                       <packing>
-                        <property name="x">75</property>
-                        <property name="y">65</property>
+                        <property name="x">266</property>
+                        <property name="y">77</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">229</property>
+                        <property name="width-request">232</property>
                         <property name="height-request">61</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -345,8 +370,8 @@
                         </attributes>
                       </object>
                       <packing>
-                        <property name="x">114</property>
-                        <property name="y">10</property>
+                        <property name="x">302</property>
+                        <property name="y">22</property>
                       </packing>
                     </child>
                   </object>
@@ -362,15 +387,15 @@
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">245</property>
+                        <property name="width-request">365</property>
                         <property name="height-request">41</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Charger un Réseau neuronal depuis un fichier :</property>
                       </object>
                       <packing>
-                        <property name="x">33</property>
-                        <property name="y">378</property>
+                        <property name="x">75</property>
+                        <property name="y">204</property>
                       </packing>
                     </child>
                     <child>
@@ -382,53 +407,27 @@
                         <property name="title" translatable="yes"/>
                       </object>
                       <packing>
-                        <property name="x">411</property>
-                        <property name="y">372</property>
+                        <property name="x">581</property>
+                        <property name="y">203</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkButton">
                         <property name="label" translatable="yes">Enregistrer</property>
-                        <property name="width-request">161</property>
-                        <property name="height-request">51</property>
+                        <property name="width-request">221</property>
+                        <property name="height-request">79</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
                       </object>
                       <packing>
-                        <property name="x">177</property>
-                        <property name="y">501</property>
+                        <property name="x">310</property>
+                        <property name="y">597</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">100</property>
-                        <property name="height-request">54</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">OU</property>
-                      </object>
-                      <packing>
-                        <property name="x">204</property>
-                        <property name="y">264</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="width-request">188</property>
-                        <property name="height-request">60</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Charger des images d'entrainement :</property>
-                      </object>
-                      <packing>
-                        <property name="x">60</property>
-                        <property name="y">150</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="width-request">229</property>
+                        <property name="width-request">345</property>
                         <property name="height-request">80</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -438,21 +437,8 @@
                         </attributes>
                       </object>
                       <packing>
-                        <property name="x">116</property>
-                        <property name="y">4</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFileChooserButton">
-                        <property name="width-request">148</property>
-                        <property name="height-request">54</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="title" translatable="yes"/>
-                      </object>
-                      <packing>
-                        <property name="x">368</property>
-                        <property name="y">155</property>
+                        <property name="x">246</property>
+                        <property name="y">6</property>
                       </packing>
                     </child>
                   </object>
@@ -470,27 +456,28 @@
                       <object class="GtkButton" id="save_result">
                         <property name="label" translatable="yes">Sauvegarder 
   le Résultat</property>
-                        <property name="width-request">170</property>
-                        <property name="height-request">66</property>
+                        <property name="width-request">202</property>
+                        <property name="height-request">78</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
                       </object>
                       <packing>
-                        <property name="x">186</property>
-                        <property name="y">497</property>
+                        <property name="x">355</property>
+                        <property name="y">650</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkImage" id="SolvedImage">
-                        <property name="width-request">394</property>
-                        <property name="height-request">412</property>
+                        <property name="width-request">676</property>
+                        <property name="height-request">541</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="pixbuf">sigmavision_logo_big.png</property>
                       </object>
                       <packing>
-                        <property name="x">42</property>
-                        <property name="y">42</property>
+                        <property name="x">131</property>
+                        <property name="y">68</property>
                       </packing>
                     </child>
                   </object>
