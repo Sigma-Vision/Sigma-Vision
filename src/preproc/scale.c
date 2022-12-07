@@ -162,7 +162,7 @@ void find_square(int* label, int h, int w, int l, Square* square)
     topRight.X =i;
     topRight.Y = j;
 
-    // Top Left
+    // bottom Left
     Dot bottomLeft;
     i = h - 1;
     j = 0;
@@ -179,10 +179,28 @@ void find_square(int* label, int h, int w, int l, Square* square)
     bottomLeft.X = i;
     bottomLeft.Y = j;
 
+    // bottom Right
+    Dot bottomRight;
+    i = h - 1;
+    j = w - 1;
+    while (j > 0 && i > 0 && label[i * w + j] != l)
+    {
+        while (i > 0 && label[i * w + j] != l)
+            i--;
+        if (i >= 0 && label[i * w + j] != l)
+        {
+            j--;
+            i = h - 1;
+        }
+    }
+    bottomRight.X = i;
+    bottomRight.Y = j;
+
 
     square->topLeft = topLeft;
     square->topRight = topRight;
     square->bottomLeft = bottomLeft;
+    square->bottomRight = bottomRight;
 }
 
 void find_square2(int* label, int h, int w, int l, Square* square)
@@ -248,10 +266,31 @@ void find_square2(int* label, int h, int w, int l, Square* square)
     bottomLeft.X = i;
     bottomLeft.Y = j;
 
+    // Bottom Right
+    Dot bottomRight;
+    i = h - 1;
+    j = w - 1;
+
+    while (j < 0 && label[i * w + j] != l)
+    {
+        while (i > j && i < h && label[i * w + j] != l)
+        {
+            i--;
+        }
+        if (i < h && j < w && label[i * w + j] != l)
+        {
+            j--;
+            i = h - 1;
+        }
+    }
+
+    bottomRight.X = i;
+    bottomRight.Y = j;
 
     square->topLeft = topLeft;
     square->topRight = topRight;
     square->bottomLeft = bottomLeft;
+    square->bottomRight = bottomRight;
 }
 
 /**
@@ -265,12 +304,6 @@ int Area(Square* square)
     double d2 = sqrt(pow(abs(square->topLeft.X - square->bottomLeft.X), 2) +
                 pow(abs(square->topLeft.Y - square->bottomLeft.Y), 2));
 
-    printf("Pt 1 : %i, %i ; Pt 2 : %i, %i ; Pt 3 : %i, %i\n", square->topLeft.X,
-        square->topLeft.Y, square->topRight.X, square->topRight.Y, 
-         square->bottomLeft.X, square->bottomLeft.Y);
-
-    printf("Distance : %i ; %i \n", (int) d1, (int) d2);
-    printf("Area : %i\n\n", (int) (d1 * d2));
     return (int) (d1 * d2);
 }
 
@@ -344,7 +377,6 @@ void find_grid(SDL_Surface* surface, Square* s)
     // find the 2 biggest label
     int big_label[] = {0, 0};
     max(label_stats, maxLabel, big_label);
-    printf("Label 1 : %i ; Label 2 : %i\n\n", big_label[0], big_label[1]);
 
     Square square1;
     Square square2;
@@ -354,7 +386,6 @@ void find_grid(SDL_Surface* surface, Square* s)
 
     int a1 = Area(&square1);
     int a2 = Area(&square2);
-    printf("Area 1 : %i, Area 2 : %i\n", a1, a2);
     if (a1 > a2)
     {
     	find_square2(label, h, w, big_label[0], &square1);
@@ -362,7 +393,6 @@ void find_grid(SDL_Surface* surface, Square* s)
         s->topRight = square1.topRight;
         s->bottomLeft = square1.bottomLeft;
         add_color(pixels, label, big_label[0], h, w);
-        printf("Label : %i\n", big_label[0]);
     }
     else
     {
@@ -371,7 +401,6 @@ void find_grid(SDL_Surface* surface, Square* s)
         s->topRight = square2.topRight;
         s->bottomLeft = square2.bottomLeft;
         add_color(pixels, label, big_label[1], h, w);
-        printf("Label : %i\n", big_label[1]);
     }
 
 
