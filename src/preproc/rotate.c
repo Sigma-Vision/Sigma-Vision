@@ -128,46 +128,6 @@ SDL_Surface* rotate90cw(SDL_Surface* surface)
     return temp;
 }
 
-void get_max_coord(SDL_Surface* surface, double angle, int* maxx, int* minx,int* maxy, int* miny)
-{
-
-    double center_x = surface->w / 2;
-    double center_y = surface->h / 2;
-
-    int nmaxx = surface->w; 
-    int nminx = 0;
-    int nmaxy = surface->h;
-    int nminy = 0;
-
-    int newx;
-    int newy;
-
-    for (double y = 0;y < surface->h;y++)
-    {
-        for (double x = 0;x < surface->w;x++)
-        {
-            newx = (x-center_x) * cos(angle) - (y-center_y) * sin(angle) + center_x;
-            
-            if (newx < nminx) 
-               nminx = newx;
-            
-            if (newx > nmaxx)
-                nmaxx = newx;
-            
-            newy = (x-center_x) * sin(angle) + (y-center_y) * cos(angle) + center_y;
-            if (newy < nminy)
-               nminy = newy;
-            if (newy > nmaxy)
-                nmaxy = newy;
-        }
-    }
-    
-    *maxx = nmaxx;
-    *minx = nminx; 
-    *maxy = nmaxy;
-    *miny = nminy;
-}
-
 /**
  *
  * rotateAny : Rotates a surface by an arbitrary angle (in degrees).
@@ -194,10 +154,6 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill,int rad)
     int maxy;
     int miny;
     
-    get_max_coord(surface,angle,&maxx,&minx,&maxy,&miny);
-    // this function gets the desired width and height for the rotated surface
-    // in order to have every point in the surface 
-
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     
