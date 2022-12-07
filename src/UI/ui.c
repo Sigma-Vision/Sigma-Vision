@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include "../preproc/preproc.h"
 #include "../preproc/tools.h"
+#include "../preproc/rotate.h"
 #define UNUSED(x) (void)(x)
 
 //Gtk variable declaration
@@ -42,7 +43,7 @@ Uint32                  src_format;
 Uint32                  dst_format;
 int                     rowstride;
 gboolean                has_alpha;
-SDL_Surface*            surface;
+SDL_Surface*            surface = NULL;
 guchar                  *pixels;
 
 GdkPixbuf		*pix;
@@ -167,6 +168,28 @@ void ui_solve(GtkButton *a, gpointer user_data)
     ///gtk_stack_set_visible_child(user_data, _grid); 
 }
 
+void ui_rotate_right(GtkButton *a, gpointer user_data)
+{
+    UNUSED(a);
+    UNUSED(user_data);
+    if (surface)
+    {
+        surface = rotateAny(surface, -90, 0, 0);
+        display_surface();
+    }
+}
+
+void ui_rotate_left(GtkButton *a, gpointer user_data)
+{
+    UNUSED(a);
+    UNUSED(user_data);
+    if (surface)
+    {
+        surface = rotateAny(surface, 90, 0, 0);
+        display_surface();
+    }
+}
+
 int ui (int argc, char *argv[])
 {
     gtk_init (&argc, &argv);
@@ -205,7 +228,7 @@ int ui (int argc, char *argv[])
 
     progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
 
-	progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
+    progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
 
     g_object_unref (G_OBJECT (builder));
 
@@ -217,7 +240,9 @@ int ui (int argc, char *argv[])
     //g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(ui_solve), Stack);
 
-    //g_signal_connect(button_rotate_auto, "clicked", G_CALLBACK(rotateDetectedGrid()), Stack);
+    g_signal_connect(button_rotate_right, "clicked", G_CALLBACK(ui_rotate_right), Stack);
+    g_signal_connect(button_rotate_left, "clicked", G_CALLBACK(ui_rotate_left), Stack);
+
 
     g_signal_connect(button_load_file, "selection_changed", 
             G_CALLBACK(load_image_from_chooser), NULL);
