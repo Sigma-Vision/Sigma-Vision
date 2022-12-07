@@ -31,6 +31,7 @@ typedef struct Square
     Dot topLeft;
     Dot topRight;
     Dot bottomLeft;
+    Dot bottomRight;
 } Square;
 
 typedef struct SquareList
