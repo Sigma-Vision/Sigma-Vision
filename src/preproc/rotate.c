@@ -157,13 +157,6 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill,int rad)
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     
-    //SDL_Surface* temp = SDL_CreateRGBSurface(0,(maxx - minx),(maxy - miny),32,0,0,0,0);
-    // check si 32 est bon
-
-    //printf("MAXX = %i | MINX = %i | MAXY = %i | MINY = %i\n",maxx,minx,maxy,miny);
-
-    //printf("temp->w = %i | temp->h = %i\n",temp->w,temp->h);
-
     SDL_Surface* temp = SDL_CreateRGBSurface(0,surface->w,surface->h,32,0,0,0,0);
     double center_x = temp->w / 2;
     double center_y = temp->h / 2;
@@ -205,9 +198,6 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill,int rad)
 
     int srcx;
     int srcy;
-
-    //FILE* f = fopen("debug.txt","w");
-    //fprintf(f,"WIDTH = %i\nHEIGHT = %i\n",temp->w,temp->h);
 
     for (double y = 0;y < temp->h;y++)
     {
