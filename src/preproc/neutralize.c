@@ -342,3 +342,9 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
     
     return surface;
 }
+
+SDL_Surface* unconvex(SDL_Surface* surface,Square* s)
+{
+    int width = surface->w;
+    int height = surface->h;
+}

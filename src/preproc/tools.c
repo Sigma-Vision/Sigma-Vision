@@ -1,9 +1,11 @@
 #include <stdlib.h>
-#include <err.h>
+#include <err.h> 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h> 
 #include "struct.h"
 #include "neutralize.h"
+
+#define CASE_SIDE_SIZE 8
 
 /** 
  * Loads an image in a surface.
@@ -195,22 +197,24 @@ void GridSplit(SDL_Surface* surface)
     char filename[15];
 
     Square s;
+    int cut_w = w9/8;
+    int cut_h = h9/8;
     
     for (int i = 0;i < 9;i++)
     {
         for (int j = 0;j < 9;j++)
         {
-            s.topLeft.Y = w9*j;
-            s.topLeft.X = h9*i;
+            s.topLeft.Y = w9*j + cut_w;
+            s.topLeft.X = h9*i + cut_h;
 
-            s.topRight.Y = w9*(j+1);
-            s.topRight.X = h9*i;
+            s.topRight.Y = w9*(j+1) - cut_w;
+            s.topRight.X = h9*i + cut_h;
 
-            s.bottomLeft.Y = w9*j;
-            s.bottomLeft.X = h9*(i+1);
+            s.bottomLeft.Y = w9*j + cut_w;
+            s.bottomLeft.X = h9*(i+1) - cut_h;
 
             SDL_Surface* temp = GridCropping(surface,&s);
-            temp = ResizeSurface(temp,8,8);
+            temp = ResizeSurface(temp,CASE_SIDE_SIZE,CASE_SIDE_SIZE);
 
             snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
             IMG_SaveJPG(temp, filename,100);
