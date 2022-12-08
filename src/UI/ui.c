@@ -1,5 +1,9 @@
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+#include "../rebuild/rebuild.h"
+
 #include "../preproc/neutralize.h"
 #include "../preproc/transform.h"
 #include "../preproc/tools.h"
@@ -169,6 +173,7 @@ void ui_solve(GtkButton *a, gpointer user_data)
     if (surface)
     {
         //gtk_progress_bar_set_text(progress_bar, "progressssss ");
+        
         display_surface();
         OtsuBinarization(surface); 
         display_surface();
@@ -178,6 +183,9 @@ void ui_solve(GtkButton *a, gpointer user_data)
         find_grid(surface, &s);
         display_surface();
         surface = RotateDetectedGrid(surface,&s); 
+        display_surface();
+        
+        //surface = rebuild ("grid_00", "grid_00.result");
         display_surface();
     }
 }
