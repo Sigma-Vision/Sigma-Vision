@@ -100,6 +100,10 @@ SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
     return temp;
 }
 
+/**
+ * THIS FUNCTIONS DOES NOT FREE THE PROVIDED SURFACE AND RETURNES ANOTHER
+ * WATCH OUT FOR USE AFTER FREE
+ */
 SDL_Surface* SobelTransform(SDL_Surface* surface)
 {
     //we use a 5x5 kernel here, may not be needed or may need 7x7
@@ -189,7 +193,7 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
         }
     }
      
-    SDL_FreeSurface(surface);
+    //SDL_FreeSurface(surface);
 
     SDL_UnlockSurface(temp);
 

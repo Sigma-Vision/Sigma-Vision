@@ -14,7 +14,33 @@
  * path: Path of the image.
  */
 
+void fill_outside_square(SDL_Surface* surface, Square* s)
+{
+    int width = surface->w;
+    int height = surface->h;
+    Uint32* pixels = surface->pixels; 
 
+    Dot tl = s->topLeft;
+    Dot tr = s->topRight;
+    Dot bl = s->bottomLeft;
+    Dot br = s->bottomRight;
+   
+    if (SDL_LockSurface(surface) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    for (int i = 0; i < height;i++)
+    {
+        for (int j = 0;j < width;j++)
+        {
+            int in_square = 0; 
+
+            if (!in_square)
+                pixels[i*width +j] = SDL_MapRGB(surface->format,0,0,255);
+        }
+    }
+
+    SDL_UnlockSurface(surface);
+}
 
 void print_pixel(SDL_Surface* surface, int i, int j)
 {
@@ -37,7 +63,6 @@ void print_pixel(SDL_Surface* surface, int i, int j)
             }
         }
     }
-    printf("done"); 
     SDL_UnlockSurface(surface);
 }
 
