@@ -1,4 +1,4 @@
-#define CONFIG_FILE "digit_guess.nnconf"
+#define CONFIG_FILE "digit_net.nnconf"
 
 void write_config(const int nb_inputs, const int nb_layers,
                   const int nb_nodes[], double** biases_pp,
