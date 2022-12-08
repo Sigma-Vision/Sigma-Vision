@@ -11,12 +11,13 @@
 */
 int learn(const int NB_ITER)
 {
+    //printf("Init params\n");
     init_rand();
 
     /* Network configuration */
-    const int nb_inputs = 2;
+    const int nb_inputs = INPUT_SIZE;
     const int nb_layers = 2;
-    const int nb_nodes[] = {3, 2};
+    const int nb_nodes[] = {100, 9};
 
     double** nodes_pp = malloc(nb_layers * sizeof(double*));
     double** deltas_pp = malloc(nb_layers * sizeof(double*));
@@ -29,7 +30,7 @@ int learn(const int NB_ITER)
     /* Training set */
     static const int nb_digits = 9;
     int digit_set_order[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8};
-    double training_inputs[INPUT_SIZE];
+    double training_inputs[INPUT_SIZE] = {0};
 
     const double learning_rate = 0.1f;
 
@@ -38,13 +39,22 @@ int learn(const int NB_ITER)
 
     for (int iter_i = 0; iter_i < NB_ITER; iter_i++)
     {
+        //printf("\n### ITER %i ###\n", iter_i);
+
         shuffle(digit_set_order, nb_digits);
+
+        //printf("[");
+        //for (int i = 0; i < 9; i++)
+        //    printf(" %i", digit_set_order[i]);
+        //printf(" ]\n");
+
         long file_id = get_rand_long(DATASET_SIZE);
 
         for (int x = 0; x < nb_digits; x++)
         {
             int i = digit_set_order[x];
-            get_bit_array(i, file_id, training_inputs);
+            //printf("> get_bit_array(%i, %li)\n", i+1, file_id);
+            get_bit_array(i+1, file_id, training_inputs);
 
             double* nodes_p = *nodes_pp;
             double* biases_p = *biases_pp;
@@ -52,6 +62,7 @@ int learn(const int NB_ITER)
 
 
             /* FORWARD PASS */
+            //printf("Forward pass\n");
 
             int prev_nb_nodes = nb_inputs;
             int curr_nb_nodes = nb_nodes[0];
@@ -97,6 +108,8 @@ int learn(const int NB_ITER)
             /* BACK PROPAGATION */
 
             /* Get deltas */
+            //printf("Get deltas\n");
+
             prev_nb_nodes = nb_nodes[nb_layers - 1];
             curr_nb_nodes = prev_nb_nodes;
             nodes_p = *(nodes_pp + nb_layers - 1);
@@ -104,12 +117,14 @@ int learn(const int NB_ITER)
             double* curr_deltas_p = *(deltas_pp + nb_layers - 1);
 
             // output layer
+            //printf("--output layer\n");
             for (int node_i = 0; node_i < curr_nb_nodes; node_i++)
                 *(curr_deltas_p + node_i) = -*(nodes_p + node_i);
             *(curr_deltas_p + i) = d_sigmoid(*(nodes_p + i)) - *(nodes_p + i);
 
             for (int layer_i = nb_layers - 2; layer_i >= 0; layer_i--)
             {
+                //printf("--layer %i\n", layer_i);
                 prev_nb_nodes = curr_nb_nodes;
                 curr_nb_nodes = nb_nodes[layer_i];
                 nodes_p = *(nodes_pp + layer_i);
@@ -132,6 +147,8 @@ int learn(const int NB_ITER)
 
 
             /* Adapt biases & weights */
+            //printf("Adapt biases & weights\n");
+
             prev_nb_nodes = nb_inputs;
             curr_nb_nodes = nb_nodes[0];
             double* deltas_p = *deltas_pp;
@@ -180,7 +197,8 @@ int learn(const int NB_ITER)
     }
 
 
-    write_config(nb_inputs, nb_layers, nb_nodes, biases_pp, weights_ppp);
+    //printf("Write config\n");
+    //write_config(nb_inputs, nb_layers, nb_nodes, biases_pp, weights_ppp);
 
     free_memory(nb_layers, nb_nodes, nodes_pp, deltas_pp, biases_pp,
                 weights_ppp);

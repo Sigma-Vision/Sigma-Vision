@@ -3,8 +3,8 @@
 CC = gcc
 CPPFLAGS = -MMD
 CFLAGS = -Wall -Wextra
-LDFLAGS =
-LDLIBS = -lm
+LDFLAGS = -g
+LDLIBS = `pkg-config --libs sdl2 SDL2_image gtk+-3.0` -lm
 
 SRC = $(filter-out no-make/*, $(wildcard *.c))
 OBJ = ${SRC:.c=.o}
@@ -15,7 +15,7 @@ OBJ_TEST = ${SRC_TEST:.c=.o}
 DEP_TEST = ${SRC_TEST:.c=.d}
 
 
-digit_net: ${OBJ}
+train: ${OBJ}
 
 no-make/test: ${OBJ} ${OBJ_TEST}
 
@@ -27,6 +27,6 @@ no-make/test: ${OBJ} ${OBJ_TEST}
 clean:
 	${RM} ${OBJ} ${OBJ_TEST}
 	${RM} ${DEP} ${DEP_TEST}
-	${RM} digit_net no-make/test
+	${RM} train no-make/test
 
 # END
