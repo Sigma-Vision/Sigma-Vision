@@ -51,11 +51,9 @@ void shuffle(int *array, size_t n)
 {
     if (n > 1)
     {
-        size_t i;
-
-        for (i = 0; i < n - 1; i++)
+        for (size_t i = 0; i < n - 1; i++)
         {
-            size_t j = i + (rand() * (n - i + 1)) / RAND_MAX;
+            size_t j = i + (rand() * (n - i)) / RAND_MAX;
             int tmp = array[j];
 
             array[j] = array[i];
@@ -151,9 +149,8 @@ void free_memory(const int nb_layers, const int nb_nodes[], double** nodes_pp,
 void get_bit_array(int digit, long n, double bit_a[])
 {
     // retrieve path
-    // TODO modif path to architecture
     char* path = malloc(sizeof(char) * 10);
-    sprintf(path, "%i%li.png", digit, n);
+    sprintf(path, "dataset/%i/%li.png", digit, n);
 
     // create SDL surface
     SDL_Surface* surface = IMG_Load(path);
