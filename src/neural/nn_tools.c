@@ -149,29 +149,20 @@ void free_memory(const int nb_layers, const int nb_nodes[], double** nodes_pp,
 void get_bit_array(int digit, long n, double bit_a[])
 {
     // retrieve path
-    //printf("retrieve path\n");
     char* path = malloc(sizeof(char) * 10);
     sprintf(path, "dataset/%i/%li.png", digit, n);
 
-    //printf("%s\n", path);
     // create SDL surface
-    //printf("create surface\n");
     SDL_Surface* surface = IMG_Load(path);
     free(path);
 
     // number of bytes per pixel
-    //printf("# bpp\n");
-    //const Uint8 bpp = surface->format->BytesPerPixel;
+    const Uint8 bpp = surface->format->BytesPerPixel;
 
     for (int i = 0; i < surface->w * surface->w; i++)
     {
-        //if (!(i % 16))
-        //    printf("\n");
-        //printf("%i\n", i);
-        //printf("pixel_p\n");
         Uint8* pixel_p = (Uint8*) surface->pixels + i / surface->w
-            * surface->pitch + i % surface->w;// * bpp;
-        //printf("pixel_data\n");
+            * surface->pitch + i % surface->w * bpp;
         Uint32 pixel_data = *(Uint32*)pixel_p;
 
         SDL_Color color = {0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE};
@@ -180,7 +171,6 @@ void get_bit_array(int digit, long n, double bit_a[])
         SDL_GetRGB(pixel_data, surface->format, &color.r, &color.g, &color.b);
 
         bit_a[i] = (double) (color.r / 255.0f);
-        //printf("%i ", (int)bit_a[i]);
     }
 }
 
