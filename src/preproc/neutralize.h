@@ -9,5 +9,6 @@ void surface_to_grayscale(SDL_Surface* surface);
 void OtsuBinarization(SDL_Surface* surface);
 int OtsuGetMaxVariance(SDL_Surface* surface);
 SDL_Surface* Dilation(SDL_Surface* surface,int iterations);
+SDL_Surface* Erosion(SDL_Surface* surface, int iterations);
 
 #endif

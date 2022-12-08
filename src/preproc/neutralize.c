@@ -236,67 +236,12 @@ void OtsuBinarization(SDL_Surface* surface)
  * Dilates an already binarized surface.
  */
 
-SDL_Surface* Dilation(SDL_Surface* surface,int radius)
+SDL_Surface* Dilation(SDL_Surface* surface, int iterations)
 {
     int width = surface->w;
     int height = surface->h;
-
-    SDL_PixelFormat* format = surface->format;
-    
-    SDL_Surface* res = 
-        SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
-   
-    if (SDL_LockSurface(res) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    Uint32* respixels = res-> pixels;
-    for (int i = 0; i < height;i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            respixels[i*width+j] = SDL_MapRGB(format,255,255,255);
-        }
-    }
-
-    for (int i = 0; i < height; i++)
-    {
-        
-        for (int j = 0; j < width; j++)
-        {
-            if (GetColor(surface,i,j) == 255)
-            {
-                for (int i2 = -radius; i2 <= radius;i2++)
-                {
-                    
-                    for (int j2 = -radius; j2 <= radius;j2++)
-                    {
-                        int x = (i+i2);
-                        int y = (j+j2);
-                        
-                        if (x >= 0 && x < height && y>= 0 && y < width && 
-                                abs(i2) + abs(j2) <= radius) 
-                        {
-                            respixels[x* width +y] = SDL_MapRGB(format,0,0,0); 
-                        }
-                    }
-                }
-            }
-        } 
-    }
-
-    SDL_UnlockSurface(res);
-
-    SDL_FreeSurface(surface);
-
-    return res;
-}
-
-SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
-{
     for (int iter = 0;iter < iterations;iter++)
     {
-        int width = surface->w;
-        int height = surface->h;
 
         SDL_PixelFormat* format = surface->format;
 
@@ -313,21 +258,18 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
             {
                 if (GetColor(surface,i,j) == 255)
                 {
-                    if ((i<=0 || GetColor(surface,i-1,j) == 255) 
-                            && (i+1 >= height || GetColor(surface,i+1,j) == 255) 
-                            && (j <= 0 || GetColor(surface,i,j-1) == 255)
-                            && (j+1 >= width || GetColor(surface,i,j+1) == 255))
-                    {
                         if (i > 0)
-                            respixels[(i-1)*width+j] = 0;
+                            respixels[(i-1)*width+j] = SDL_MapRGB(format,255,255,255);
                         if (i+1 < height)
-                            respixels[(i+1)*width+j] = 0;
+                            respixels[(i+1)*width+j] = SDL_MapRGB(format,255,255,255);
                         if (j > 0)
-                            respixels[i*width+(j-1)] = 0;
+                            respixels[i*width+(j-1)] = SDL_MapRGB(format,255,255,255);
                         if (j+1 >= width)
-                            respixels[i*width+(j+1)] = 0;
-                    }
-
+                            respixels[i*width+(j+1)] = SDL_MapRGB(format,255,255,255);
+                }
+                else
+                {
+                    respixels[i*width+j] = 0;
                 } 
             }
         } 
@@ -338,6 +280,72 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
 
         surface = res;
  
+    }
+    
+    return surface;
+}
+
+
+SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
+{
+    int width = surface->w;
+    int height = surface->h;
+    SDL_PixelFormat* format = surface->format;
+
+    for (int iter = 0;iter < iterations;iter++)
+    {
+        SDL_Surface* res = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+
+        if (SDL_LockSurface(res) < 0)
+            errx(EXIT_FAILURE, "%s", SDL_GetError());
+    
+        Uint32* respixels = res-> pixels;
+
+        for (int i = 0;i < height;i++)
+        {
+            for (int j = 0;j < width;j++)
+            {
+                if (GetColor(surface,i,j) == 255)
+                {
+                    char found = 0; 
+                    
+                    if (i > 0 && GetColor(surface,i-1,j) == 255 )
+                    {
+                        found  = 1;
+                        respixels[(i-1)*width+j] = 0;
+                    }
+
+                    if (i+1 < height && GetColor(surface,i+1,j) == 255)
+                    {
+                        found = 1;
+                        respixels[(i+1)*width+j] = 0;
+                    }
+
+                    if (j > 0 && GetColor(surface,i,j-1) == 255)
+                    {
+                        found = 1;
+                        respixels[i*width+(j-1)] = 0;
+                    }
+
+                    if (j+1 >= width && GetColor(surface,i,j+1) == 255)
+                    {
+                        found = 1;
+                        respixels[i*width+(j+1)] = 0;
+                    }
+
+                    if (!found)
+                        respixels[i*width+j] = 0;
+                }
+                else
+                   respixels[i*width+j] = SDL_MapRGB(format,255,255,255); 
+            }
+        } 
+
+        SDL_UnlockSurface(res);
+
+        SDL_FreeSurface(surface);
+        
+        surface = res;
     }
     
     return surface;
