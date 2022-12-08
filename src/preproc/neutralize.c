@@ -343,8 +343,16 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
     return surface;
 }
 
-SDL_Surface* unconvex(SDL_Surface* surface,Square* s)
+SDL_Surface* unlosange(SDL_Surface* surface,Square* s)
 {
     int width = surface->w;
     int height = surface->h;
+
+    Dot tl = s->topLeft;
+    Dot tr = s->topRight;
+    Dot bl = s->bottomLeft;
+    Dot br = s->bottomRight;
+
+    //do rotation as described in the picture
+    //include ponderation with distance to the angle / distance to the dot that is off / further outside    
 }

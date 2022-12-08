@@ -149,11 +149,6 @@ SDL_Surface* rotateAny(SDL_Surface* surface,double angle,int color_fill,int rad)
 
     Uint32* pixels = surface -> pixels;
 
-    int maxx;
-    int minx;
-    int maxy;
-    int miny;
-    
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     

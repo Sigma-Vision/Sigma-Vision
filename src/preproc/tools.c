@@ -79,8 +79,6 @@ SDL_Surface* ResizeSurface (SDL_Surface* surface,int n_width,int n_height)
     double ratio_w = (double)n_width/(double)width;
     double ratio_h = (double)n_height/(double)height;
     
-    printf("w = %lf\nh = %lf\n",ratio_w,ratio_h);
-
     int x;
     int y;
 
