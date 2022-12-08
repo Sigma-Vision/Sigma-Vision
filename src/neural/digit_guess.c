@@ -9,7 +9,7 @@
 /**
 ** Guess digit value present in bit array inputs
 */
-int use(double inputs[])
+int guess_digit(double inputs[])
 {
     /* Network configuration */
     if (INPUT_SIZE != get_nb_inputs())

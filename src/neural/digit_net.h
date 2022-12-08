@@ -4,4 +4,4 @@
 #define DATASET_SIZE 10000   //number of training picture per digit
 
 int learn(int NB_ITER);
-int guess(double inputs[], int nb_inputs);
+int guess_digit(double inputs[]);
