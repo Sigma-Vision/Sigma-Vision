@@ -198,7 +198,7 @@ int learn(const int NB_ITER)
 
 
     //printf("Write config\n");
-    //write_config(nb_inputs, nb_layers, nb_nodes, biases_pp, weights_ppp);
+    write_config(nb_inputs, nb_layers, nb_nodes, biases_pp, weights_ppp);
 
     free_memory(nb_layers, nb_nodes, nodes_pp, deltas_pp, biases_pp,
                 weights_ppp);
