@@ -6,27 +6,26 @@
 SDL_Surface* rebuild (char* not_solved, char* solved)
 {
     SDL_Surface* number[] = 
-    {IMG_Load("ressources/1.png"),
-        IMG_Load("ressources/2.png"),
-        IMG_Load("ressources/3.png"),
-        IMG_Load("ressources/4.png"),
-        IMG_Load("ressources/5.png"),
-        IMG_Load("ressources/6.png"),
-        IMG_Load("ressources/7.png"),
-        IMG_Load("ressources/8.png"),
-        IMG_Load("ressources/9.png")};
+    {IMG_Load("resources/1.png"),
+        IMG_Load("resources/2.png"),
+        IMG_Load("resources/3.png"),
+        IMG_Load("resources/4.png"),
+        IMG_Load("resources/5.png"),
+        IMG_Load("resources/6.png"),
+        IMG_Load("resources/7.png"),
+        IMG_Load("resources/8.png"),
+        IMG_Load("resources/9.png")};
 
     SDL_Surface* number_added[] =
-    {IMG_Load("ressources/1_a.png"),
-        IMG_Load("ressources/2_a.png"),
-        IMG_Load("ressources/3_a.png"),
-        IMG_Load("ressources/4_a.png"),
-        IMG_Load("ressources/5_a.png"),
-        IMG_Load("ressources/6_a.png"),
-        IMG_Load("ressources/7_a.png"),
-        IMG_Load("ressources/8_a.png"),
-        IMG_Load("ressources/9_a.png")};
-
+    {IMG_Load("resources/1_a.png"),
+        IMG_Load("resources/2_a.png"),
+        IMG_Load("resources/3_a.png"),
+        IMG_Load("resources/4_a.png"),
+        IMG_Load("resources/5_a.png"),
+        IMG_Load("resources/6_a.png"),
+        IMG_Load("resources/7_a.png"),
+        IMG_Load("resources/8_a.png"),
+        IMG_Load("resources/9_a.png")};
 
     SDL_Rect dest;
     dest.x = 5;
@@ -34,7 +33,7 @@ SDL_Surface* rebuild (char* not_solved, char* solved)
     dest.w = 45;
     dest.h = 45;
 
-    SDL_Surface* grid = IMG_Load("ressources/blank-sudoku-grid.png");
+    SDL_Surface* grid = IMG_Load("resources/blank-sudoku-grid.png");
 
     char *grid_ns = malloc(sizeof(char)*81);
     char *grid_s = malloc(sizeof(char)*81);
@@ -93,8 +92,10 @@ SDL_Surface* rebuild (char* not_solved, char* solved)
             dest.y += 55;
         }
     }
-    SDL_FreeSurface(*number);
-    SDL_FreeSurface(*number_added);
 
+    for (size_t i = 0; i < 9 ; i++)
+        SDL_FreeSurface(number[i]);
+    for (size_t i = 0; i < 9 ; i++)
+        SDL_FreeSurface(number_added[i]);
     return grid;
 }
