@@ -9,5 +9,6 @@ SDL_Surface* load_image(const char* path);
 SDL_Surface* GridCropping(SDL_Surface* surface,Square* s);
 void GridSplit(SDL_Surface* surface);
 SDL_Surface* ResizeSurface(SDL_Surface* surface,int n_width,int n_height);
+void print_pixel(SDL_Surface* surface, int i, int j);
 
 #endif

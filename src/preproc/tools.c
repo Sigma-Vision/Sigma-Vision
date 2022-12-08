@@ -15,6 +15,32 @@
  */
 
 
+
+void print_pixel(SDL_Surface* surface, int i, int j)
+{
+    int width = surface->w;
+    int height = surface->h;
+    Uint32* pixels = surface->pixels;
+
+    if (SDL_LockSurface(surface) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+
+    for (int k = -10;k <= 10;k++)
+    {
+        for (int l = -10;l < 10;l++)
+        {
+            if ( i+k > 0 && i+k < height
+                    && j+l > 0 && j+l < width)
+            {
+                pixels[(i+k)*width+(j+l)] = SDL_MapRGB(surface->format,255,0,0); 
+            }
+        }
+    }
+    printf("done"); 
+    SDL_UnlockSurface(surface);
+}
+
 Uint8 GetColor(SDL_Surface* surface, int i, int j)
 {
     Uint8 r,g,b;

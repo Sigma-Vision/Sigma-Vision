@@ -230,6 +230,17 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
     //X = VERTICAL
     //Y = HORIZONTAL
 
+    printf("tl : X = %i | Y = %i\n",s->topLeft.X,s->topLeft.Y);
+    printf("tr : X = %i | Y = %i\n",s->topRight.X,s->topRight.Y);
+    printf("bl : X = %i | Y = %i\n",s->bottomLeft.X,s->bottomLeft.Y);
+
+    print_pixel(surface,s->topLeft.X,s->topLeft.Y);
+    print_pixel(surface,s->topRight.X,s->topRight.Y);
+    print_pixel(surface,s->bottomLeft.X,s->bottomLeft.Y);
+    print_pixel(surface,s->bottomRight.X,s->bottomRight.Y);
+
+    return surface;
+
     Dot cdot1;
     cdot1.X = s->topLeft.X;
     cdot1.Y = s->topLeft.Y;
