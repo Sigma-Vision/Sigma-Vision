@@ -66,19 +66,17 @@ SDL_Surface* rotate90ccw(SDL_Surface* surface)
     SDL_Surface* temp = SDL_CreateRGBSurface(0,height,width,32,0,0,0,0);
     Uint32* npixels = temp-> pixels;
 
-    // check si 32 est bon
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
     if (SDL_LockSurface(temp) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-
     for (int i = 0;i < height;i++)
     {
         for (int j = 0;j < width;j++)
         {
-            npixels[(width-j-1)*width + i] = pixels[i*width+j]; 
+            npixels[(width-j-1)*height + i] = pixels[i*width+j]; 
         }
     }
 
@@ -105,7 +103,7 @@ SDL_Surface* rotate90cw(SDL_Surface* surface)
 
     SDL_Surface* temp = SDL_CreateRGBSurface(0,height,width,32,0,0,0,0);
     Uint32* npixels = temp-> pixels;
-    // check si 32 est bon
+    
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
@@ -117,7 +115,7 @@ SDL_Surface* rotate90cw(SDL_Surface* surface)
     {
         for (int j = 0;j < width;j++)
         {
-             npixels[j*width + (height - i - 1)] = pixels[i*width+j]; 
+             npixels[j*height + (height - i - 1)] = pixels[i*width+j]; 
         }
     }
 
