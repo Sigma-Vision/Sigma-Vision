@@ -307,37 +307,47 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
             {
                 if (GetColor(surface,i,j) == 255)
                 {
-                    char found = 0; 
+                    //on disc == is not on border
+                    int is_border = ! ((i<=0 || GetColor(surface,i-1,j) == 255) 
+                            && (i+1 >= height || GetColor(surface,i+1,j) == 255) 
+                            && (j <= 0 || GetColor(surface,i,j-1) == 255)
+                            && (j+1 >= width || GetColor(surface,i,j+1) == 255));
+                    if (is_border)
+                    {
+                        char found = 0; 
                     
-                    if (i > 0 && GetColor(surface,i-1,j) == 255 )
-                    {
-                        found  = 1;
-                        respixels[(i-1)*width+j] = 0;
-                    }
+                        if (i > 0 && GetColor(surface,i-1,j) == 255 )
+                        {
+                            found  = 1;
+                            respixels[(i-1)*width+j] = 0;
+                        }
 
-                    if (i+1 < height && GetColor(surface,i+1,j) == 255)
-                    {
-                        found = 1;
-                        respixels[(i+1)*width+j] = 0;
-                    }
+                        if (i+1 < height && GetColor(surface,i+1,j) == 255)
+                        {
+                            found = 1;
+                            respixels[(i+1)*width+j] = 0;
+                        }
 
-                    if (j > 0 && GetColor(surface,i,j-1) == 255)
-                    {
-                        found = 1;
-                        respixels[i*width+(j-1)] = 0;
-                    }
+                        if (j > 0 && GetColor(surface,i,j-1) == 255)
+                        {
+                            found = 1;
+                            respixels[i*width+(j-1)] = 0;
+                        }
 
-                    if (j+1 >= width && GetColor(surface,i,j+1) == 255)
-                    {
-                        found = 1;
-                        respixels[i*width+(j+1)] = 0;
-                    }
+                        if (j+1 >= width && GetColor(surface,i,j+1) == 255)
+                        {
+                            found = 1;
+                            respixels[i*width+(j+1)] = 0;
+                        }
 
-                    if (!found)
-                        respixels[i*width+j] = 0;
+                        if (!found)
+                            respixels[i*width+j] = 0;
+                    }
+                    else
+                        respixels[i*width+j] = SDL_MapRGB(format,255,255,255);
                 }
                 else
-                   respixels[i*width+j] = SDL_MapRGB(format,255,255,255); 
+                   respixels[i*width+j] = 0; 
             }
         } 
 
