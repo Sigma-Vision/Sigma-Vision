@@ -76,7 +76,7 @@ int guess_digit(double inputs[])
     }
 
     char result = get_output(*(nodes_pp + nb_layers - 1));
-    printf("RESULT: %i\n", result);
+    //printf("RESULT: %i\n", result);
 
     free_memory(nb_layers, nb_nodes, nodes_pp, 0, biases_pp,
                 weights_ppp);
