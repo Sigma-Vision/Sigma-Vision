@@ -239,7 +239,7 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
     //print_pixel(surface,s->bottomLeft.X,s->bottomLeft.Y);
     //print_pixel(surface,s->bottomRight.X,s->bottomRight.Y);
 
-    return surface;
+    //return surface;
 
     Dot cdot1;
     cdot1.X = s->topLeft.X;

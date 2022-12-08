@@ -4,8 +4,10 @@
 #include <SDL2/SDL_image.h> 
 #include "struct.h"
 #include "neutralize.h"
+#include <math.h>
 
 #define CASE_SIDE_SIZE 8
+#define PI 3.14159265
 
 /** 
  * Loads an image in a surface.
@@ -14,16 +16,151 @@
  * path: Path of the image.
  */
 
+int losange_collision(Square* s, double i, double j)
+{
+    
+    Dot tl = s->topLeft;
+    Dot tr = s->topRight;
+    Dot bl = s->bottomLeft;
+    Dot br = s->bottomRight;
+
+    if (i < tl.X)
+    {
+        if (i < tr.X)
+            return 0;
+        int y = j - tl.Y;
+        int x = i - tr.X;
+    
+        int X = tl.X - tr.X;
+        int Y = tr.Y - tl.Y;
+
+        if (Y*x < X*y)
+            return 0;        
+    }
+    
+    if (i < tr.X)
+    {
+        if (i < tl.X)
+            return 0;
+        
+        int y = j - tl.Y;
+        int x = i - tl.X;
+        
+        int X = tr.X - tl.X;
+        int Y = tr.Y - tl.Y;
+
+        //example of the way this works
+        /*
+        double angle = arctan((double)(tr.X - tl.X) / (double)(tr.Y - tr.X));
+        if (tan(a)*y < x)
+            return 0;*/
+
+        //faster operation and lossless
+        if (X*y < Y*x)
+            return 0;
+
+    }
+
+    if (i > bl.X)
+    {
+        if (i > br.X)
+            return 0;
+
+        int y = j - bl.Y;
+        int x = i - bl.X;
+
+        int X = br.X - bl.X;
+        int Y = br.Y - bl.Y;
+
+        if (X*y > Y*x)
+            return 0;
+    }
+
+    if (i > br.X)
+    {
+        if (i > bl.X)
+            return 0;
+
+        int y = j - bl.Y;
+        int x = i - br.X;
+
+        int X = bl.X - br.X;
+        int Y = br.Y - bl.Y;
+
+        if (Y*x > X*y)
+            return 0;
+    }
+
+    if (j < tl.Y)
+    {
+        if (j < bl.Y)
+            return 0;
+
+        int y = j - tl.Y;
+        int x = i - tl.X;
+
+        int X = bl.X - tl.X;
+        int Y = bl.Y - tl.Y;
+
+        if (X*y > Y*x)
+            return 0;
+    }
+
+        
+    if (j < bl.Y)
+    {
+        if (j < tl.Y)
+            return 0;
+
+        int y = j - bl.Y;
+        int x = i - tl.X;
+
+        int X = bl.X - tl.X;
+        int Y = tl.Y - bl.Y;
+
+        if (Y*x > X*y)
+            return 0;
+    }
+
+    if (j > tr.Y)
+    {
+        if (j > br.Y)
+            return 0;
+
+        int y = j - tr.Y;
+        int x = i - tr.X;
+
+        int X = br.X - tr.X;
+        int Y = br.Y - tr.Y;
+
+        if (X*y < Y*x)
+            return 0;
+    }
+
+    if (j > br.Y)
+    {
+        if (j > tr.Y)
+            return 0;
+
+        int y = j - br.Y;
+        int x = i - tr.X;
+
+        int X = br.X - tr.X;
+        int Y = tr.Y - br.Y;
+
+        if (Y*x < X*y)
+            return 0;
+    }
+
+    return 1;
+}
+
 void fill_outside_square(SDL_Surface* surface, Square* s)
 {
     int width = surface->w;
     int height = surface->h;
     Uint32* pixels = surface->pixels; 
 
-    Dot tl = s->topLeft;
-    Dot tr = s->topRight;
-    Dot bl = s->bottomLeft;
-    Dot br = s->bottomRight;
    
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
