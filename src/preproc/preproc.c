@@ -41,7 +41,7 @@ int preproc(char* file, char* output)
 
    surface = RotateDetectedGrid(surface,&s); 
 
-    find_coin(surface, s);
+    find_coin(surface, &s);
 
     //SDL_Surface* to_free = surface;
     //surface = GridCropping(to_free,&s);
