@@ -500,5 +500,9 @@ void find_coin(SDL_Surface* surface, Square* s)
     s->topRight = square1.topRight;
     s->bottomLeft = square1.bottomLeft;
     s->bottomRight = square1.bottomRight;
+
+    free(label_stats);
+    free(label);
+    SDL_UnlockSurface(surface);
 }
 
