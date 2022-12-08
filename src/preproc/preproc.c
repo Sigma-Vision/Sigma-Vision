@@ -36,15 +36,18 @@ int preproc(char* file, char* output)
   
     //rotate180(surface);
 
-//  surface = rotateAny(surface,0,255,1);
+    //surface = rotateAny(surface,0,255,1);
     
-    surface = RotateDetectedGrid(surface,&s); 
 
-    SDL_Surface* to_free = surface;
-    surface = GridCropping(to_free,&s);
-    SDL_FreeSurface(to_free);
+   surface = RotateDetectedGrid(surface,&s); 
 
-    GridSplit(surface);
+    find_coin(surface, s);
+
+    //SDL_Surface* to_free = surface;
+    //surface = GridCropping(to_free,&s);
+    //SDL_FreeSurface(to_free);
+
+    //GridSplit(surface);
 
     IMG_SaveJPG(surface, output, 100);
     // - Cleanup

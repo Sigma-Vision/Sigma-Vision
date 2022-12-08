@@ -271,16 +271,27 @@ void find_square2(int* label, int h, int w, int l, Square* square)
     i = h - 1;
     j = w - 1;
 
-    while (j < 0 && label[i * w + j] != l)
+    while (j > 0 && label[i * w + j] != l)
     {
-        while (i > j && i < h && label[i * w + j] != l)
+        while (i > j && i > 0 && label[i * w + j] != l)
         {
             i--;
         }
-        if (i < h && j < w && label[i * w + j] != l)
+        if (i >= 0 && j >= 0 && label[i * w + j] != l)
         {
             j--;
             i = h - 1;
+        }
+    }
+    while (j + 5 < w && i < h && (label[i * w + j + 1] == l || label[i * w + j - w +
+    5] == l))
+    {
+        if (label[i * w + j + 1] == l)
+            j++;
+        else if (label[i * w + j - w + 2] == l)
+        {
+            i--;
+            j += 5;
         }
     }
 
@@ -392,7 +403,28 @@ void find_grid(SDL_Surface* surface, Square* s)
         s->topLeft = square1.topLeft;
         s->topRight = square1.topRight;
         s->bottomLeft = square1.bottomLeft;
+        s->bottomRight = square1.bottomRight;
         add_color(pixels, label, big_label[0], h, w);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 1] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 2] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 3] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 4] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 5] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 6] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 7] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 8] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 9] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 10] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 1] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 2] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 3] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 4] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 5] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 6] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 7] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 8] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 9] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y + 10] = SDL_MapRGB(format, 255, 0, 0);
     }
     else
     {
@@ -400,12 +432,73 @@ void find_grid(SDL_Surface* surface, Square* s)
         s->topLeft = square2.topLeft;
         s->topRight = square2.topRight;
         s->bottomLeft = square2.bottomLeft;
+        s->bottomRight = square2.bottomRight;
         add_color(pixels, label, big_label[1], h, w);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 1] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 2] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 3] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 4] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 5] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 6] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 7] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 8] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 9] = SDL_MapRGB(format, 255, 0, 0);
+        pixels[s->bottomRight.X * w + s->bottomRight.Y - 10] = SDL_MapRGB(format, 255, 0, 0);
     }
 
 
     free(label_stats);
     free(label);
     SDL_UnlockSurface(surface);
+}
+
+void find_coin(SDL_Surface* surface, Square* s)
+{
+    Uint32* pixels = surface->pixels;
+    int w = surface -> w;
+    int h = surface -> h;// gets the length of pixels with the
+                                      // width and length of the given surface.
+    SDL_PixelFormat* format = surface->format;
+
+    if (SDL_LockSurface(surface) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    int* label = calloc(w + 1, sizeof(int) * h + 1);
+    int maxLabel = 1;
+
+    // fill the label
+    for (int i = 1; i < h - 1; i++)
+    {
+        for (int j = 1; j < w - 1; j++)
+        {
+            int l = IsLabeled(label[i * w + j - 1], label[(i - 1) * w + j], 
+                    pixels[i * w + j], format);
+            if (l != -1)
+                label[i * w + j] = l;
+            else
+                label[i * w + j] = maxLabel++;
+        }
+    }
+
+    // fix the label fill
+    Step2(label, h, w);
+
+    // Stats about labels
+    int* label_stats = calloc(maxLabel, sizeof(int));
+    fillStats(label, label_stats, h, w);
+
+    // find the 2 biggest label
+    int big_label[] = {0, 0};
+    max(label_stats, maxLabel, big_label);
+
+    Square square1;
+    
+    find_square(label, h, w, big_label[0], &square1);
+
+    find_square2(label, h, w, big_label[0], &square1);
+    s->topLeft = square1.topLeft;
+    s->topRight = square1.topRight;
+    s->bottomLeft = square1.bottomLeft;
+    s->bottomRight = square1.bottomRight;
 }
 

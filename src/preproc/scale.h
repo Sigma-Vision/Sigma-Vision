@@ -15,4 +15,5 @@
 #define SCALE_H
 
 void find_grid(SDL_Surface* surface, Square* s);
+void find_coin(SDL_Surface* surface, Square* s);
 #endif
