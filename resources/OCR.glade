@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.40.0 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="MainWindow">
-    <property name="can-focus">False</property>
+    <property name="name">dark</property>
+    <property name="can_focus">False</property>
     <property name="resizable">False</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkStack" id="MainStack">
         <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="transition-duration">100</property>
-        <property name="transition-type">crossfade</property>
+        <property name="can_focus">False</property>
+        <property name="transition_duration">100</property>
+        <property name="transition_type">crossfade</property>
         <child>
           <object class="GtkFixed" id="MainFixed">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkImage">
-                <property name="width-request">500</property>
-                <property name="height-request">500</property>
+                <property name="width_request">500</property>
+                <property name="height_request">500</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="pixbuf">sigmavision_logo_big.png</property>
               </object>
               <packing>
@@ -31,11 +35,11 @@
             <child>
               <object class="GtkButton" id="ButtonHomepage">
                 <property name="label" translatable="yes">Démarrer</property>
-                <property name="width-request">183</property>
-                <property name="height-request">81</property>
+                <property name="width_request">183</property>
+                <property name="height_request">81</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
               </object>
               <packing>
                 <property name="x">449</property>
@@ -44,10 +48,10 @@
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="width-request">488</property>
-                <property name="height-request">81</property>
+                <property name="width_request">488</property>
+                <property name="height_request">81</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">PROJET S3: OCR</property>
                 <attributes>
                   <attribute name="font-desc" value="Ebrima Bold 35"/>
@@ -62,10 +66,10 @@
             </child>
             <child>
               <object class="GtkImage">
-                <property name="width-request">125</property>
-                <property name="height-request">85</property>
+                <property name="width_request">125</property>
+                <property name="height_request">85</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="pixbuf">epita_logo.png</property>
               </object>
               <packing>
@@ -75,10 +79,10 @@
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="width-request">184</property>
-                <property name="height-request">148</property>
+                <property name="width_request">184</property>
+                <property name="height_request">148</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Malo GARNIER
 Paul DUFOUR
 Josef TOURRAND
@@ -93,10 +97,10 @@ Eloi COUDERC</property>
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="width-request">100</property>
-                <property name="height-request">80</property>
+                <property name="width_request">100</property>
+                <property name="height_request">80</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">By:</property>
               </object>
               <packing>
@@ -111,30 +115,32 @@ Eloi COUDERC</property>
           </packing>
         </child>
         <child>
-          <!-- n-columns=2 n-rows=1 -->
           <object class="GtkGrid" id="MainGrid">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkFixed" id="Side_Menu">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkImage">
-                    <property name="width-request">162</property>
-                    <property name="height-request">199</property>
+                  <object class="GtkImage" id="image2">
+                    <property name="width_request">162</property>
+                    <property name="height_request">199</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <property name="pixbuf">sigmavision_logo.png</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkFileChooserButton" id="load_file">
-                    <property name="width-request">182</property>
-                    <property name="height-request">60</property>
+                    <property name="width_request">182</property>
+                    <property name="height_request">60</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <property name="title" translatable="yes"/>
+                    <style>
+                      <class name="dark"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="y">262</property>
@@ -143,11 +149,14 @@ Eloi COUDERC</property>
                 <child>
                   <object class="GtkButton" id="solve">
                     <property name="label" translatable="yes">Solve</property>
-                    <property name="width-request">180</property>
-                    <property name="height-request">59</property>
+                    <property name="width_request">180</property>
+                    <property name="height_request">59</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <style>
+                      <class name="dark"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="y">387</property>
@@ -155,10 +164,10 @@ Eloi COUDERC</property>
                 </child>
                 <child>
                   <object class="GtkLabel">
-                    <property name="width-request">110</property>
-                    <property name="height-request">49</property>
+                    <property name="width_request">110</property>
+                    <property name="height_request">49</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <property name="label" translatable="yes">OCR by Sigma-Vision
          EPITA 2026</property>
                   </object>
@@ -169,14 +178,13 @@ Eloi COUDERC</property>
                 </child>
                 <child>
                   <object class="GtkButton" id="settings">
-                    <property name="label">gtk-properties</property>
-                    <property name="width-request">180</property>
-                    <property name="height-request">45</property>
+                    <property name="label">Préférences</property>
+                    <property name="width_request">180</property>
+                    <property name="height_request">45</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="use-stock">True</property>
-                    <property name="always-show-image">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="always_show_image">True</property>
                   </object>
                   <packing>
                     <property name="y">621</property>
@@ -185,11 +193,14 @@ Eloi COUDERC</property>
                 <child>
                   <object class="GtkButton" id="neural_network">
                     <property name="label" translatable="yes">Réseau Neuronal</property>
-                    <property name="width-request">180</property>
-                    <property name="height-request">45</property>
+                    <property name="width_request">180</property>
+                    <property name="height_request">45</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <style>
+                      <class name="dark"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="y">566</property>
@@ -198,11 +209,14 @@ Eloi COUDERC</property>
                 <child>
                   <object class="GtkButton" id="NormalMenu">
                     <property name="label" translatable="yes">Menu</property>
-                    <property name="width-request">180</property>
-                    <property name="height-request">45</property>
+                    <property name="width_request">180</property>
+                    <property name="height_request">45</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <style>
+                      <class name="dark"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="y">513</property>
@@ -210,31 +224,30 @@ Eloi COUDERC</property>
                 </child>
               </object>
               <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
               </packing>
             </child>
             <child>
               <object class="GtkStack" id="ImageStack">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="transition-duration">100</property>
-                <property name="transition-type">crossfade</property>
+                <property name="can_focus">False</property>
+                <property name="transition_duration">100</property>
+                <property name="transition_type">crossfade</property>
                 <child>
-                  <!-- n-columns=1 n-rows=2 -->
                   <object class="GtkGrid" id="NormalGrid">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <child>
                       <object class="GtkFixed" id="ImageFixed">
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkImage" id="image1">
-                            <property name="width-request">650</property>
-                            <property name="height-request">650</property>
+                            <property name="width_request">650</property>
+                            <property name="height_request">650</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">False</property>
+                            <property name="can_focus">False</property>
                             <property name="pixbuf">sigmavision_logo_big.png</property>
                           </object>
                           <packing>
@@ -243,22 +256,25 @@ Eloi COUDERC</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">0</property>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFixed" id="RotaFixed">
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkButton" id="rotate_left">
                             <property name="label" translatable="yes">Rotation Gauche</property>
-                            <property name="width-request">214</property>
-                            <property name="height-request">62</property>
+                            <property name="width_request">214</property>
+                            <property name="height_request">62</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <style>
+                              <class name="dark"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="x">162</property>
@@ -267,12 +283,12 @@ Eloi COUDERC</property>
                         </child>
                         <child>
                           <object class="GtkProgressBar" id="progress">
-                            <property name="width-request">494</property>
-                            <property name="height-request">27</property>
+                            <property name="width_request">494</property>
+                            <property name="height_request">27</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="pulse-step">0</property>
-                            <property name="show-text">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="pulse_step">0</property>
+                            <property name="show_text">True</property>
                           </object>
                           <packing>
                             <property name="x">215</property>
@@ -281,11 +297,14 @@ Eloi COUDERC</property>
                         <child>
                           <object class="GtkButton" id="rotate_right">
                             <property name="label" translatable="yes">Rotation Droite</property>
-                            <property name="width-request">211</property>
-                            <property name="height-request">62</property>
+                            <property name="width_request">211</property>
+                            <property name="height_request">62</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <style>
+                              <class name="dark"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="x">550</property>
@@ -294,10 +313,10 @@ Eloi COUDERC</property>
                         </child>
                         <child>
                           <object class="GtkLabel">
-                            <property name="width-request">38</property>
-                            <property name="height-request">109</property>
+                            <property name="width_request">38</property>
+                            <property name="height_request">109</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">False</property>
+                            <property name="can_focus">False</property>
                           </object>
                           <packing>
                             <property name="x">882</property>
@@ -306,8 +325,8 @@ Eloi COUDERC</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                   </object>
@@ -319,14 +338,14 @@ Eloi COUDERC</property>
                 <child>
                   <object class="GtkFixed" id="SettingFixed">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">132</property>
-                        <property name="height-request">29</property>
+                        <property name="width_request">132</property>
+                        <property name="height_request">29</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Dark Mode (NIY)</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Dark Mode</property>
                       </object>
                       <packing>
                         <property name="x">136</property>
@@ -334,11 +353,11 @@ Eloi COUDERC</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch">
-                        <property name="width-request">50</property>
-                        <property name="height-request">26</property>
+                      <object class="GtkSwitch" id="switchDmode">
+                        <property name="width_request">50</property>
+                        <property name="height_request">26</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can_focus">True</property>
                       </object>
                       <packing>
                         <property name="x">499</property>
@@ -347,10 +366,10 @@ Eloi COUDERC</property>
                     </child>
                     <child>
                       <object class="GtkSeparator">
-                        <property name="width-request">300</property>
-                        <property name="height-request">24</property>
+                        <property name="width_request">300</property>
+                        <property name="height_request">24</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                       </object>
                       <packing>
@@ -360,10 +379,10 @@ Eloi COUDERC</property>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">232</property>
-                        <property name="height-request">61</property>
+                        <property name="width_request">232</property>
+                        <property name="height_request">61</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Paramètres</property>
                         <attributes>
                           <attribute name="font-desc" value="Sans Bold 20"/>
@@ -384,13 +403,13 @@ Eloi COUDERC</property>
                 <child>
                   <object class="GtkFixed" id="NNTFixed">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">365</property>
-                        <property name="height-request">41</property>
+                        <property name="width_request">365</property>
+                        <property name="height_request">41</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Charger un Réseau neuronal depuis un fichier :</property>
                       </object>
                       <packing>
@@ -400,11 +419,14 @@ Eloi COUDERC</property>
                     </child>
                     <child>
                       <object class="GtkFileChooserButton">
-                        <property name="width-request">146</property>
-                        <property name="height-request">56</property>
+                        <property name="width_request">146</property>
+                        <property name="height_request">56</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <property name="title" translatable="yes"/>
+                        <style>
+                          <class name="dark"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="x">581</property>
@@ -414,11 +436,14 @@ Eloi COUDERC</property>
                     <child>
                       <object class="GtkButton">
                         <property name="label" translatable="yes">Enregistrer</property>
-                        <property name="width-request">221</property>
-                        <property name="height-request">79</property>
+                        <property name="width_request">221</property>
+                        <property name="height_request">79</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <style>
+                          <class name="dark"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="x">310</property>
@@ -427,10 +452,10 @@ Eloi COUDERC</property>
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="width-request">345</property>
-                        <property name="height-request">80</property>
+                        <property name="width_request">345</property>
+                        <property name="height_request">80</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Réseau Neuronal</property>
                         <attributes>
                           <attribute name="font-desc" value="Sans Bold 20"/>
@@ -451,16 +476,19 @@ Eloi COUDERC</property>
                 <child>
                   <object class="GtkFixed" id="SolvedFixed">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <child>
                       <object class="GtkButton" id="save_result">
                         <property name="label" translatable="yes">Sauvegarder 
   le Résultat</property>
-                        <property name="width-request">202</property>
-                        <property name="height-request">78</property>
+                        <property name="width_request">202</property>
+                        <property name="height_request">78</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <style>
+                          <class name="dark"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="x">355</property>
@@ -469,10 +497,10 @@ Eloi COUDERC</property>
                     </child>
                     <child>
                       <object class="GtkImage" id="SolvedImage">
-                        <property name="width-request">676</property>
-                        <property name="height-request">541</property>
+                        <property name="width_request">676</property>
+                        <property name="height_request">541</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
+                        <property name="can_focus">False</property>
                         <property name="pixbuf">sigmavision_logo_big.png</property>
                       </object>
                       <packing>
@@ -489,8 +517,8 @@ Eloi COUDERC</property>
                 </child>
               </object>
               <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">0</property>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
               </packing>
             </child>
           </object>
@@ -502,5 +530,8 @@ Eloi COUDERC</property>
         </child>
       </object>
     </child>
+    <style>
+      <class name="dark"/>
+    </style>
   </object>
 </interface>

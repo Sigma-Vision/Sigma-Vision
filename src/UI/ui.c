@@ -1,16 +1,8 @@
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-#include "../rebuild/rebuild.h"
-
-#include "../preproc/neutralize.h"
-#include "../preproc/transform.h"
+#include "../preproc/preproc.h"
 #include "../preproc/tools.h"
-#include "../preproc/struct.h"
 #include "../preproc/rotate.h"
-#include "../preproc/scale.h"
-#include "../preproc/transform.h"
 #define UNUSED(x) (void)(x)
 
 //Gtk variable declaration
@@ -33,15 +25,20 @@ GtkWidget		*button_settings;
 GtkWidget		*button_normal_menu;
 GtkWidget		*button_homepage;
 
+GtkWidget		*switch_Dmode;
+
 GtkWidget		*progress_bar;
 
 GtkWidget		*image1;
+GtkWidget		*image2;
 
 GtkStack		*big_stack;
 GtkStack		*Stack;
 
 GtkWidget		*main_grid;
 GtkWidget		*normal_grid;
+GtkWidget		*side_menu;
+
 
 gchar			*filename;
 
@@ -88,13 +85,13 @@ static void display_surface()
             rowstride);
     SDL_UnlockSurface(surface);
 
-    pix = gdk_pixbuf_scale_simple (pixIn, 715, 600, GDK_INTERP_NEAREST);
+    pix = gdk_pixbuf_scale_simple (pixIn, 415, 405, GDK_INTERP_NEAREST);
     // create GtkImage from pixbuf                                              
     image1 = gtk_image_new_from_pixbuf (pix);
 
+
     gtk_container_add(GTK_CONTAINER (ImageFixed), image1);
     gtk_fixed_move (GTK_FIXED (ImageFixed), image1, 39, 10);
-
     //We show the image to the user
     gtk_widget_show(image1);
 }
@@ -171,23 +168,9 @@ void ui_solve(GtkButton *a, gpointer user_data)
     UNUSED(a);
     UNUSED(user_data);
     if (surface)
-    {
-        //gtk_progress_bar_set_text(progress_bar, "progressssss ");
-        
-        display_surface();
-        OtsuBinarization(surface); 
-        display_surface();
-        surface = SobelTransform(surface);
-        display_surface();
-        Square s;
-        find_grid(surface, &s);
-        display_surface();
-        surface = RotateDetectedGrid(surface,&s); 
-        display_surface();
-        
-        //surface = rebuild ("grid_00", "grid_00.result");
-        display_surface();
-    }
+        surface = preproc(surface);
+    display_surface();
+    ///gtk_stack_set_visible_child(user_data, _grid); 
 }
 
 void ui_rotate_right(GtkButton *a, gpointer user_data)
@@ -212,6 +195,36 @@ void ui_rotate_left(GtkButton *a, gpointer user_data)
     }
 }
 
+void change_mode(GtkSwitch *a, gpointer user_data)
+{
+	UNUSED(user_data);
+	if (gtk_switch_get_active(a) == 1)
+	{
+		GtkCssProvider *css2 = gtk_css_provider_new();
+		gtk_css_provider_load_from_path(css2, "resources/DMode.css", NULL);
+		gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                               GTK_STYLE_PROVIDER(css2),
+                               GTK_STYLE_PROVIDER_PRIORITY_USER);
+		gtk_container_remove (GTK_CONTAINER (side_menu), image2);
+		image2 = gtk_image_new_from_file ("resources/sigmavisionW_logo.png");
+   		gtk_container_add (GTK_CONTAINER (side_menu), image2);
+		gtk_widget_show(image2);
+	}
+	else
+	{
+		GtkCssProvider * css1 = gtk_css_provider_new();
+		gtk_css_provider_load_from_path(css1, "resources/LMode.css", NULL);
+		gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                               GTK_STYLE_PROVIDER(css1),
+                               GTK_STYLE_PROVIDER_PRIORITY_USER);
+		gtk_container_remove (GTK_CONTAINER (side_menu), image2);
+		image2 = gtk_image_new_from_file ("resources/sigmavision_logo.png");
+   		gtk_container_add (GTK_CONTAINER (side_menu), image2);
+		gtk_widget_show(image2);
+	}
+
+}
+
 int ui (int argc, char *argv[])
 {
     gtk_init (&argc, &argv);
@@ -225,6 +238,7 @@ int ui (int argc, char *argv[])
 
     //Widget association
     image1 = GTK_WIDGET (gtk_builder_get_object (builder, "image1"));
+	image2 = GTK_WIDGET (gtk_builder_get_object (builder, "image2"));
 
     big_stack = GTK_STACK (gtk_builder_get_object (builder, "MainStack"));
     Stack = GTK_STACK (gtk_builder_get_object (builder, "ImageStack"));
@@ -234,6 +248,7 @@ int ui (int argc, char *argv[])
     SFixed = GTK_WIDGET (gtk_builder_get_object	(builder, "SettingFixed"));
     ImageFixed = GTK_WIDGET (gtk_builder_get_object (builder, "ImageFixed"));
     SoFixed = GTK_WIDGET (gtk_builder_get_object (builder, "SolvedFixed"));
+	side_menu = GTK_WIDGET (gtk_builder_get_object (builder, "Side_Menu"));
 
     button_homepage = GTK_WIDGET (gtk_builder_get_object (builder, "ButtonHomepage"));
 
@@ -250,7 +265,7 @@ int ui (int argc, char *argv[])
 
     progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
 
-    progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
+	switch_Dmode = GTK_WIDGET (gtk_builder_get_object (builder, "switchDmode"));
 
     g_object_unref (G_OBJECT (builder));
 
@@ -259,12 +274,11 @@ int ui (int argc, char *argv[])
     g_signal_connect(button_settings, "clicked", G_CALLBACK(changeStackVisibleS), Stack);
     g_signal_connect(button_neural_network, "clicked", G_CALLBACK(changeStackVisibleM), Stack);
     g_signal_connect(button_normal_menu, "clicked", G_CALLBACK(changeStackVisibleN), Stack);
-    //g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(ui_solve), Stack);
 
     g_signal_connect(button_rotate_right, "clicked", G_CALLBACK(ui_rotate_right), Stack);
     g_signal_connect(button_rotate_left, "clicked", G_CALLBACK(ui_rotate_left), Stack);
-
+	g_signal_connect(switch_Dmode, "state-set", G_CALLBACK(change_mode), NULL);
 
     g_signal_connect(button_load_file, "selection_changed", 
             G_CALLBACK(load_image_from_chooser), NULL);
