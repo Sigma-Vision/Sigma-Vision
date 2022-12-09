@@ -436,6 +436,13 @@ char* to_grid(int* input)
     return res;
 }
 
+//tester sans normalisation histogramme otsu
+int case_empty(SDL_Surface* surface)
+{
+    int var = OtsuGetMaxVariance(surface);    
+
+    return var < 50;
+}
 
 void GridSplit(SDL_Surface* surface)
 {
@@ -454,7 +461,7 @@ void GridSplit(SDL_Surface* surface)
     int cut_w = w9/8;
     int cut_h = h9/8;
 
-    char* result = calloc(81,sizeof(int));
+    int* result = calloc(81,sizeof(int));
     
     for (int i = 0;i < 9;i++)
     {
@@ -483,7 +490,7 @@ void GridSplit(SDL_Surface* surface)
                
                 for (int k = 0;k < CASE_SIDE_SIZE*CASE_SIDE_SIZE;k++)
                 {
-                    input[k] = (double) GetColor_x(temp->pixels[k]) / 255.0f;
+                    input[k] = (double) GetColor_x(temp,k) / 255.0f;
                 }
 
                 result[i*9+j] = guess(input);
@@ -496,20 +503,16 @@ void GridSplit(SDL_Surface* surface)
 
     char* grid = to_grid(result);
 
-    FILE* fptr = fopen("grid",'w');
+    FILE* fptr = fopen("grid","w");
     
     fputs(grid,fptr);
 
     fclose(fptr);
+
+    free(result);
 }
 
-//tester sans normalisation histogramme otsu
-int case_empty(SDL_Surface* surface)
-{
-    int var = OtsuGetMaxVariance(surface);    
 
-    return var < 50;
-}
 
 int** ParseOutput()
 {
