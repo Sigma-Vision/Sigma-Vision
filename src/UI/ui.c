@@ -189,7 +189,7 @@ void ui_rotate_right(GtkButton *a, gpointer user_data)
     UNUSED(user_data);
     if (surface)
     {
-        surface = rotateAny(surface, -90, 0, 0);
+        surface = rotate90cw(surface);
         display_surface();
     }
 }
@@ -200,7 +200,7 @@ void ui_rotate_left(GtkButton *a, gpointer user_data)
     UNUSED(user_data);
     if (surface)
     {
-        surface = rotateAny(surface, 90, 0, 0);
+        surface = rotate90ccw(surface);
         display_surface();
     }
 }
