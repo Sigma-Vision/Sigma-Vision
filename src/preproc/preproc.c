@@ -44,7 +44,7 @@ int preproc(char* file, char* output)
     //rotate180(surface);
 
     //surface = rotateAny(surface,0,255,1);
-    surface = RotateDetectedGrid(surface,&s); 
+    //surface = RotateDetectedGrid(surface,&s); 
 
     //find_coin(surface, &s);
 

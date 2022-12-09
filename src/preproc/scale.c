@@ -1,5 +1,6 @@
 #include <err.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "struct.h"
@@ -116,8 +117,32 @@ void add_color(Uint32* pixel, int* label, int l, int h, int w)
     }
 }
 
+int get_X_center(int* label, int h, int w, int l)
+{
+    int pt1 = 0;
+    int pt2 = h - 1;
+    while (pt1 < h && label[pt1 * w + h / 2] != l)
+        pt1++;
+    while (pt2 > 0 && label[pt2 * w + h / 2] != l)
+        pt2--;
+    return (pt2 + pt1) / 2;
+}
 
+int get_Y_center(int* label, int h, int w, int l)
+{
+    int pt1 = 0;
+    int pt2 = w - 1;
+    while (pt1 < h && label[(w / 2) * w + pt1] != l)
+        pt1++;
+    while (pt2 > 0 && label[(w / 2) * w + pt2] != l)
+        pt2--;
+    return (pt2 + pt1) / 2;
+}
 
+int distance_X_Y(int x1, int y1, int x2, int y2)
+{
+    return abs(x2 - x1) + abs(y2 - y1);
+}
 
 
 /**
@@ -132,7 +157,7 @@ void find_square(int* label, int h, int w, int l, Square* square)
     Dot topLeft;
     int i = 0;
     int j = 0;
-    while (i < h && j < w&& label[i * w + j] != l)
+    while (i < h && j < w && label[i * w + j] != l)
     {
         while (j < w && label[i * w + j] != l)
             j++;
@@ -205,122 +230,131 @@ void find_square(int* label, int h, int w, int l, Square* square)
 
 void find_square2(int* label, int h, int w, int l, Square* square)
 {
-    // Top Left
-    Dot topLeft;
+    int X = get_X_center(label, h, w, l);
+    int Y = get_Y_center(label, h, w, l);
+    printf("center position : X = %i ; Y = %i\n", X, Y);
+
     int i = 0;
     int j = 0;
-    while (i < h && label[i * w + j] != l)
+    int max = 0;
+    int xmax = 0;
+    int ymax = 0;
+    while (i < X && j < Y)
     {
-        while (j < i && j < w && label[i * w + j] != l)
+        if (label[i * w + j] == l && max < distance_X_Y(X, Y, i, j))
         {
+            xmax = i;
+            ymax = j;
+            max = distance_X_Y(X, Y, i, j);
+        }
+        i ++;
+        if (X == i)
+        {
+            i = 0;
             j++;
         }
-        if (i < h && j < w && label[i * w + j] != l)
-        {
-            i++;
-            j = 0;
-        }
     }
+    Dot tl;
+    tl.X = xmax;
+    tl.Y = ymax;
+    square->topLeft = tl;
 
-    topLeft.X = i;
-    topLeft.Y = j;
-
-    // Top Right
-    Dot topRight;
     i = 0;
     j = w - 1;
-    while (i < h && label[i * w + j] != l)
+    max = 0;
+    while (i < X && j > Y)
     {
-        while (j > i && j < w && label[i * w + j] != l)
+        if (label[i * w + j] == l)
         {
+            if(max < distance_X_Y(X, Y, i, j))
+            {
+                xmax = i;
+                ymax = j;
+                max = distance_X_Y(X, Y, i, j);
+            }
+        }
+        i ++;
+        if (X == i)
+        {
+            i = 0;
             j--;
         }
-        if (i < h && j < w && label[i * w + j] != l)
-        {
-            i++;
-            j = w - 1;
-        }
     }
+    Dot t2;
+    t2.X = xmax;
+    t2.Y = ymax;
+    square->topRight = t2;
 
-    topRight.X = i;
-    topRight.Y = j;
-
-    // Bottom Left
-    Dot bottomLeft;
     i = h - 1;
     j = 0;
-
-    while (j < w && label[i * w + j] != l)
+    max = 0;
+    while (i > X && j < Y)
     {
-        while (i > j && i < h && label[i * w + j] != l)
+        if (label[i * w + j] == l)
         {
+            if(max < distance_X_Y(X, Y, i, j))
+            {
+                xmax = i;
+                ymax = j;
+                max = distance_X_Y(X, Y, i, j);
+            }
+        }
+        j++;
+        if (Y == j)
+        {
+            j = 0;
             i--;
         }
-        if (i < h && j < w && label[i * w + j] != l)
-        {
-            j++;
-            i = h - 1;
-        }
     }
+    Dot t3;
+    t3.X = xmax;
+    t3.Y = ymax;
+    square->bottomLeft = t3;
 
-    bottomLeft.X = i;
-    bottomLeft.Y = j;
-
-    // Bottom Right
-    Dot bottomRight;
     i = h - 1;
     j = w - 1;
-
-    while (j > 0 && label[i * w + j] != l)
+    max = 0;
+    while (i > X && j > Y)
     {
-        while (i > j && i > 0 && label[i * w + j] != l)
+        if (label[i * w + j] == l)
         {
-            i--;
+            if(max < distance_X_Y(X, Y, i, j))
+            {
+                xmax = i;
+                ymax = j;
+                max = distance_X_Y(X, Y, i, j);
+            }
         }
-        if (i >= 0 && j >= 0 && label[i * w + j] != l)
+        i--;
+        if (i == X)
         {
-            j--;
             i = h - 1;
+            j--;
         }
     }
-    while (j + 5 < w && i < h && (label[i * w + j + 1] == l || label[i * w + j - w +
-    5] == l))
-    {
-        if (label[i * w + j + 1] == l)
-            j++;
-        else if (label[i * w + j - w + 2] == l)
-        {
-            i--;
-            j += 5;
-        }
-    }
-
-    bottomRight.X = i;
-    bottomRight.Y = j;
-
-    square->topLeft = topLeft;
-    square->topRight = topRight;
-    square->bottomLeft = bottomLeft;
-    square->bottomRight = bottomRight;
+    Dot t4;
+    t4.X = xmax;
+    t4.Y = ymax;
+    square->bottomRight = t4;
 }
 
 /**
  * Description : calculate the area of a square
-**/
+ **/
 int Area(Square* square)
 {
     double d1 = sqrt(pow(abs(square->topLeft.X - square->topRight.X), 2) +
-                pow(abs(square->topLeft.Y - square->topRight.Y), 2));
+            pow(abs(square->topLeft.Y - square->topRight.Y), 2));
 
     double d2 = sqrt(pow(abs(square->topLeft.X - square->bottomLeft.X), 2) +
-                pow(abs(square->topLeft.Y - square->bottomLeft.Y), 2));
+            pow(abs(square->topLeft.Y - square->bottomLeft.Y), 2));
 
     return (int) (d1 * d2);
 }
 
 /**
  * find the index of the max of the array of label_stats and store it in *index
-**/
+ **/
 void max(int* label_stats, int l, int* index)
 {
     int max = label_stats[0];
@@ -349,13 +383,13 @@ void max(int* label_stats, int l, int* index)
 
 /**
  * Find the grid of the imge
-**/
+ **/
 void find_grid(SDL_Surface* surface, Square* s)
 {
     Uint32* pixels = surface->pixels;
     int w = surface -> w;
     int h = surface -> h;// gets the length of pixels with the
-                                      // width and length of the given surface.
+                         // width and length of the given surface.
     SDL_PixelFormat* format = surface->format;
 
     if (SDL_LockSurface(surface) < 0)
@@ -391,7 +425,7 @@ void find_grid(SDL_Surface* surface, Square* s)
 
     Square square1;
     Square square2;
-    
+
     find_square(label, h, w, big_label[0], &square1);
     find_square(label, h, w, big_label[1], &square2);
 
@@ -399,7 +433,7 @@ void find_grid(SDL_Surface* surface, Square* s)
     int a2 = Area(&square2);
     if (a1 > a2)
     {
-    	find_square2(label, h, w, big_label[0], &square1);
+        find_square2(label, h, w, big_label[0], &square1);
         s->topLeft = square1.topLeft;
         s->topRight = square1.topRight;
         s->bottomLeft = square1.bottomLeft;
@@ -408,7 +442,7 @@ void find_grid(SDL_Surface* surface, Square* s)
     }
     else
     {
-    	find_square2(label, h, w, big_label[1], &square2);
+        find_square2(label, h, w, big_label[1], &square2);
         s->topLeft = square2.topLeft;
         s->topRight = square2.topRight;
         s->bottomLeft = square2.bottomLeft;
@@ -427,7 +461,7 @@ void find_coin(SDL_Surface* surface, Square* s)
     Uint32* pixels = surface->pixels;
     int w = surface -> w;
     int h = surface -> h;// gets the length of pixels with the
-                                      // width and length of the given surface.
+                         // width and length of the given surface.
     SDL_PixelFormat* format = surface->format;
 
     if (SDL_LockSurface(surface) < 0)
@@ -462,7 +496,7 @@ void find_coin(SDL_Surface* surface, Square* s)
     max(label_stats, maxLabel, big_label);
 
     Square square1;
-    
+
     find_square(label, h, w, big_label[0], &square1);
 
     find_square2(label, h, w, big_label[0], &square1);
