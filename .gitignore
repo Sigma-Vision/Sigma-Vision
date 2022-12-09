@@ -67,3 +67,5 @@ dkms.conf
 *.case
 src/preproc/preproc
 src/preproc/test.jpeg
+sobeled.jpg
+binarized
