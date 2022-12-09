@@ -25,9 +25,8 @@ int preproc(char* file, char* output)
 
     OtsuBinarization(surface); 
  
-    //surface = Dilation(surface,2);
-    //surface = Erosion(surface,1); 
-    
+    surface = Erosion(surface,1); 
+    surface = Dilation(surface,2);
 
     //surface = ResizeSurface(surface,1000,1000); 
 
@@ -35,12 +34,13 @@ int preproc(char* file, char* output)
     
     Square s;
     find_grid(sobeled, &s);
- 
+
+    print_square(sobeled,&s); 
     IMG_SaveJPG(sobeled, "sobeled.jpg", 100);
 
     SDL_FreeSurface(sobeled); 
 
-    fill_outside_square(surface,&s); 
+    //fill_outside_square(surface,&s); 
     surface = RotateDetectedGrid(surface,&s); 
 
     //find_coin(surface, &s);

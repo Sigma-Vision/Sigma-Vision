@@ -10,5 +10,7 @@ void OtsuBinarization(SDL_Surface* surface);
 int OtsuGetMaxVariance(SDL_Surface* surface);
 SDL_Surface* Dilation(SDL_Surface* surface,int iterations);
 SDL_Surface* Erosion(SDL_Surface* surface, int iterations);
+void OtsuEqualizeHistogram (int* histogram,double nb_pix);
+void OtsuEquNormHistogram (int* histogram);
 
 #endif

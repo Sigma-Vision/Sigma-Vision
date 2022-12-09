@@ -109,6 +109,8 @@ void OtsuNormalizeHistogram(int* histogram)
     for (; min_intensity< 256 && histogram[min_intensity] == 0; min_intensity++);
     for (; max_intensity >= 0 && histogram[max_intensity] == 0; max_intensity--);
 
+    if (max_intensity == 0)
+        errx(4,"Histogram empty in OtsuNormalizeHistogram");
 
     for (int i = 0; i < 256;i++)
     {
@@ -116,9 +118,84 @@ void OtsuNormalizeHistogram(int* histogram)
     }
 }
 
-/*int* OtsuEqualizeHistogram (int* histogram)
+void OtsuEqualizeImage (SDL_Surface* surface, int* histogram,double nb_pix)
 {
+    if (nb_pix == 0)
+        errx(4,"Histogram not build in OtsuEqualizeHistogram");
     
+    int* color_map = malloc(sizeof(int)*256);
+    
+    double cumulated = 0;
+    double val;
+    for (int i = 0;i < 256;i++)
+    {
+        cumulated += histogram[i];
+        val = cumulated * 255 / nb_pix;
+        if (val - (double)(int)val >= 0.5)
+           color_map[i] = (int)val+1;
+        else
+           color_map[i] = (int)val; 
+    }
+
+    for (int i = 0; i<256;i++)
+    {
+        int prev = -1;
+        int cur = color_map[i];
+        while (prev != cur)
+        {
+            prev = cur;
+            cur = color_map[cur];
+        }
+        color_map[i] = cur;
+    }
+
+    Uint32* pixels = surface->pixels;
+    int width = surface->w;
+
+    for (int i = 0; i < surface->h;i++)
+    {
+        for (int j = 0; j < surface->w;j++)
+        {
+            int color = GetColor(surface,i,j);
+            pixels[i*width+j] = SDL_MapRGB(surface->format,
+                    color_map[color],color_map[color],color_map[color]);
+        }
+    }
+
+    free(color_map);
+}
+
+/*
+void OtsuEquNormHistogram (int* histogram)
+{
+    int min_intensity = 0;
+    int max_intensity = 255;
+
+    for (; min_intensity< 256 && histogram[min_intensity] == 0; min_intensity++);
+    for (; max_intensity >= 0 && histogram[max_intensity] == 0; max_intensity--);
+
+    if (max_intensity == 0)
+        errx(4,"Histogram empty in OtsuEquNormHistogram");
+
+    double sum = 0;
+
+    for (int i = 0; i < 256;i++)
+    {
+        histogram[i] = ((histogram[i]-min_intensity)/(max_intensity - min_intensity)) * 255; 
+        sum += histogram[i];
+    }
+    
+    double cumulated = 0;
+    double val;
+    for (int i = 0;i < 256;i++)
+    {
+        cumulated += histogram[i];
+        val = cumulated * 255 / sum;
+        if (val - (double)(int)val >= 0.5)
+           histogram[i] = (int)val+1;
+        else
+           histogram[i] = (int)val; 
+    }
 }*/
 
 int* OtsuBuildHistogram(SDL_Surface* surface)
@@ -144,13 +221,20 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
     return histogram;
 }
 
+SDL_Surface* copy(SDL_Surface* surface)
+{
+    
+}
+
 int OtsuGetMaxVariance(SDL_Surface* surface)
 {
     int full_w = surface->w * surface->h;
 
     int* histogram = OtsuBuildHistogram(surface);
-    
-    OtsuNormalizeHistogram(histogram);
+   
+     
+    //OtsuNormalizeHistogram(histogram);
+    //OtsuEqualizeHistogram(histogram,full_w);
     
     double Wb;
     double Wf;
