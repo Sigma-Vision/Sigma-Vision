@@ -1,4 +1,12 @@
 #include <gtk/gtk.h>
+#include <SDL2/SDL.h>
+
+#include "../solve/solver.h"
+#include "../rebuild/rebuild.h"
+
+#include "../preproc/preproc.h"
+#include "../preproc/tools.h"
+#include "../preproc/rotate.h"
 #define UNUSED(x) (void)(x)
 
 //Gtk variable declaration
@@ -16,48 +24,90 @@ GtkWidget		*button_solve;
 GtkWidget		*button_save_image;
 GtkWidget		*button_rotate_left;
 GtkWidget		*button_rotate_right;
+GtkWidget		*button_rotate_auto;
 GtkWidget		*button_settings;
-GtkWidget		*button_pretraitement;
 GtkWidget		*button_normal_menu;
 GtkWidget		*button_homepage;
 
+GtkWidget		*switch_Dmode;
+
+GtkWidget		*progress_bar;
+
 GtkWidget		*image1;
+GtkWidget		*image2;
 
 GtkStack		*big_stack;
 GtkStack		*Stack;
 
 GtkWidget		*main_grid;
 GtkWidget		*normal_grid;
+GtkWidget		*side_menu;
+
 
 gchar			*filename;
 
 
 //Pixbuf declaration for the rescale of the image displayed
+Uint32                  src_format;
+Uint32                  dst_format;
+int                     rowstride;
+gboolean                has_alpha;
+SDL_Surface*            surface = NULL;
+guchar                  *pixels;
+
 GdkPixbuf		*pix;
 GdkPixbuf		*pixIn;
 GdkPixbuf		*pixOut;
 
-
-
-//File Loader function
-static void load_image(GtkFileChooser *chooser)
+static void display_surface()
 {
-    filename = gtk_file_chooser_get_filename (chooser);
-
     //If an image is already display, we delete it
     if (image1)
         gtk_container_remove (GTK_CONTAINER (ImageFixed), image1);
 
-    //Rescale the image for the display
-    pixIn = gdk_pixbuf_new_from_file (filename, NULL);
-    pix = gdk_pixbuf_scale_simple (pixIn, 415, 405, GDK_INTERP_NEAREST);
+    src_format = surface->format->format;
+
+    has_alpha = SDL_ISPIXELFORMAT_ALPHA(src_format);
+    if (has_alpha) {
+        dst_format = SDL_PIXELFORMAT_RGBA32;
+    }
+    else {
+        dst_format = SDL_PIXELFORMAT_RGB24;
+    }
+    // create pixbuf                                                            
+    pixIn = gdk_pixbuf_new (GDK_COLORSPACE_RGB, has_alpha, 8,
+            surface->w, surface->h);
+    rowstride = gdk_pixbuf_get_rowstride (pixIn);
+    pixels = gdk_pixbuf_get_pixels (pixIn);
+
+    // copy pixels                                                              
+    SDL_LockSurface(surface);
+    SDL_ConvertPixels (surface->w, surface->h, src_format,
+            surface->pixels, surface->pitch,
+            dst_format,
+            pixels,
+            rowstride);
+    SDL_UnlockSurface(surface);
+
+    pix = gdk_pixbuf_scale_simple (pixIn, 715, 705, GDK_INTERP_NEAREST);
+    // create GtkImage from pixbuf                                              
     image1 = gtk_image_new_from_pixbuf (pix);
+
+
     gtk_container_add(GTK_CONTAINER (ImageFixed), image1);
     gtk_fixed_move (GTK_FIXED (ImageFixed), image1, 39, 10);
-
     //We show the image to the user
     gtk_widget_show(image1);
+}
 
+//File Loader function
+static void load_image_from_chooser(GtkFileChooser *chooser)
+{
+    filename = gtk_file_chooser_get_filename (chooser);
+    // - Create a surface from the image.
+    surface = load_image(filename);
+
+    display_surface();
 }
 
 //Save function
@@ -120,8 +170,69 @@ void changeBigStackVisible (GtkButton *a, gpointer user_data)
 void ui_solve(GtkButton *a, gpointer user_data)
 {
     UNUSED(a);
-    char* c = "test.jpeg";
-    preproc(filename, c);
+    UNUSED(user_data);
+    if (surface)
+    {
+        surface = preproc(surface);
+        display_surface();
+        solve_file("grid");
+        surface = rebuild("grid", "grid.result");
+        display_surface();
+
+    }
+    ///gtk_stack_set_visible_child(user_data, _grid); 
+}
+
+void ui_rotate_right(GtkButton *a, gpointer user_data)
+{
+    UNUSED(a);
+    UNUSED(user_data);
+    if (surface)
+    {
+        surface = rotateAny(surface, -90, 0, 0);
+        display_surface();
+    }
+}
+
+void ui_rotate_left(GtkButton *a, gpointer user_data)
+{
+    UNUSED(a);
+    UNUSED(user_data);
+    if (surface)
+    {
+        surface = rotateAny(surface, 90, 0, 0);
+        display_surface();
+    }
+}
+
+void change_mode(GtkSwitch *a, gpointer user_data)
+{
+	UNUSED(user_data);
+	if (gtk_switch_get_active(a) == 1)
+	{
+		GtkCssProvider *css2 = gtk_css_provider_new();
+		gtk_css_provider_load_from_path(css2, "resources/DMode.css", NULL);
+		gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                               GTK_STYLE_PROVIDER(css2),
+                               GTK_STYLE_PROVIDER_PRIORITY_USER);
+		gtk_container_remove (GTK_CONTAINER (side_menu), image2);
+		image2 = gtk_image_new_from_file ("resources/sigmavisionW_logo.png");
+   		gtk_container_add (GTK_CONTAINER (side_menu), image2);
+		gtk_widget_show(image2);
+	}
+	else
+	{
+		GtkCssProvider * css1 = gtk_css_provider_new();
+		gtk_css_provider_load_from_path(css1, "resources/LMode.css", NULL);
+		gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                               GTK_STYLE_PROVIDER(css1),
+                               GTK_STYLE_PROVIDER_PRIORITY_USER);
+		gtk_container_remove (GTK_CONTAINER (side_menu), image2);
+		image2 = gtk_image_new_from_file ("resources/sigmavision_logo.png");
+   		gtk_container_add (GTK_CONTAINER (side_menu), image2);
+		gtk_widget_show(image2);
+	}
+
 }
 
 int ui (int argc, char *argv[])
@@ -137,6 +248,7 @@ int ui (int argc, char *argv[])
 
     //Widget association
     image1 = GTK_WIDGET (gtk_builder_get_object (builder, "image1"));
+	image2 = GTK_WIDGET (gtk_builder_get_object (builder, "image2"));
 
     big_stack = GTK_STACK (gtk_builder_get_object (builder, "MainStack"));
     Stack = GTK_STACK (gtk_builder_get_object (builder, "ImageStack"));
@@ -146,11 +258,11 @@ int ui (int argc, char *argv[])
     SFixed = GTK_WIDGET (gtk_builder_get_object	(builder, "SettingFixed"));
     ImageFixed = GTK_WIDGET (gtk_builder_get_object (builder, "ImageFixed"));
     SoFixed = GTK_WIDGET (gtk_builder_get_object (builder, "SolvedFixed"));
+	side_menu = GTK_WIDGET (gtk_builder_get_object (builder, "Side_Menu"));
 
     button_homepage = GTK_WIDGET (gtk_builder_get_object (builder, "ButtonHomepage"));
 
     button_load_file = GTK_WIDGET (gtk_builder_get_object (builder, "load_file"));
-    button_pretraitement = GTK_WIDGET (gtk_builder_get_object (builder, "pretraitement"));
     button_solve = GTK_WIDGET (gtk_builder_get_object (builder, "solve"));
     button_save_image = GTK_WIDGET (gtk_builder_get_object (builder, "save_result"));
     button_normal_menu = GTK_WIDGET (gtk_builder_get_object (builder, "NormalMenu"));
@@ -159,6 +271,11 @@ int ui (int argc, char *argv[])
 
     button_rotate_right = GTK_WIDGET (gtk_builder_get_object (builder, "rotate_right"));
     button_rotate_left = GTK_WIDGET (gtk_builder_get_object (builder, "rotate_left"));
+    button_rotate_auto = GTK_WIDGET (gtk_builder_get_object (builder, "auto_rotate"));
+
+    progress_bar = GTK_WIDGET (gtk_builder_get_object (builder, "progress"));
+
+	switch_Dmode = GTK_WIDGET (gtk_builder_get_object (builder, "switchDmode"));
 
     g_object_unref (G_OBJECT (builder));
 
@@ -167,10 +284,14 @@ int ui (int argc, char *argv[])
     g_signal_connect(button_settings, "clicked", G_CALLBACK(changeStackVisibleS), Stack);
     g_signal_connect(button_neural_network, "clicked", G_CALLBACK(changeStackVisibleM), Stack);
     g_signal_connect(button_normal_menu, "clicked", G_CALLBACK(changeStackVisibleN), Stack);
-    g_signal_connect(button_solve, "clicked", G_CALLBACK(changeStackVisibleSo), Stack);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(ui_solve), Stack);
 
-    g_signal_connect(button_load_file, "selection_changed", G_CALLBACK(load_image), NULL);
+    g_signal_connect(button_rotate_right, "clicked", G_CALLBACK(ui_rotate_right), Stack);
+    g_signal_connect(button_rotate_left, "clicked", G_CALLBACK(ui_rotate_left), Stack);
+	g_signal_connect(switch_Dmode, "state-set", G_CALLBACK(change_mode), NULL);
+
+    g_signal_connect(button_load_file, "selection_changed", 
+            G_CALLBACK(load_image_from_chooser), NULL);
 
     g_signal_connect(button_save_image, "clicked", G_CALLBACK (save_image), NULL);
 

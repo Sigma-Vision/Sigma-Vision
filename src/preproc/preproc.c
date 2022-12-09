@@ -9,26 +9,15 @@
 #include "scale.h"
 #include "transform.h"
 
-int preproc(char* file, char* output)
+SDL_Surface* preproc(SDL_Surface* surface)
 {
-    if (file == NULL)
-        errx(EXIT_FAILURE, "Usage: neutralize <image-file> <outfile>");
-
-    // - Create a surface from the image.
-    SDL_Surface* surface = load_image(file);
-
     // - Neutralizes the image and saves it.
     surface_to_grayscale(surface);
-
-    //surface = GaussianBlur(surface,5);
-    //rotate180(surface);
 
     OtsuBinarization(surface); 
  
     surface = Erosion(surface,1); 
     surface = Dilation(surface,2);
-
-    //surface = ResizeSurface(surface,1000,1000); 
 
     SDL_Surface* sobeled = SobelTransform(surface);
     
@@ -40,22 +29,13 @@ int preproc(char* file, char* output)
 
     SDL_FreeSurface(sobeled); 
 
-    //fill_outside_square(surface,&s); 
     surface = RotateDetectedGrid(surface,&s); 
-
-    //find_coin(surface, &s);
-
     
-    //SDL_Surface* to_free = surface;
-    //surface = GridCropping(to_free,&s);
-    //SDL_FreeSurface(to_free);
+    SDL_Surface* to_free = surface;
+    surface = GridCropping(to_free,&s);
+    SDL_FreeSurface(to_free);
 
-    //GridSplit(surface);
-
-    IMG_SaveJPG(surface, output, 100);
-    // - Cleanup
-    SDL_FreeSurface(surface);
-    SDL_Quit();
+    GridSplit(surface);
     
-    return EXIT_SUCCESS;
+    return surface;
 }
