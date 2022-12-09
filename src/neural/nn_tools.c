@@ -8,16 +8,18 @@
 ** Basic sigmoid activation function
 */
 double sigmoid(double x)
-{   
+{
     return 1 / (1 + exp(-x));
+    //return x > 0 ? x : 0;
 }
 
 /**
 ** Derived of sigmoid activation function
 */
 double d_sigmoid(double x)
-{   
+{
     return x * (1 - x);
+    //return x < 0 ? 0 : 1;
 }
 
 /**
@@ -37,11 +39,13 @@ long get_rand_long(long n)
 }
 
 /**
-** Generate random number between 0 and 1
+** Generate random number between -1 and 1
 */
 double get_rand_double()
 {
-    return ((double)rand()) / ((double)RAND_MAX);
+    double range = 2;
+    double div = RAND_MAX / range;
+    return -1 + (rand() / div);
 }
 
 /**
@@ -161,6 +165,9 @@ void get_bit_array(int digit, long n, double bit_a[])
 
     for (int i = 0; i < surface->w * surface->w; i++)
     {
+        //if (!(i % 16))
+        //    printf("\n");
+
         Uint8* pixel_p = (Uint8*) surface->pixels + i / surface->w
             * surface->pitch + i % surface->w * bpp;
         Uint32 pixel_data = *(Uint32*)pixel_p;
@@ -170,8 +177,11 @@ void get_bit_array(int digit, long n, double bit_a[])
         // retrieve RGB value
         SDL_GetRGB(pixel_data, surface->format, &color.r, &color.g, &color.b);
 
+        //bit_a[i] = (double) color.r;
         bit_a[i] = (double) (color.r / 255.0f);
+        //printf("%i ", (int) bit_a[i]);
     }
+    //printf("\n\n");
 }
 
 
@@ -190,5 +200,5 @@ char get_output(double* outputs)
             res = i;
         }
 
-    return res;
+    return res + 1;
 }

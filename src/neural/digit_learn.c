@@ -17,7 +17,7 @@ int learn(const int NB_ITER)
     /* Network configuration */
     const int nb_inputs = INPUT_SIZE;
     const int nb_layers = 2;
-    const int nb_nodes[] = {100, 9};
+    const int nb_nodes[] = {INPUT_SIZE / 2, 9};
 
     double** nodes_pp = malloc(nb_layers * sizeof(double*));
     double** deltas_pp = malloc(nb_layers * sizeof(double*));
@@ -32,29 +32,21 @@ int learn(const int NB_ITER)
     int digit_set_order[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8};
     double training_inputs[INPUT_SIZE] = {0};
 
-    const double learning_rate = 0.1f;
+    const double learning_rate = 0.000001f;
 
 
     /* TRAINING LOOP */
 
     for (int iter_i = 0; iter_i < NB_ITER; iter_i++)
     {
-        //printf("\n### ITER %i ###\n", iter_i);
-
         shuffle(digit_set_order, nb_digits);
-
-        //printf("[");
-        //for (int i = 0; i < 9; i++)
-        //    printf(" %i", digit_set_order[i]);
-        //printf(" ]\n");
 
         long file_id = get_rand_long(DATASET_SIZE);
 
         for (int x = 0; x < nb_digits; x++)
         {
             int i = digit_set_order[x];
-            //printf("> get_bit_array(%i, %li)\n", i+1, file_id);
-            get_bit_array(i+1, file_id, training_inputs);
+            get_bit_array(i + 1, file_id, training_inputs);
 
             double* nodes_p = *nodes_pp;
             double* biases_p = *biases_pp;

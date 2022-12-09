@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 #from zipfile import ZipFile
 import random, os, shutil
 
-NUMBER_OF_IMAGE = 10000
+NUMBER_OF_IMAGE = 500
 
 #Check if the folder 1-9 exist
 if os.path.exists("1"):
@@ -47,13 +47,14 @@ for n in range(1, 10):
     for i in range(NUMBER_OF_IMAGE):
         Fpath = "font/" + random.choice(os.listdir("font/"))
 
-        img = Image.new('RGB', (15,23), color = (255, 255, 255))
-        fnt= ImageFont.truetype(Fpath, 20)
+        img = Image.new('RGB', (15, 23), color = (255, 255, 255))
+        fnt= ImageFont.truetype(Fpath, 17)
 
         d = ImageDraw.Draw(img)
-        d.text((random.randint(-2,6),random.randint(-4, -2)), str(n), font=fnt, fill=(0, 0, 0))
+        #d.text((random.randint(-2,6),random.randint(-4, -2)), str(n), font=fnt, fill=(0, 0, 0))
+        d.text((2, -3), str(n), font=fnt, fill=(0, 0, 0))
 
-        img = img.resize((16, 16))
+        img = img.resize((20, 20))
 
         img.save(str(n) + "/" + str(i) + ".png")
 

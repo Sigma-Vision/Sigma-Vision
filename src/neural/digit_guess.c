@@ -19,6 +19,15 @@ int guess_digit(double inputs[])
         exit(1);
     }
 
+    /*
+    for (int i = 0; i < PICTURE_WIDTH; i++)
+    {
+        for(int j = 0; j < PICTURE_WIDTH; j++)
+            printf("%i ", (int)inputs[i * PICTURE_WIDTH + j]);
+        printf("\n");
+    }
+    */
+
     const int nb_layers = get_nb_layers();
     int nb_nodes[nb_layers];
 
@@ -50,10 +59,12 @@ int guess_digit(double inputs[])
             activation += inputs[input_i] * *(weights_p + input_i);
 
         *(nodes_p + node_i) = sigmoid(activation);
+        //printf("%lf\t%lf\n", activation, *(*nodes_pp + node_i));
     }
 
     for (int layer_i = 1; layer_i < nb_layers; layer_i++)
     {
+        //printf(">%i\n", layer_i);
         prev_nb_nodes = curr_nb_nodes;
         curr_nb_nodes = nb_nodes[layer_i];
 
@@ -76,7 +87,8 @@ int guess_digit(double inputs[])
     }
 
     char result = get_output(*(nodes_pp + nb_layers - 1));
-    //printf("RESULT: %i\n", result);
+    //for (int i = 0; i < 9; i++)
+    //    printf("%i: %lf\n", i + 1, *(*(nodes_pp + nb_layers - 1) + i));
 
     free_memory(nb_layers, nb_nodes, nodes_pp, 0, biases_pp,
                 weights_ppp);
