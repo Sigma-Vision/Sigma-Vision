@@ -6,7 +6,7 @@
 #include "neutralize.h"
 #include <math.h>
 
-#define CASE_SIDE_SIZE 8
+#define CASE_SIDE_SIZE 16
 #define PI 3.14159265
 
 void print_pixel(SDL_Surface* surface, int i, int j, Uint8 r, Uint8 g, Uint8 b)

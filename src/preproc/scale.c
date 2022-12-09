@@ -338,6 +338,88 @@ void find_square2(int* label, int h, int w, int l, Square* square)
     square->bottomRight = t4;
 }
 
+int get_h_min(int* label, int h, int w, int l)
+{
+    int i = 0;
+    int j = 0;
+    int min = 0;
+    while (i < h && j < w)
+    {
+        if (label[i * w + j] == l)
+            if (min > i)
+                min = i;
+        i ++;
+        if (i >= min)
+        {
+            i = 0;
+            j++;
+        }
+    }
+    return min;
+}
+
+int get_h_max(int* label, int h, int w, int l)
+{
+    int i = h - 1;
+    int j = 0;
+    int max = h - 1;
+    while (i > 0 && j < w)
+    {
+        if (label[i * w + j] == l)
+            if (max < i)
+                max = i;
+        i--;
+        if (i <= max)
+        {
+            i = h - 1;
+            j++;
+        }
+    }
+    return max;
+}
+
+
+int get_w_min(int* label, int h, int w, int l)
+{
+    int i = 0;
+    int j = 0;
+    int min = 0;
+    while (i < h && j < w)
+    {
+        if (label[i * w + j] == l)
+            if (min > j)
+                min = j;
+        j++;
+        if (j >= min)
+        {
+            j = 0;
+            i++;
+        }
+    }
+    return min;
+}
+
+int get_w_max(int* label, int h, int w, int l)
+{
+    int i = 0;
+    int j = w - 1;
+    int max = w - 1;
+    while (i < h && j > 0)
+    {
+        if (label[i * w + j] == l)
+            if (max < j)
+                max = j;
+        j--;
+        if (j <= max)
+        {
+            j = w - 1;
+            i++;
+        }
+    }
+    return max;
+}
+
+
 /**
  * Description : calculate the area of a square
  **/
@@ -450,13 +532,12 @@ void find_grid(SDL_Surface* surface, Square* s)
         add_color(pixels, label, big_label[1], h, w);
     }
 
-
     free(label_stats);
     free(label);
     SDL_UnlockSurface(surface);
 }
 
-void find_coin(SDL_Surface* surface, Square* s)
+void get_chiffre(SDL_Surface* surface, Chiffre c)
 {
     Uint32* pixels = surface->pixels;
     int w = surface -> w;
@@ -495,18 +576,22 @@ void find_coin(SDL_Surface* surface, Square* s)
     int big_label[] = {0, 0};
     max(label_stats, maxLabel, big_label);
 
-    Square square1;
 
-    find_square(label, h, w, big_label[0], &square1);
+    Dot tL;
+    tL.X = get_h_min(label, h, w, labal_stats[0]);
+    tL.Y = get_w_min(label, h, w, labal_stats[0]);
+    Dot bR;
+    bR.X = get_h_max(label, h, w, labal_stats[0]);
+    bR.Y = get_w_max(label, h, w, labal_stats[0]);
 
-    find_square2(label, h, w, big_label[0], &square1);
-    s->topLeft = square1.topLeft;
-    s->topRight = square1.topRight;
-    s->bottomLeft = square1.bottomLeft;
-    s->bottomRight = square1.bottomRight;
+    c.topLeft = tL;
+    c.bottomRight = bR;
+
 
     free(label_stats);
     free(label);
     SDL_UnlockSurface(surface);
+
 }
+
 

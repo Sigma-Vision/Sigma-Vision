@@ -46,5 +46,11 @@ typedef struct GlobalMean
     int num;
 }GlobalMean;
 
+typedef struct Chiffre
+{
+    Dot topLeft;
+    Dot bottomRight;
+}
+
 #endif
 
