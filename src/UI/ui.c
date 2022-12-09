@@ -1,5 +1,9 @@
 #include <gtk/gtk.h>
 #include <SDL2/SDL.h>
+
+#include "../solve/solver.h"
+#include "../rebuild/rebuild.h"
+
 #include "../preproc/preproc.h"
 #include "../preproc/tools.h"
 #include "../preproc/rotate.h"
@@ -85,7 +89,7 @@ static void display_surface()
             rowstride);
     SDL_UnlockSurface(surface);
 
-    pix = gdk_pixbuf_scale_simple (pixIn, 415, 405, GDK_INTERP_NEAREST);
+    pix = gdk_pixbuf_scale_simple (pixIn, 715, 705, GDK_INTERP_NEAREST);
     // create GtkImage from pixbuf                                              
     image1 = gtk_image_new_from_pixbuf (pix);
 
@@ -168,8 +172,14 @@ void ui_solve(GtkButton *a, gpointer user_data)
     UNUSED(a);
     UNUSED(user_data);
     if (surface)
+    {
         surface = preproc(surface);
-    display_surface();
+        display_surface();
+        solve_file("grid");
+        surface = rebuild("grid", "grid.result");
+        display_surface();
+
+    }
     ///gtk_stack_set_visible_child(user_data, _grid); 
 }
 
