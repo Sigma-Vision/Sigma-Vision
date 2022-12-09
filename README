@@ -1,0 +1,47 @@
+# Sigma-Vision
+A tool to solve your sudoku, coded in c.
+
+Optical character recognition (OCR)
+
+To run the project :
+```
+# clone the repo
+make
+./build/preproc
+```
+
+![UI](/images/screen.pnj)
+
+
+
+# To use only a part of this OCR :
+each part is independent
+to use 
+
+## IA
+
+```
+cd src/ia/xor
+make
+```
+
+## Preprocess
+
+```
+cd src/preproc/no-make
+make
+./test image_a_traiter destination
+```
+
+## Solver
+```
+cd src/solve
+make
+./solver <grid>
+```
+
+## rebuild
+```
+cd src/rebuild
+make
+```

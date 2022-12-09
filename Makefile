@@ -1,9 +1,9 @@
 # Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
 CC = gcc
 CPPFLAGS = -MMD
-CFLAGS = -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image`
+CFLAGS = -Wall -Wextra -O3 `pkg-config --cflags sdl2 SDL2_image gtk+-3.0` -D __NO_INLINE__
 LDFLAGS =
-LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
+LDLIBS = `pkg-config --libs sdl2 SDL2_image gtk+-3.0` -lm
 
 TARGET_EXEC := final_program
 

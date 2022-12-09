@@ -60,3 +60,17 @@ dkms.conf
 # Training samples
 *.png
 *.jpg
+
+# result files
+*.result
+
+# build dir
+/build/
+
+# case file
+*.case
+src/preproc/preproc
+src/preproc/test.jpeg
+sobeled.jpg
+binarized
+

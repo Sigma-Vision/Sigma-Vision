@@ -1,4 +1,7 @@
-int main() {
+#include "UI/ui.h"
+
+int main(int argc, char *argv[]) {
         // to change
-        return 0;
+    ui(argc, argv);
+    return 0;
 }

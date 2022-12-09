@@ -1,0 +1,13 @@
+.dark {
+	background-color: #eeeeee;
+}
+
+window.dark button{
+	background-color: #ffffff;
+	color: #000000;
+
+}
+
+window.dark label {
+	color: black;
+}
