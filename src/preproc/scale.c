@@ -578,11 +578,11 @@ void get_chiffre(SDL_Surface* surface, Chiffre c)
 
 
     Dot tL;
-    tL.X = get_h_min(label, h, w, labal_stats[0]);
-    tL.Y = get_w_min(label, h, w, labal_stats[0]);
+    tL.X = get_h_min(label, h, w, label_stats[0]);
+    tL.Y = get_w_min(label, h, w, label_stats[0]);
     Dot bR;
-    bR.X = get_h_max(label, h, w, labal_stats[0]);
-    bR.Y = get_w_max(label, h, w, labal_stats[0]);
+    bR.X = get_h_max(label, h, w, label_stats[0]);
+    bR.Y = get_w_max(label, h, w, label_stats[0]);
 
     c.topLeft = tL;
     c.bottomRight = bR;

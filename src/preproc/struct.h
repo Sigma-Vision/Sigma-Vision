@@ -50,7 +50,7 @@ typedef struct Chiffre
 {
     Dot topLeft;
     Dot bottomRight;
-}
+}Chiffre;
 
 #endif
 

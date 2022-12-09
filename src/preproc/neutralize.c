@@ -221,10 +221,7 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
     return histogram;
 }
 
-SDL_Surface* copy(SDL_Surface* surface)
-{
-    
-}
+
 
 int OtsuGetMaxVariance(SDL_Surface* surface)
 {
@@ -445,7 +442,7 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
     return surface;
 }
 
-SDL_Surface* unlosange(SDL_Surface* surface,Square* s)
+/*SDL_Surface* unlosange(SDL_Surface* surface,Square* s)
 {
     int width = surface->w;
     int height = surface->h;
@@ -457,4 +454,4 @@ SDL_Surface* unlosange(SDL_Surface* surface,Square* s)
 
     //do rotation as described in the picture
     //include ponderation with distance to the angle / distance to the dot that is off / further outside    
-}
+}*/

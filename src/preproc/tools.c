@@ -9,6 +9,27 @@
 #define CASE_SIDE_SIZE 16
 #define PI 3.14159265
 
+SDL_Surface* copy(SDL_Surface* surface)
+{
+    int width = surface->w;
+    int height = surface->h;
+    Uint32* pixels = surface->pixels;
+    
+    SDL_Surface* res = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+    Uint32* respixels = res->pixels;
+
+    for (int i = 0;i < height;i++)
+    {
+        for (int j = 0;j < width;j++)
+        {
+            respixels[i*width+j] = pixels[i*width+j];
+        }
+    }
+
+    return res;
+}
+
+
 void print_pixel(SDL_Surface* surface, int i, int j, Uint8 r, Uint8 g, Uint8 b)
 {
     int width = surface->w;
