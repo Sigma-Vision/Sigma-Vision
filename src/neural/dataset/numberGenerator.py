@@ -54,7 +54,7 @@ for n in range(1, 10):
         #d.text((random.randint(-2,6),random.randint(-4, -2)), str(n), font=fnt, fill=(0, 0, 0))
         d.text((2, -3), str(n), font=fnt, fill=(0, 0, 0))
 
-        img = img.resize((20, 20))
+        img = img.resize((28, 28))
 
         img.save(str(n) + "/" + str(i) + ".png")
 

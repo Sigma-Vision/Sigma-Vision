@@ -10,7 +10,6 @@
 double sigmoid(double x)
 {
     return 1 / (1 + exp(-x));
-    //return x > 0 ? x : 0;
 }
 
 /**
@@ -19,7 +18,6 @@ double sigmoid(double x)
 double d_sigmoid(double x)
 {
     return x * (1 - x);
-    //return x < 0 ? 0 : 1;
 }
 
 /**

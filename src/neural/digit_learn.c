@@ -16,8 +16,8 @@ int learn(const int NB_ITER)
 
     /* Network configuration */
     const int nb_inputs = INPUT_SIZE;
-    const int nb_layers = 2;
-    const int nb_nodes[] = {INPUT_SIZE / 2, 9};
+    const int nb_layers = 4;
+    const int nb_nodes[] = {392, 98, 49, 9};
 
     double** nodes_pp = malloc(nb_layers * sizeof(double*));
     double** deltas_pp = malloc(nb_layers * sizeof(double*));
@@ -32,7 +32,7 @@ int learn(const int NB_ITER)
     int digit_set_order[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8};
     double training_inputs[INPUT_SIZE] = {0};
 
-    const double learning_rate = 0.000001f;
+    const double learning_rate = 0.0001f;
 
 
     /* TRAINING LOOP */
