@@ -9,14 +9,44 @@
 #define CASE_SIDE_SIZE 8
 #define PI 3.14159265
 
-/** 
- * Loads an image in a surface.
- * The format of the surface is SDL_PIXELFORMAT_RGB888.
- *
- * path: Path of the image.
- */
+void print_pixel(SDL_Surface* surface, int i, int j, Uint8 r, Uint8 g, Uint8 b)
+{
+    int width = surface->w;
+    int height = surface->h;
+    Uint32* pixels = surface->pixels;
 
-int losange_collision(Square* s, double i, double j)
+    if (SDL_LockSurface(surface) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+
+    for (int k = -10;k <= 10;k++)
+    {
+        for (int l = -10;l < 10;l++)
+        {
+            if ( i+k > 0 && i+k < height
+                    && j+l > 0 && j+l < width)
+            {
+                pixels[(i+k)*width+(j+l)] = SDL_MapRGB(surface->format,r,g,b); 
+            }
+        }
+    }
+    SDL_UnlockSurface(surface);
+}
+
+void print_square(SDL_Surface* surface, Square* s)
+{
+    Dot tl = s->topLeft;
+    Dot tr = s->topRight;
+    Dot bl = s->bottomLeft;
+    Dot br = s->bottomRight;
+
+    print_pixel(surface,tl.X,tl.Y,255,0,0);
+    print_pixel(surface,tr.X,tr.Y,0,255,0);
+    print_pixel(surface,bl.X,bl.Y,255,255,0);
+    print_pixel(surface,br.X,br.Y,255,0,255);
+}
+
+int losange_collision(Square* s, int i, int j)
 {
     
     Dot tl = s->topLeft;
@@ -28,13 +58,14 @@ int losange_collision(Square* s, double i, double j)
     {
         if (i < tr.X)
             return 0;
+        
         int y = j - tl.Y;
-        int x = i - tr.X;
+        int x = tl.X - i;
     
         int X = tl.X - tr.X;
         int Y = tr.Y - tl.Y;
 
-        if (Y*x < X*y)
+        if (Y*x > X*y)
             return 0;        
     }
     
@@ -56,7 +87,7 @@ int losange_collision(Square* s, double i, double j)
             return 0;*/
 
         //faster operation and lossless
-        if (X*y < Y*x)
+        if (X*y > Y*x)
             return 0;
 
     }
@@ -72,7 +103,7 @@ int losange_collision(Square* s, double i, double j)
         int X = br.X - bl.X;
         int Y = br.Y - bl.Y;
 
-        if (X*y > Y*x)
+        if (X*y < Y*x)
             return 0;
     }
 
@@ -82,12 +113,12 @@ int losange_collision(Square* s, double i, double j)
             return 0;
 
         int y = j - bl.Y;
-        int x = i - br.X;
+        int x = bl.X - i;
 
         int X = bl.X - br.X;
         int Y = br.Y - bl.Y;
 
-        if (Y*x > X*y)
+        if (Y*x < X*y)
             return 0;
     }
 
@@ -102,7 +133,7 @@ int losange_collision(Square* s, double i, double j)
         int X = bl.X - tl.X;
         int Y = bl.Y - tl.Y;
 
-        if (X*y > Y*x)
+        if (X*y < Y*x)
             return 0;
     }
 
@@ -113,7 +144,7 @@ int losange_collision(Square* s, double i, double j)
             return 0;
 
         int y = j - bl.Y;
-        int x = i - tl.X;
+        int x = bl.X - i;
 
         int X = bl.X - tl.X;
         int Y = tl.Y - bl.Y;
@@ -133,7 +164,7 @@ int losange_collision(Square* s, double i, double j)
         int X = br.X - tr.X;
         int Y = br.Y - tr.Y;
 
-        if (X*y < Y*x)
+        if (X*y > Y*x)
             return 0;
     }
 
@@ -141,9 +172,9 @@ int losange_collision(Square* s, double i, double j)
     {
         if (j > tr.Y)
             return 0;
-
+        
         int y = j - br.Y;
-        int x = i - tr.X;
+        int x = br.X - i;
 
         int X = br.X - tr.X;
         int Y = tr.Y - br.Y;
@@ -161,7 +192,6 @@ void fill_outside_square(SDL_Surface* surface, Square* s)
     int height = surface->h;
     Uint32* pixels = surface->pixels; 
 
-   
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
@@ -169,39 +199,17 @@ void fill_outside_square(SDL_Surface* surface, Square* s)
     {
         for (int j = 0;j < width;j++)
         {
-            int in_square = 0; 
+            int in_square = losange_collision(s,i,j); 
 
             if (!in_square)
                 pixels[i*width +j] = SDL_MapRGB(surface->format,0,0,255);
         }
     }
 
+    print_square(surface,s);
     SDL_UnlockSurface(surface);
 }
 
-void print_pixel(SDL_Surface* surface, int i, int j)
-{
-    int width = surface->w;
-    int height = surface->h;
-    Uint32* pixels = surface->pixels;
-
-    if (SDL_LockSurface(surface) < 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-
-    for (int k = -10;k <= 10;k++)
-    {
-        for (int l = -10;l < 10;l++)
-        {
-            if ( i+k > 0 && i+k < height
-                    && j+l > 0 && j+l < width)
-            {
-                pixels[(i+k)*width+(j+l)] = SDL_MapRGB(surface->format,255,0,0); 
-            }
-        }
-    }
-    SDL_UnlockSurface(surface);
-}
 
 Uint8 GetColor(SDL_Surface* surface, int i, int j)
 {

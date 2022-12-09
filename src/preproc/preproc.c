@@ -31,8 +31,6 @@ int preproc(char* file, char* output)
 
     //surface = ResizeSurface(surface,1000,1000); 
 
-    //surface = rotateAny(surface,45);
-
     SDL_Surface* sobeled = SobelTransform(surface);
     
     Square s;
@@ -41,20 +39,19 @@ int preproc(char* file, char* output)
     IMG_SaveJPG(sobeled, "sobeled.jpg", 100);
 
     SDL_FreeSurface(sobeled); 
-    //rotate180(surface);
 
-    //surface = rotateAny(surface,0,255,1);
-    //surface = RotateDetectedGrid(surface,&s); 
+    fill_outside_square(surface,&s); 
+    surface = RotateDetectedGrid(surface,&s); 
 
     //find_coin(surface, &s);
 
- /*   
+    
     //SDL_Surface* to_free = surface;
     //surface = GridCropping(to_free,&s);
     //SDL_FreeSurface(to_free);
 
     //GridSplit(surface);
-*/
+
     IMG_SaveJPG(surface, output, 100);
     // - Cleanup
     SDL_FreeSurface(surface);
