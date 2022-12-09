@@ -421,8 +421,10 @@ char* to_grid(int* input)
                 p++;       
             }
 
-
-            *p = input[i*9+j] + 48;
+            if (input[i*9+j] == 0)
+                *p = '.';
+            else
+                *p = input[i*9+j] + 48;
             p++;
         }
 
