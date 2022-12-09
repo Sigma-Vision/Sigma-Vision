@@ -15,15 +15,18 @@ SDL_Surface* preproc(SDL_Surface* surface)
     surface_to_grayscale(surface);
 
     OtsuBinarization(surface); 
- 
-    surface = Erosion(surface,1); 
-    surface = Dilation(surface,2);
+
+    IMG_SaveJPG(surface,"binarized",100);
+
+    //surface = Erosion(surface,1); 
+    //surface = Dilation(surface,2);
 
     SDL_Surface* sobeled = SobelTransform(surface);
+    sobeled = Erosion(sobeled,1);
     
     Square s;
     find_grid(sobeled, &s);
-
+    
     print_square(sobeled,&s); 
     IMG_SaveJPG(sobeled, "sobeled.jpg", 100);
 

@@ -6,6 +6,8 @@
 #include "neutralize.h"
 #include <math.h>
 
+#include "../neural/digit_net.h"
+
 #define CASE_SIDE_SIZE 16
 #define PI 3.14159265
 
@@ -397,6 +399,43 @@ SDL_Surface* GridCropping (SDL_Surface* surface, Square* s)
 }
 
 
+char* to_grid(int* input)
+{
+    char* res = calloc(12*11+1,sizeof(char));
+
+    char* p = res;
+
+    for (int i = 0;i < 9;i++)
+    {
+        if (i != 0 && i % 3 == 0)
+        {
+            *p = '\n';
+            p++;
+        }
+        
+        for (int j = 0;j < 9;j++)
+        {
+            if (j != 0 && j%3 == 0)
+            {
+                *p = ' ';
+                p++;       
+            }
+
+
+            *p = input[i*9+j] + 48;
+            p++;
+        }
+
+
+        *p = '\n';
+        p++;
+    }
+
+    *p = 0;
+
+    return res;
+}
+
 
 void GridSplit(SDL_Surface* surface)
 {
@@ -414,11 +453,14 @@ void GridSplit(SDL_Surface* surface)
     Square s;
     int cut_w = w9/8;
     int cut_h = h9/8;
+
+    char* result = calloc(81,sizeof(int));
     
     for (int i = 0;i < 9;i++)
     {
         for (int j = 0;j < 9;j++)
         {
+
             s.topLeft.Y = w9*j + cut_w;
             s.topLeft.X = h9*i + cut_h;
 
@@ -429,14 +471,36 @@ void GridSplit(SDL_Surface* surface)
             s.bottomLeft.X = h9*(i+1) - cut_h;
 
             SDL_Surface* temp = GridCropping(surface,&s);
-            temp = ResizeSurface(temp,CASE_SIDE_SIZE,CASE_SIDE_SIZE);
 
-            snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
-            IMG_SaveJPG(temp, filename,100);
+            if (! case_empty(surface))
+            {
+                temp = ResizeSurface(temp,CASE_SIDE_SIZE,CASE_SIDE_SIZE);
 
-            SDL_FreeSurface(temp);
+                double* input = malloc(CASE_SIDE_SIZE*CASE_SIDE_SIZE * sizeof(double));
+
+                snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
+                IMG_SaveJPG(temp, filename,100);
+               
+                for (int k = 0;k < CASE_SIDE_SIZE*CASE_SIDE_SIZE;k++)
+                {
+                    input[k] = (double) GetColor_x(temp->pixels[k]) / 255.0f;
+                }
+
+                result[i*9+j] = guess(input);
+                
+                free(input);
+                SDL_FreeSurface(temp);    
+            }
         }
     }
+
+    char* grid = to_grid(result);
+
+    FILE* fptr = fopen("grid",'w');
+    
+    fputs(grid,fptr);
+
+    fclose(fptr);
 }
 
 //tester sans normalisation histogramme otsu

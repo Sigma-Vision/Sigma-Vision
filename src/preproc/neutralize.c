@@ -137,18 +137,6 @@ void OtsuEqualizeImage (SDL_Surface* surface, int* histogram,double nb_pix)
            color_map[i] = (int)val; 
     }
 
-    for (int i = 0; i<256;i++)
-    {
-        int prev = -1;
-        int cur = color_map[i];
-        while (prev != cur)
-        {
-            prev = cur;
-            cur = color_map[cur];
-        }
-        color_map[i] = cur;
-    }
-
     Uint32* pixels = surface->pixels;
     int width = surface->w;
 
@@ -164,39 +152,6 @@ void OtsuEqualizeImage (SDL_Surface* surface, int* histogram,double nb_pix)
 
     free(color_map);
 }
-
-/*
-void OtsuEquNormHistogram (int* histogram)
-{
-    int min_intensity = 0;
-    int max_intensity = 255;
-
-    for (; min_intensity< 256 && histogram[min_intensity] == 0; min_intensity++);
-    for (; max_intensity >= 0 && histogram[max_intensity] == 0; max_intensity--);
-
-    if (max_intensity == 0)
-        errx(4,"Histogram empty in OtsuEquNormHistogram");
-
-    double sum = 0;
-
-    for (int i = 0; i < 256;i++)
-    {
-        histogram[i] = ((histogram[i]-min_intensity)/(max_intensity - min_intensity)) * 255; 
-        sum += histogram[i];
-    }
-    
-    double cumulated = 0;
-    double val;
-    for (int i = 0;i < 256;i++)
-    {
-        cumulated += histogram[i];
-        val = cumulated * 255 / sum;
-        if (val - (double)(int)val >= 0.5)
-           histogram[i] = (int)val+1;
-        else
-           histogram[i] = (int)val; 
-    }
-}*/
 
 int* OtsuBuildHistogram(SDL_Surface* surface)
 {
@@ -222,17 +177,23 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
 }
 
 
-
 int OtsuGetMaxVariance(SDL_Surface* surface)
 {
     int full_w = surface->w * surface->h;
 
     int* histogram = OtsuBuildHistogram(surface);
-   
-     
-    //OtsuNormalizeHistogram(histogram);
-    //OtsuEqualizeHistogram(histogram,full_w);
+    OtsuNormalizeHistogram(histogram);
+    /*
+    SDL_Surface* egalized = copy(surface);
+
+    OtsuEqualizeImage(egalized,histogram,full_w);
     
+    free(histogram);
+
+    histogram = OtsuBuildHistogram(egalized); 
+    SDL_FreeSurface(egalized);
+    */
+
     double Wb;
     double Wf;
 
