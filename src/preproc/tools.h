@@ -12,5 +12,6 @@ SDL_Surface* ResizeSurface(SDL_Surface* surface,int n_width,int n_height);
 void print_pixel(SDL_Surface* surface, int i, int j, Uint8 r, Uint8 g, Uint8 b);
 void fill_outside_square(SDL_Surface* surface, Square* s);
 void print_square(SDL_Surface* surface, Square* s);
+SDL_Surface* copy(SDL_Surface* surface);
 
 #endif

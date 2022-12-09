@@ -24,17 +24,20 @@ int preproc(char* file, char* output)
     //rotate180(surface);
 
     OtsuBinarization(surface); 
- 
-    surface = Erosion(surface,1); 
-    surface = Dilation(surface,2);
+
+    IMG_SaveJPG(surface,"binarized",100);
+
+    //surface = Erosion(surface,1); 
+    //surface = Dilation(surface,2);
 
     //surface = ResizeSurface(surface,1000,1000); 
 
     SDL_Surface* sobeled = SobelTransform(surface);
+    sobeled = Erosion(sobeled,1);
     
     Square s;
     find_grid(sobeled, &s);
-
+    
     print_square(sobeled,&s); 
     IMG_SaveJPG(sobeled, "sobeled.jpg", 100);
 
