@@ -177,22 +177,26 @@ int* OtsuBuildHistogram(SDL_Surface* surface)
 }
 
 
-int OtsuGetMaxVariance(SDL_Surface* surface)
+int OtsuGetMaxVariance(SDL_Surface* surface,int equalize)
 {
     int full_w = surface->w * surface->h;
 
     int* histogram = OtsuBuildHistogram(surface);
-    OtsuNormalizeHistogram(histogram);
-    /*
-    SDL_Surface* egalized = copy(surface);
 
-    OtsuEqualizeImage(egalized,histogram,full_w);
-    
-    free(histogram);
+    if (equalize)
+    {
+        SDL_Surface* egalized = copy(surface);
 
-    histogram = OtsuBuildHistogram(egalized); 
-    SDL_FreeSurface(egalized);
-    */
+        OtsuEqualizeImage(egalized,histogram,full_w);
+        
+        free(histogram);
+
+        histogram = OtsuBuildHistogram(egalized); 
+        SDL_FreeSurface(egalized);
+
+    }
+    else
+        OtsuNormalizeHistogram(histogram);
 
     double Wb;
     double Wf;
@@ -249,13 +253,13 @@ int OtsuGetMaxVariance(SDL_Surface* surface)
     return imax_variance;
 } 
 
-void OtsuBinarization(SDL_Surface* surface)
+void OtsuBinarization(SDL_Surface* surface,int equalize)
 {
 
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     
-    int color_max_variance = OtsuGetMaxVariance(surface);
+    int color_max_variance = OtsuGetMaxVariance(surface,equalize);
     
     Uint32* pixels = surface-> pixels;
     SDL_PixelFormat* format = surface->format;
