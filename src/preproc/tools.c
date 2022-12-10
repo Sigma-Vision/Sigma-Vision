@@ -5,6 +5,7 @@
 #include "struct.h"
 #include "neutralize.h"
 #include <math.h>
+#include "scale.h"
 
 #include "../neural/digit_net.h"
 
@@ -458,7 +459,7 @@ int case_empty(SDL_Surface* surface)
     return arr[1] * 11 < arr[0];
 }
 
-void GridSplit(SDL_Surface* surface)
+void GridSplit(SDL_Surface* surface,int debug)
 {
     if (surface == NULL)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
@@ -496,6 +497,38 @@ void GridSplit(SDL_Surface* surface)
             
             if (! case_empty(temp))
             {
+                SDL_Surface* temp2 = temp;
+                Chiffre* c = calloc(1,sizeof(Chiffre));
+                get_chiffre(temp,c);
+
+                Square n;
+                n.topLeft.X = c->topLeft.X;// - (c->topLeft.X - s.topLeft.X)/4;
+                n.topLeft.Y = c->topLeft.Y;// - (c->topLeft.Y - s.topLeft.Y)/4;
+
+                n.topRight.X = n.topLeft.X;
+                n.topRight.Y = c->bottomRight.Y;// + (s.topRight.Y - c->bottomRight.Y)/4;
+
+                n.bottomLeft.X = c->bottomRight.X;// + (s.bottomLeft.X - c->bottomRight.X)/4;
+                n.bottomLeft.Y = n.topLeft.Y;
+
+                free(c);
+                if (debug)
+                {
+                    print_square(temp2,&n);
+                    IMG_SaveJPG(temp2,"debug2",100);
+                }
+
+                temp = GridCropping(temp2,&n);
+                
+                if (debug)
+                {
+                    IMG_SaveJPG(temp,"debug",100);
+                    errx(1,"osdqjdpqjs");
+
+                }
+                
+                SDL_FreeSurface(temp2);
+                                
                 temp = ResizeSurface(temp,CASE_SIDE_SIZE,CASE_SIDE_SIZE);
 
                 double* input = malloc(CASE_SIDE_SIZE*CASE_SIDE_SIZE * sizeof(double));

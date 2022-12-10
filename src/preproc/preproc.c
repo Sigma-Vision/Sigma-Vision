@@ -39,7 +39,7 @@ SDL_Surface* preproc(SDL_Surface* surface)
     surface = GridCropping(to_free,&s);
     SDL_FreeSurface(to_free);
 
-    GridSplit(surface);
+    GridSplit(surface,0);
     
     return surface;
 }
