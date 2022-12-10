@@ -1,5 +1,6 @@
 #include <SDL2/SDL_image.h>
 #include "struct.h"
+#include "../neural/digit_net.h"
 
 #ifndef TOOLS_H
 #define TOOLS_H
