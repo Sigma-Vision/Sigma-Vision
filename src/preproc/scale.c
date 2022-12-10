@@ -537,7 +537,7 @@ void find_grid(SDL_Surface* surface, Square* s)
     SDL_UnlockSurface(surface);
 }
 
-void get_chiffre(SDL_Surface* surface, Chiffre c)
+void get_chiffre(SDL_Surface* surface, Chiffre* c)
 {
     Uint32* pixels = surface->pixels;
     int w = surface -> w;
@@ -584,8 +584,8 @@ void get_chiffre(SDL_Surface* surface, Chiffre c)
     bR.X = get_h_max(label, h, w, label_stats[0]);
     bR.Y = get_w_max(label, h, w, label_stats[0]);
 
-    c.topLeft = tL;
-    c.bottomRight = bR;
+    c->topLeft = tL;
+    c->bottomRight = bR;
 
 
     free(label_stats);

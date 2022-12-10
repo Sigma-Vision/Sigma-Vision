@@ -57,6 +57,13 @@ dkms.conf
 # Swap files
 *.swp
 
+# Training samples
+*.png
+*.jpg
+
+# result files
+*.result
+
 # build dir
 /build/
 
@@ -64,3 +71,6 @@ dkms.conf
 *.case
 src/preproc/preproc
 src/preproc/test.jpeg
+sobeled.jpg
+binarized
+
