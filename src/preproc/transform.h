@@ -5,6 +5,6 @@
 #define TRANSFORM_H
 
 SDL_Surface* GaussianBlur (SDL_Surface* surface, int radius);
-SDL_Surface* SobelTransform(SDL_Surface* surface);
+SDL_Surface* SobelTransform(SDL_Surface* surface,int aggro);
 
 #endif

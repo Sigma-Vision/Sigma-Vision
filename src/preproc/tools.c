@@ -444,9 +444,9 @@ int case_empty(SDL_Surface* surface)
 {
     int arr[2] = {0,0};
 
-    for (int i = 0;i<surface->w;i++)
+    for (int i = 0;i<surface->h;i++)
     {
-        for (int j = 0;j < surface->h;j++)
+        for (int j = 0;j < surface->w;j++)
         {
             if (GetColor(surface,i,j) == 0)
                 arr[0]++;
@@ -455,7 +455,7 @@ int case_empty(SDL_Surface* surface)
         }
     }
 
-    return arr[1] * 10 < arr[0];
+    return arr[1] * 11 < arr[0];
 }
 
 void GridSplit(SDL_Surface* surface)
@@ -508,7 +508,8 @@ void GridSplit(SDL_Surface* surface)
                     input[k] = (double) GetColor_x(temp,k) / 255.0f;
                 }
 
-                result[i*9+j] = guess_digit(input);
+                //result[i*9+j] = guess_digit(input);
+                result[i*9+j] = 1;
                 
                 free(input);
             }

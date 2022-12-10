@@ -100,57 +100,127 @@ SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
     return temp;
 }
 
+void fill_matrices_sobel(int* matx, int* maty, int aggro)
+{
+    if (aggro == 5)
+    {
+        matx[0] = -5;
+        matx[1] = -4;
+        matx[2] = 0;
+        matx[3] = 4;
+        matx[4] = 5;
+        matx[5] = -8;
+        matx[6] = -10;
+        matx[7] = 0;
+        matx[8] = 10;
+        matx[9] = 8;
+        matx[10] = -10;
+        matx[11] = -20;
+        matx[12] = 0;
+        matx[13] = 20;
+        matx[14] = 10;
+        matx[15] = -8;
+        matx[16] = -10;
+        matx[17] = 0;
+        matx[18] = 10;
+        matx[19] = 8;
+        matx[20] = -5;
+        matx[21] = -4;
+        matx[22] = 0;
+        matx[23] = 4;
+        matx[24] = 5;
+        
+        maty[0] = -5;
+        maty[1] = -8;
+        maty[2] = -10;
+        maty[3] = -8;
+        maty[4] = -5;
+        maty[5] = -4;
+        maty[6] = -10;
+        maty[7] = -20;
+        maty[8] = -10;
+        maty[9] = -4;
+        maty[10] = 0;
+        maty[11] = 0;
+        maty[12] = 0;
+        maty[13] = 0;
+        maty[14] = 0;
+        maty[15] = 4;
+        maty[16] = 10;
+        maty[17] = 20;
+        maty[18] = 10;
+        maty[19] = 4;
+        maty[20] = 5;
+        maty[21] = 8;
+        maty[22] = 10;
+        maty[23] = 8;
+        maty[24] = 5;
+
+    }
+
+    if (aggro == 3)
+    {
+        matx[0] = -1; 
+        matx[1] =  0;
+        matx[2] =  1;
+        matx[3] = -2;
+        matx[4] =  0;
+        matx[5] =  2;
+        matx[6] = -1; 
+        matx[7] =  0;
+        matx[8] =  1;
+
+        maty[0] = -1; 
+        maty[1] = -2; 
+        maty[2] = -1; 
+        maty[3] =  0;
+        maty[4] =  0;
+        maty[5] =  0;
+        maty[6] =  1;
+        maty[7] =  2;
+        maty[8] =  1;
+
+    }
+}
+
 /**
  * THIS FUNCTIONS DOES NOT FREE THE PROVIDED SURFACE AND RETURNES ANOTHER
  * WATCH OUT FOR USE AFTER FREE
  */
-SDL_Surface* SobelTransform(SDL_Surface* surface)
+SDL_Surface* SobelTransform(SDL_Surface* surface,int aggro)
 {
     //we use a 5x5 kernel here, may not be needed or may need 7x7
-    /* 
-    int matx[25] = 
+     
+    Kernel Gx;
+    Kernel Gy;
+
+    if (aggro == 5)
     {
-        -5, -4, 0, 4, 5, 
-        -8, -10, 0, 10, 8,
-        -10, -20, 0, 20, 10,
-        -8, -10, 0, 10, 8,
-        -5, -4, 0, 4, 5
-    };
+        int* matx = malloc(25*sizeof(int));
+        int* maty = malloc(25*sizeof(int));
+        
+        fill_matrices_sobel(matx, maty,aggro);
+        
+        Gx.radius = 5;
+        Gx.matrix = matx;
 
-    int maty[25] = 
+        Gy.radius = 5;
+        Gy.matrix = maty;
+    }
+    else
     {
-        -5,-8,-10,-8,-5,
-        -4,-10,-20,-10,-4,
-        0,0,0,0,0,
-        4,10,20,10,4,
-        5,8,10,8,5
-    };
+        //radius = 3
+        int* matx = malloc(9*sizeof(int));
+        int* maty = malloc(9*sizeof(int));
 
-    Kernel Gx = { .radius = 5, .matrix = matx};
+        fill_matrices_sobel(matx, maty,aggro);
 
-    Kernel Gy = { .radius = 5, .matrix = maty};
-    */
-    
-
-    //radius = 3
-
-    int matx[9] = 
-    {
-        -1,0,1,
-        -2,0,2,
-        -1,0,1
-    };
-    
-    int maty[9] =
-    {
-        -1,-2,-1,
-        0,0,0,
-        -1,2,1
-    };
-
-    Kernel Gx = {.radius = 3, .matrix = matx};
-
-    Kernel Gy = {.radius = 3, .matrix = maty};
+        Gx.radius = 3;
+        Gx.matrix = matx;
+        
+        Gy.radius = 3;
+        Gy.matrix = maty;
+    }
     
 
     if (SDL_LockSurface(surface) < 0)
@@ -193,6 +263,9 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
     }
      
     //SDL_FreeSurface(surface);
+    //
+    free(Gy.matrix);
+    free(Gx.matrix);
 
     SDL_UnlockSurface(temp);
 
@@ -205,7 +278,7 @@ SDL_Surface* CannyTransform(SDL_Surface* surface)
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    surface = SobelTransform(surface);
+    surface = SobelTransform(surface,3);
 
     SDL_UnlockSurface(surface);
 

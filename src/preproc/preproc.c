@@ -14,26 +14,27 @@ SDL_Surface* preproc(SDL_Surface* surface)
     // - Neutralizes the image and saves it.
     surface_to_grayscale(surface);
 
-    OtsuBinarization(surface); 
+    OtsuBinarization(surface,0); 
 
     IMG_SaveJPG(surface,"binarized",100);
 
     //surface = Erosion(surface,1); 
     //surface = Dilation(surface,2);
 
-    SDL_Surface* sobeled = SobelTransform(surface);
-    sobeled = Erosion(sobeled,1);
+    SDL_Surface* sobeled = SobelTransform(surface,5);
+    //sobeled = Erosion(sobeled,3);
     
     Square s;
     find_grid(sobeled, &s);
     
+
     print_square(sobeled,&s); 
     IMG_SaveJPG(sobeled, "sobeled.jpg", 100);
 
     SDL_FreeSurface(sobeled); 
 
+
     surface = RotateDetectedGrid(surface,&s); 
-    
     SDL_Surface* to_free = surface;
     surface = GridCropping(to_free,&s);
     SDL_FreeSurface(to_free);
