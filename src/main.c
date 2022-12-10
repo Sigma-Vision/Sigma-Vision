@@ -8,12 +8,12 @@
 
 int main(int argc, char *argv[]) {
         // to change
-    if (argc < 3)
+    if (argc < 2)
         ui(argc, argv);
     else
     {
-        if (argc != 3)
-            errx(EXIT_FAILURE, "Usage: neutralize <image-file> <outfile>");
+        if (argc != 2)
+            errx(EXIT_FAILURE, "Usage: neutralize <image-file>");
 
         // - Create a surface from the image.
         SDL_Surface* surface = load_image(argv[1]);
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
         surface = preproc(surface);
 
-        IMG_SaveJPG(surface, argv[2], 100);
+        IMG_SaveJPG(surface, "output.jpg", 100);
         // - Cleanup
         SDL_FreeSurface(surface);
         SDL_Quit();
