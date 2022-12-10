@@ -4,7 +4,7 @@
 #include <err.h>
 #include "xor.h"
 
-int xor(int argc, char** argv)
+int main(int argc, char** argv)
 {
   if (argc < 2)
     errx(EXIT_FAILURE, "missing parameters");
