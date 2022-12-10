@@ -230,14 +230,6 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
     //X = VERTICAL
     //Y = HORIZONTAL
 
-    printf("tl : X = %i | Y = %i\n",s->topLeft.X,s->topLeft.Y);
-    printf("tr : X = %i | Y = %i\n",s->topRight.X,s->topRight.Y);
-    printf("bl : X = %i | Y = %i\n",s->bottomLeft.X,s->bottomLeft.Y);
-
-    print_square(surface,s);
-
-    //return surface;
-
     Dot cdot1;
     cdot1.X = s->topLeft.X;
     cdot1.Y = s->topLeft.Y;
@@ -248,12 +240,6 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
 
     double center_y = surface->w / 2;
     double center_x = surface->h / 2;
-
-    //if (topLeft->Y != topRight->Y)
-        //printf("DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i",topLeft->X,topLeft->Y,topRight->X,topRight->Y);    
-    
-    //printf("DOT3 : X = %i and Y = %i\n",s->bottomLeft.X, s->bottomLeft.Y);
-    //errx(1,"DOT1 : X = %i and Y = %i | DOT2 : X = %i and Y = %i\n",s->topLeft.X,s->topLeft.Y,s->topRight.X,s->topRight.Y);    
 
     if (s->topLeft.Y == s->topRight.Y)
         errx(1,"RotateDetectedGrid: Length of the top line of the grid is 0.");
