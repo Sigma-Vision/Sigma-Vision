@@ -495,7 +495,7 @@ void GridSplit(SDL_Surface* surface)
                     input[k] = (double) GetColor_x(temp,k) / 255.0f;
                 }
 
-                result[i*9+j] = guess(input);
+                result[i*9+j] = guess_digit(input);
                 
                 free(input);
                 SDL_FreeSurface(temp);    
