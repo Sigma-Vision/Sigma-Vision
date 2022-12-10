@@ -107,7 +107,7 @@ SDL_Surface* GaussianBlur (SDL_Surface* surface,int radius)
 SDL_Surface* SobelTransform(SDL_Surface* surface)
 {
     //we use a 5x5 kernel here, may not be needed or may need 7x7
-    
+    /* 
     int matx[25] = 
     {
         -5, -4, 0, 4, 5, 
@@ -129,8 +129,8 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
     Kernel Gx = { .radius = 5, .matrix = matx};
 
     Kernel Gy = { .radius = 5, .matrix = maty};
+    */
     
-    /*
 
     //radius = 3
 
@@ -152,7 +152,6 @@ SDL_Surface* SobelTransform(SDL_Surface* surface)
 
     Kernel Gy = {.radius = 3, .matrix = maty};
     
-    */
 
     if (SDL_LockSurface(surface) < 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());

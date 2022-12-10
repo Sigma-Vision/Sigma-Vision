@@ -8,7 +8,7 @@
 
 #include "../neural/digit_net.h"
 
-#define CASE_SIDE_SIZE 16
+#define CASE_SIDE_SIZE 16 
 #define PI 3.14159265
 
 SDL_Surface* copy(SDL_Surface* surface)
@@ -435,15 +435,27 @@ char* to_grid(int* input)
 
     *p = 0;
 
+    free(input);
+
     return res;
 }
 
-//tester sans normalisation histogramme otsu
 int case_empty(SDL_Surface* surface)
 {
-    int var = OtsuGetMaxVariance(surface);    
+    int arr[2] = {0,0};
 
-    return var < 50;
+    for (int i = 0;i<surface->w;i++)
+    {
+        for (int j = 0;j < surface->h;j++)
+        {
+            if (GetColor(surface,i,j) == 0)
+                arr[0]++;
+            else
+                arr[1]++;
+        }
+    }
+
+    return arr[1] * 10 < arr[0];
 }
 
 void GridSplit(SDL_Surface* surface)
@@ -460,6 +472,8 @@ void GridSplit(SDL_Surface* surface)
     char filename[15];
 
     Square s;
+    
+    //to remove case lines
     int cut_w = w9/8;
     int cut_h = h9/8;
 
@@ -469,7 +483,6 @@ void GridSplit(SDL_Surface* surface)
     {
         for (int j = 0;j < 9;j++)
         {
-
             s.topLeft.Y = w9*j + cut_w;
             s.topLeft.X = h9*i + cut_h;
 
@@ -480,8 +493,8 @@ void GridSplit(SDL_Surface* surface)
             s.bottomLeft.X = h9*(i+1) - cut_h;
 
             SDL_Surface* temp = GridCropping(surface,&s);
-
-            if (! case_empty(surface))
+            
+            if (! case_empty(temp))
             {
                 temp = ResizeSurface(temp,CASE_SIDE_SIZE,CASE_SIDE_SIZE);
 
@@ -498,8 +511,9 @@ void GridSplit(SDL_Surface* surface)
                 result[i*9+j] = guess_digit(input);
                 
                 free(input);
-                SDL_FreeSurface(temp);    
             }
+            
+            SDL_FreeSurface(temp);    
         }
     }
 
@@ -511,49 +525,6 @@ void GridSplit(SDL_Surface* surface)
 
     fclose(fptr);
 
-    free(result);
+    free(grid);
 }
-
-
-
-int** ParseOutput()
-{
-    int** res = malloc(sizeof(int*)*81);
-
-    int case_size = 32*32;
-    char filename[15];
-
-    for (int i = 0;i < 9;i++)
-    {
-        for (int j = 0;j < 9;j++)
-        {
-            snprintf(filename,sizeof(filename),"r%i_c%i.case",i,j);
-            SDL_Surface* surface = load_image(filename);
-
-            int* arr = malloc(sizeof(int)*case_size);
-
-            if (! case_empty(surface))
-            {
-                for (int k = 0;k < case_size;k++)
-                {
-                     arr[k] = GetColor_x(surface,k);
-                }
-            }
-            else
-            {
-                for (int k = 0;k < case_size;k++)
-                {
-                    //arr[k] = SDL_MapRGB(surface->format,255,255,255);
-                    arr[k] = 0;
-                }
-            }
-
-            res[i*9+j] = arr; 
-        }
-    }
-
-    return res;
-}
-
-
 
