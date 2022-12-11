@@ -271,14 +271,38 @@ SDL_Surface* RotateDetectedGrid(SDL_Surface* surface, Square* s)
         + (cdot2.X - center_x) * cos(angle) + center_x;
 
     Dot cdot3 = s->bottomLeft; 
-    
+    Dot cdot4 = s->bottomRight;
+
     s->bottomLeft.Y = (cdot3.Y - center_y)*cos(angle) 
         - (cdot3.X - center_x) * sin(angle) + center_y;
     
     s->bottomLeft.X = (cdot3.Y - center_y) * sin(angle) 
         + (cdot3.X - center_x) * cos(angle) + center_x;
+    
+    s->bottomRight.Y = (cdot4.Y - center_y)*cos(angle) 
+        - (cdot4.X - center_x) * sin(angle) + center_y;
+    
+    s->bottomRight.X = (cdot4.Y - center_y) * sin(angle) 
+        + (cdot4.X - center_x) * cos(angle) + center_x;
+
 
     return rotateAny(surface,angle,0,1); 
 }
 
+/*int src_unlosange_left(Square* s,double angle,int i,int j, int width)
+{
+    Dot tl = s->topLeft;
+    Dot bl = s->bottomLeft;
+    Dot tr = s->topRight;
 
+    int srcy = -(i-tl.X) * sin(angle) + (j-tl.Y) * cos(angle) + tl.Y;
+
+    double coef = ((double)(j - tr.Y)/(double)(tl.Y - tr.Y)); 
+    srcy = j + (int)((double)(srcy - j)*coef);
+    
+    if (srcy >= 0 && srcy < width)
+        return srcy;
+    else
+        return j;
+}
+*/

@@ -5,6 +5,7 @@
 #include <math.h>
 #include "tools.h"
 
+#define PI 3.14159265
 /**
  * value stay between 0 and 255
 **/
@@ -407,7 +408,59 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
     return surface;
 }
 
-/*SDL_Surface* unlosange(SDL_Surface* surface,Square* s)
+int src_unlosange_down(Square* s,double angle,int i,int j,int height)
+{ 
+
+    Dot bl = s->bottomLeft;
+    Dot tl = s->topLeft;
+
+    int srcx = ((double)(i-bl.X) * cos(angle)) + ((double)(j-bl.Y) * sin(angle)) + (double)bl.X;
+
+    double coef = ((double)(i - tl.X)/(double)(bl.X - tl.X)); 
+    srcx = i + (int)((double)(srcx - i)*coef);
+
+    if (srcx >= 0 && srcx < height)
+        return srcx;
+    else
+        return i;
+}
+
+int src_unlosange_left(Square* s,double angle,int i,int j, int width)
+{
+    Dot tl = s->topLeft;
+    Dot br = s->bottomRight;
+
+    int srcy = -(i-tl.X) * sin(angle) + (j-tl.Y) * cos(angle) + tl.Y;
+
+    double coef = ((double)(j - br.Y)/(double)(tl.Y - br.Y)); 
+    srcy = j + (int)((double)(srcy - j)*coef);
+    
+    if (srcy >= 0 && srcy < width)
+        return srcy;
+    else
+        return j;
+}
+
+int src_unlosange_right(Square* s,double angle,int i,int j, int width)
+{
+    Dot tr = s->topRight;
+    Dot bl = s->bottomLeft;
+    Dot br = s->bottomRight;
+
+    int srcy = -(i -tr.X) * sin(angle) + (j - tr.Y) * cos(angle) + tr.Y;
+    
+    double coef = ((double)(j-bl.Y)/(double)(br.Y-bl.Y)); 
+    srcy = j + ((double)(srcy - j)*coef);
+
+    if (srcy >= 0 && srcy < width)
+    {
+        return srcy;
+    }
+    else
+        return j;
+}
+
+SDL_Surface* unlosange(SDL_Surface* surface,Square* s)
 {
     int width = surface->w;
     int height = surface->h;
@@ -417,6 +470,91 @@ SDL_Surface* Erosion(SDL_Surface* surface, int iterations)
     Dot bl = s->bottomLeft;
     Dot br = s->bottomRight;
 
+    SDL_Surface* res = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+
+    if (SDL_LockSurface(res) < 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    Uint32* respixels = res-> pixels;
+    Uint32* pixels = surface->pixels;
+
     //do rotation as described in the picture
     //include ponderation with distance to the angle / distance to the dot that is off / further outside    
-}*/
+    //
+    
+     
+    double angle_down = tan((double)(bl.X - br.X)/(double)(br.Y - bl.Y)); 
+    
+    if (bl.X > br.X)
+        angle_down *= -1;
+    
+    for (int i = 0; i < height;i++)
+    {
+        for (int j = 0;j < width;j++)
+        {
+            int srcx = src_unlosange_down(s,angle_down,i,j,height);
+
+            respixels[i*width+j] = pixels[srcx*width+j];
+        }
+    }
+    
+    tl.X = src_unlosange_down(s,angle_down,tl.X,tl.Y,height);
+    tr.X = src_unlosange_down(s,angle_down,tr.X,tr.Y,height);
+    bl.X = src_unlosange_down(s,angle_down,bl.X,bl.Y,height);
+    br.X = src_unlosange_down(s,angle_down,br.X,br.Y,height);
+    
+    SDL_FreeSurface(surface);
+    surface = copy(res);
+    pixels = surface->pixels;
+
+    double angle_left = tan((double)(tl.Y - bl.Y)/(double)(bl.X - tl.X));
+
+    if (bl.Y > tl.Y)
+        angle_left *= -1;
+
+    for (int i = 0; i < height;i++)
+    {
+        for (int j = 0;j < width;j++)
+        {
+            int srcy = src_unlosange_left(s,angle_left,i,j,width); 
+            
+            respixels[i*width+j] = pixels[i*width+srcy];
+        }
+    }
+
+    tl.Y = src_unlosange_left(s,angle_left,tl.X,tl.Y,width);
+    tr.Y = src_unlosange_left(s,angle_left,tr.X,tr.Y,width);
+    bl.Y = src_unlosange_left(s,angle_left,bl.X,bl.Y,width);
+    br.Y = src_unlosange_left(s,angle_left,br.X,br.Y,width);
+    
+    
+    SDL_FreeSurface(surface);
+    surface = copy(res);
+    pixels = surface->pixels;
+
+    double angle_right = tan((double)(br.Y - tr.Y)/(double)(br.X - tr.X));
+
+    if (br.Y > tr.Y)
+        angle_right *= -1;
+
+    for (int i = 0; i < height;i++)
+    {
+        for (int j = 0;j < width;j++)
+        {
+            int srcy = src_unlosange_right(s,angle_right,i,j,width); 
+
+            respixels[i*width+j] = pixels[i*width+srcy];
+        }
+    }
+    
+    tl.Y = src_unlosange_right(s,angle_right,tl.X,tl.Y,width);
+    tr.Y = src_unlosange_right(s,angle_right,tr.X,tr.Y,width);
+    bl.Y = src_unlosange_right(s,angle_right,bl.X,bl.Y,width);
+    br.Y = src_unlosange_right(s,angle_right,br.X,br.Y,width);
+   
+    SDL_UnlockSurface(res);
+
+    SDL_FreeSurface(surface);
+
+    return res;
+}
