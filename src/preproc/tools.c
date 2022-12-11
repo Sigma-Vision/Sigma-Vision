@@ -511,6 +511,9 @@ void GridSplit(SDL_Surface* surface,int debug)
                 n.bottomLeft.X = c->bottomRight.X;// + (s.bottomLeft.X - c->bottomRight.X)/4;
                 n.bottomLeft.Y = n.topLeft.Y;
 
+                n.bottomRight.X = c->bottomRight.X;// + (s.bottomLeft.X - c->bottomRight.X)/4;
+                n.bottomRight.Y = c->bottomRight.Y;// + (s.topRight.Y - c->bottomRight.Y)/4;
+
                 free(c);
                 if (debug)
                 {

@@ -20,14 +20,16 @@ SDL_Surface* preproc(SDL_Surface* surface)
 
     //surface = Erosion(surface,1); 
     //surface = Dilation(surface,2);
+    
+    //surface = rotate90cw(surface);
 
     SDL_Surface* sobeled = SobelTransform(surface,5);
     //sobeled = Erosion(sobeled,3);
+    //IMG_SaveJPG(sobeled, "sobel1.jpg", 100);
     
     Square s;
     find_grid(sobeled, &s);
     
-
     print_square(sobeled,&s); 
     IMG_SaveJPG(sobeled, "sobeled.jpg", 100);
 
@@ -35,6 +37,11 @@ SDL_Surface* preproc(SDL_Surface* surface)
 
 
     surface = RotateDetectedGrid(surface,&s); 
+    surface = unlosange(surface,&s);
+
+    //print_square(surface,&s);
+    //IMG_SaveJPG(surface,"preproc.jpg",100);
+
     SDL_Surface* to_free = surface;
     surface = GridCropping(to_free,&s);
     SDL_FreeSurface(to_free);
