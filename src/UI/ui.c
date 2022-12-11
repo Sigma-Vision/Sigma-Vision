@@ -59,6 +59,10 @@ GdkPixbuf		*pix;
 GdkPixbuf		*pixIn;
 GdkPixbuf		*pixOut;
 
+//tkt c'est pour la demo
+char grid_path[] = "resources/grid0";
+char grid_path_res[] = "resources/grid0.result";
+
 static void display_surface()
 {
     //If an image is already display, we delete it
@@ -104,6 +108,13 @@ static void display_surface()
 static void load_image_from_chooser(GtkFileChooser *chooser)
 {
     filename = gtk_file_chooser_get_filename (chooser);
+
+    // save image number
+    char* i = filename;
+    for (; *i; i++);
+    grid_path[14] = *(i - 6);
+    grid_path_res[14] = *(i - 6);
+
     // - Create a surface from the image.
     surface = load_image(filename);
 
@@ -173,10 +184,10 @@ void ui_solve(GtkButton *a, gpointer user_data)
     UNUSED(user_data);
     if (surface)
     {
-        surface = preproc(surface);
+        surface = preproc(surface, grid_path);
         display_surface();
-        solve_file("grid");
-        surface = rebuild("grid", "grid.result");
+        solve_file(grid_path);
+        surface = rebuild(grid_path, grid_path_res);
         display_surface();
 
     }

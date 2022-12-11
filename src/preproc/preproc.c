@@ -9,7 +9,7 @@
 #include "scale.h"
 #include "transform.h"
 
-SDL_Surface* preproc(SDL_Surface* surface)
+SDL_Surface* preproc(SDL_Surface* surface, char* grid_path)
 {
     // - Neutralizes the image and saves it.
     surface_to_grayscale(surface);
@@ -46,7 +46,6 @@ SDL_Surface* preproc(SDL_Surface* surface)
     surface = GridCropping(to_free,&s);
     SDL_FreeSurface(to_free);
 
-    GridSplit(surface,0);
-    
+    GridSplit(surface,grid_path,0);
     return surface;
 }

@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
         SDL_Surface* surface = load_image(argv[1]);
 
 
-        surface = preproc(surface);
+        surface = preproc(surface, NULL);
 
         IMG_SaveJPG(surface, "output.jpg", 100);
         // - Cleanup
