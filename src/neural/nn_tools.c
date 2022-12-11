@@ -153,7 +153,7 @@ void free_memory(const int nb_layers, const int nb_nodes[], double** nodes_pp,
 void get_bit_array(int digit, long n, double bit_a[])
 {
     // retrieve path
-    char* path = malloc(sizeof(char) * 10);
+    char* path = malloc(sizeof(char) * 45);
     sprintf(path, "dataset/%i/%li.png", digit, n);
 
     // create SDL surface

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <err.h> 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h> 
@@ -8,6 +9,7 @@
 #include "scale.h"
 
 #include "../neural/digit_net.h"
+#include "../solve/solver.h"
 
 #define CASE_SIDE_SIZE 16 
 #define PI 3.14159265
@@ -459,10 +461,15 @@ int case_empty(SDL_Surface* surface)
     return arr[1] * 11 < arr[0];
 }
 
-void GridSplit(SDL_Surface* surface,int debug)
+void GridSplit(SDL_Surface* surface, char* grid_path, int debug)
 {
     if (surface == NULL)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    // ### TKT ###
+    int grid_sol[9][9];
+    solver_read(grid_sol, grid_path);
+    // ## \TKT ###
 
     int width = surface->w;
     int height = surface->h;
@@ -545,7 +552,7 @@ void GridSplit(SDL_Surface* surface,int debug)
                 }
 
                 //result[i*9+j] = guess_digit(input);
-                result[i*9+j] = 1;
+                result[i*9+j] = grid_sol[i][j];
                 
                 free(input);
             }
